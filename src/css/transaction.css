@@ -1,0 +1,35 @@
+
+.transaction-card, .secure-card, .payment-card, .international-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 200px;
+  }
+  .transaction-card:hover, .secure-card:hover, .payment-card:hover, .international-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  .transaction-card i, .secure-card i, .payment-card i, .international-card i {
+    font-size: 3rem;
+    color: #63b330;
+    margin-bottom: 15px;
+  }
+  
+  .transaction-card h4, .secure-card h4, .payment-card h4, .international-card h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .transaction-card p, .secure-card p, .payment-card p, .international-card p {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }

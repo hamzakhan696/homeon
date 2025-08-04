@@ -1,0 +1,73 @@
+.turnkey-section, .turnkey-service, .turnkey-construction, .turnkey-support {
+    padding: 70px 0;
+    background-color: #f3f3f3;
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease;
+    position: relative;
+  }
+  .turnkey-service:hover, .turnkey-construction:hover, .turnkey-support:hover {
+    transform: translateY(-6px);
+  }
+  .section-heading, .service-title, .construction-title, .support-title {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
+  }
+  
+  .section-heading:after, .service-title:after, .construction-title:after, .support-title:after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #63b330;
+    width: 80px;
+    height: 3px;
+    border-radius: 5px;
+  }
+  
+  .section-text, .service-description, .construction-description, .support-description {
+    font-size: 1rem;
+    line-height: 1.8;
+    text-align: center;
+    margin: 0 auto;
+    padding-top: 20px;
+  }
+  
+  .turnkey-service, .turnkey-support {
+    background: #fff;
+    border-radius: 12px;
+    padding: 45px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .turnkey-service i, .turnkey-construction i, .turnkey-support i {
+    font-size: 3.5rem;
+    color: #63b330;
+    margin-bottom: 25px;
+  }
+  @media (max-width: 767px) {
+    .section-heading {
+      font-size: 1.1rem;
+    }
+  
+    .turnkey-service, .turnkey-construction, .turnkey-support {
+      padding: 30px;
+    }
+  }
+  .section-heading .section-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #63b330;
+    position: absolute;
+    top: 0;
+    left: -10px;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }

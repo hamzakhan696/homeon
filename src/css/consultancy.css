@@ -1,0 +1,160 @@
+.consultancy {
+    background: linear-gradient(135deg, #63b330, black);
+    color: #fff;
+    padding: 60px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .consultancy .heading {
+    color: white;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeInUp 1s ease-out forwards;
+  }
+  
+  .consultancy p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    transform: translateY(-20px);
+    animation: fadeInUp 1.2s ease-out forwards;
+    color: white;
+    font-weight: 400;
+  }
+  @media (max-width: 768px) {
+    .consultancy p {
+        font-size: 1rem;
+      }
+}
+  .consultancy .btn{
+    color: #fff;
+    background-color: black;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    padding: 10px 30px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+.consultancy .btn:hover {
+    transform: translateY(-3px);
+    background-color: #63b330 !important;
+    color: white !important;
+}
+
+  
+  .consultancy::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: rotateBackground 20s linear infinite;
+    z-index: 0;
+  }
+  
+  .consultancy > * {
+    position: relative;
+    z-index: 1;
+  }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes rotateBackground {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+
+  .why-choose-us h2 {
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  .why-choose-us h2::after {
+    content: '';
+    width: 60px;
+    height: 3px;
+    background: #63b330;
+    display: block;
+    margin: 10px auto 0;
+  }
+  
+  .why-choose-us .benefit {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+  }
+  
+  .why-choose-us .benefit:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  }
+  
+  .why-choose-us .benefit i {
+    font-size: 2.5rem;
+    color: #63b330;
+    margin-bottom: 15px;
+  }
+  
+  .why-choose-us .benefit h5 {
+    font-size: 15px;
+    font-weight: 500;
+  }
+  @media (max-width:520px) {
+    .why-choose-us .benefit h5 {
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .why-choose-us .benefit {
+        background: #fff;
+        padding: 5px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+      }
+  }
+  @media (max-width:380px) {
+    .why-choose-us .benefit h5 {
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .why-choose-us .benefit {
+        background: #fff;
+
+        padding: 5px;
+      }
+  }
+  @media (max-width:480) {
+    .custom-btn-cosult{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+            }
+            .custom-btn-cosult{
+                margin: 0px !important;
+                margin-bottom: 20px !important;
+            }
+  }

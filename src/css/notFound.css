@@ -1,0 +1,10 @@
+.nf-container {
+  height: 100vh;
+  background-color: #000;
+  background-image: url("/public/assets/stardust.png");
+  display: flex;
+  justify-content: center;
+  color: #fff;
+  align-items: center;
+  padding: 0 5%;
+}

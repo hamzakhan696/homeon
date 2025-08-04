@@ -1,0 +1,152 @@
+.portfolio .custom-nav-tabs {
+    -webkit-overflow-scrolling: touch !important;
+    -ms-overflow-style: none !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+  }
+  .portfolio .custom-nav-tabs {
+    -webkit-overflow-scrolling: touch !important;
+    -ms-overflow-style: none !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+  }
+  .portfolio .nav-tabs{
+    border: none !important;
+  }
+  .portfolio .nav-tabs .nav-link {
+  border: none !important;
+  padding: 10px 0px 10px 0px!important;
+  }
+  .portfolio-tabs{
+    position: relative;
+  }
+  .nav-link .portfolio-tabs::before,
+  .nav-link .portfolio-tabs::after {
+    content: "";
+    position: absolute;
+    height: 6px;
+    background-color: #63b330;
+    width: 0;
+    transition: width 1s ease;
+  }
+  .nav-link:hover .portfolio-tabs::before,
+  .nav-link.active .portfolio-tabs::before {
+    top: 0; 
+    left: 0;
+    width: 100%;
+  }
+  .nav-link:hover .portfolio-tabs::after,
+  .nav-link.active .portfolio-tabs::after {
+    bottom: 0;
+    right: 0; 
+    width: 100%;
+  }
+  .portfolio.nav-link:hover{
+    color: black !important;
+  }
+  .portfolio .nav-link::after {
+    content: none !important;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #63b330;
+    transition: width 1s ease;
+  }
+  .lh-lgg{
+    line-height: 3 !important;
+  }
+.custom-nav-link:hover{
+    color: black !important;
+    }
+.custom-nav-link.active{
+        color: black !important;
+        }
+.tab-pane .clearfix ul li{
+            list-style: none !important;
+        }
+.dlab-media {
+  position: relative;
+  overflow: hidden;
+}
+
+.img-fluid {
+  transition: transform 0.5s ease;
+}
+.dlab-media:hover .img-fluid {
+  transform: scale(1.1);
+}
+.overlay-bx {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.overlay-bx:hover{
+    cursor: pointer;
+}
+.dlab-media:hover .overlay-bx {
+  opacity: 1;
+}
+
+.portinner {
+  text-align: center;
+  color: white;
+  transform: translateY(20px);
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0;
+}
+
+.dlab-media:hover .portinner {
+  transform: translateY(0);
+  opacity: 1;
+}
+.portinner span{
+    color: white !important;
+    font-size: 14px !important;
+}
+.portinner .port-title{
+    font-size: 20px !important;
+    color: white !important;
+}
+#myTabConten .tab-pane{
+    background-color: transparent!important;
+}
+@media (max-width:500px) {
+  .portinner span{
+    color: white !important;
+    font-size: 12px !important;
+}
+.portinner .port-title{
+    font-size: 16px !important;
+    color: white !important;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.portfolio-btn{
+  padding: 5px 15px !important;
+  font-size: 14px !important;
+}
+}
+.portfolio-main{
+  position: relative;
+}
+.frame-2-portfolio{
+  position: absolute;
+  right: 10px;
+  margin-right: 10px;
+}
+.frame-3-position{
+  position: absolute;
+  top: 0px; 
+}
