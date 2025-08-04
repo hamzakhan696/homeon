@@ -909,7 +909,7 @@ const AdminDashboard = () => {
                   <div className="platform-selection">
                     <div className="platform-card active">
                       <i className="fas fa-check-circle"></i>
-                      <span>zameen.com</span>
+                      <span>homeon.pk</span>
                     </div>
                   </div>
                 </div>

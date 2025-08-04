@@ -626,3 +626,227 @@ line-height: 10px;
   text-decoration: none;
   color: inherit;
 }
+
+/* Property Search Filter Styles - Zameen.com Style */
+.search-container {
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+  background: rgba(51, 51, 51, 0.9);
+  border-radius: 8px;
+}
+
+.search-title {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.search-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-tab {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.search-tab.active {
+  background: white;
+  color: #333;
+  border-color: white;
+}
+
+.search-tab:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.search-tab.active:hover {
+  background: white;
+}
+
+.search-form {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-group {
+  flex: 1;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.form-group select option {
+  background: #333;
+  color: white;
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.range-inputs select {
+  flex: 1;
+}
+
+.range-inputs span {
+  color: white;
+  font-size: 11px;
+}
+
+.find-btn {
+  width: 100%;
+  background: #63b330;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 15px;
+}
+
+.find-btn:hover {
+  background: #4a8a24;
+}
+
+.additional-options {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.option-link {
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.option-link:hover {
+  color: #63b330;
+}
+
+.separator {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-container {
+    padding: 12px;
+  }
+  
+  .search-title {
+    font-size: 1.3rem;
+  }
+  
+  .search-tabs {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .search-tab {
+    width: 120px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .range-inputs {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .additional-options {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .separator {
+    display: none;
+  }
+  
+  .search-form {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    padding: 10px;
+  }
+  
+  .search-form {
+    padding: 12px;
+  }
+  
+  .search-title {
+    font-size: 1.2rem;
+  }
+  
+  .search-tab {
+    width: 100px;
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+}

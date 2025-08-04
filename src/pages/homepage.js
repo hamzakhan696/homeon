@@ -69,6 +69,7 @@ const HomePage = () => {
 							</div>
 						</div>
 	 </div>
+   
                        <div className='whatsapp-position-custom'>
           <a href="https://wa.me/923255255255" className='whatsapp' target='_blank'>
           <svg
