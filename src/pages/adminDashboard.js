@@ -27,6 +27,32 @@ const AdminDashboard = () => {
   const blogImageInputRef = useRef(null);
   const blogFeaturedImageInputRef = useRef(null);
 
+  // Add this mapping after state declarations
+  const propertySubtypes = {
+    home: [
+      { key: 'house', label: 'House', icon: 'fas fa-home' },
+      { key: 'flat', label: 'Flat', icon: 'fas fa-building' },
+      { key: 'upper', label: 'Upper Portion', icon: 'fas fa-level-up-alt' },
+      { key: 'lower', label: 'Lower Portion', icon: 'fas fa-level-down-alt' },
+      { key: 'farmhouse', label: 'Farm House', icon: 'fas fa-tree' },
+      { key: 'room', label: 'Room', icon: 'fas fa-door-open' },
+      { key: 'penthouse', label: 'Penthouse', icon: 'fas fa-crown' },
+    ],
+    plots: [
+      { key: 'residential', label: 'Residential Plot', icon: 'fas fa-map-marker-alt' },
+      { key: 'commercial', label: 'Commercial Plot', icon: 'fas fa-map-signs' },
+      { key: 'agricultural', label: 'Agricultural Plot', icon: 'fas fa-tractor' },
+      { key: 'industrial', label: 'Industrial Land', icon: 'fas fa-industry' },
+    ],
+    commercial: [
+      { key: 'office', label: 'Office', icon: 'fas fa-briefcase' },
+      { key: 'shop', label: 'Shop', icon: 'fas fa-store' },
+      { key: 'warehouse', label: 'Warehouse', icon: 'fas fa-warehouse' },
+      { key: 'factory', label: 'Factory Building', icon: 'fas fa-industry' },
+      { key: 'other', label: 'Other', icon: 'fas fa-ellipsis-h' },
+    ],
+  };
+
   useEffect(() => {
     // Check if admin is logged in
     const isLoggedIn = localStorage.getItem('adminLoggedIn');
@@ -473,55 +499,16 @@ const AdminDashboard = () => {
                     </div>
                     
                     <div className="property-subtypes">
-                      <button 
-                        className={`subtype-btn ${activeSubtype === 'house' ? 'active' : ''}`}
-                        onClick={() => handleSubtypeChange('house')}
-                      >
-                        <i className="fas fa-home"></i>
-                        House
-                      </button>
-                      <button 
-                        className={`subtype-btn ${activeSubtype === 'flat' ? 'active' : ''}`}
-                        onClick={() => handleSubtypeChange('flat')}
-                      >
-                        <i className="fas fa-building"></i>
-                        Flat
-                      </button>
-                      <button 
-                        className={`subtype-btn ${activeSubtype === 'upper' ? 'active' : ''}`}
-                        onClick={() => handleSubtypeChange('upper')}
-                      >
-                        <i className="fas fa-level-up-alt"></i>
-                        Upper Portion
-                      </button>
-                      <button 
-                        className={`subtype-btn ${activeSubtype === 'lower' ? 'active' : ''}`}
-                        onClick={() => handleSubtypeChange('lower')}
-                      >
-                        <i className="fas fa-level-down-alt"></i>
-                        Lower Portion
-                      </button>
-                      <button 
-                        className={`subtype-btn ${activeSubtype === 'farmhouse' ? 'active' : ''}`}
-                        onClick={() => handleSubtypeChange('farmhouse')}
-                      >
-                        <i className="fas fa-tree"></i>
-                        Farm House
-                      </button>
-                      <button 
-                        className={`subtype-btn ${activeSubtype === 'room' ? 'active' : ''}`}
-                        onClick={() => handleSubtypeChange('room')}
-                      >
-                        <i className="fas fa-door-open"></i>
-                        Room
-                      </button>
-                      <button 
-                        className={`subtype-btn ${activeSubtype === 'penthouse' ? 'active' : ''}`}
-                        onClick={() => handleSubtypeChange('penthouse')}
-                      >
-                        <i className="fas fa-crown"></i>
-                        Penthouse
-                      </button>
+                      {propertySubtypes[activePropertyTab].map((sub) => (
+                        <button
+                          key={sub.key}
+                          className={`subtype-btn ${activeSubtype === sub.key ? 'active' : ''}`}
+                          onClick={() => handleSubtypeChange(sub.key)}
+                        >
+                          <i className={sub.icon}></i>
+                          {sub.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
 
