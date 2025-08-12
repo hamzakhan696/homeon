@@ -66,6 +66,113 @@ const HomePage = () => {
 										</div>
 									</div>	
 								</div>
+								<div className="col-md-6">
+									<div className="zameen-filter-container">
+										<div className="zameen-filter-main">
+											<div className="zameen-filter-row">
+												<div className="zameen-filter-field" name="City">
+													<div className="zameen-field-wrapper">
+														<label className="zameen-field-label" htmlFor="filter-title">City</label>
+														<div className="zameen-dropdown" role="button" aria-haspopup="true" aria-label="City filter">
+															<span className="zameen-dropdown-text">
+																<span className="zameen-text">Lahore</span>
+															</span>
+															<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
+																<path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
+															</svg>
+														</div>
+													</div>
+												</div>
+												<div className="zameen-filter-field" aria-label="Location filter" name="location">
+													<div className="zameen-field-wrapper">
+														<label className="zameen-field-label" htmlFor="filter-title">location</label>
+														<div className="zameen-input-wrapper">
+															<div className="zameen-input-container">
+																<div aria-label="Location filter" className="zameen-input-field">
+																	<input type="text" value="" autoComplete="off" spellCheck="false" className="zameen-text-input" placeholder="Enter location" />
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<a href="/Homes/Lahore-1-1.html" role="button" language="en" className="zameen-find-btn" aria-label="Find button">Find</a>
+										</div>
+										
+										<div className="zameen-filter-secondary">
+											<div className="zameen-filter-field" name="property type">
+												<div className="zameen-field-wrapper">
+													<label className="zameen-field-label" htmlFor="filter-title">property type</label>
+													<div className="zameen-dropdown" role="button" aria-haspopup="true" aria-label="Category filter">
+														<span className="zameen-dropdown-text">
+															<span className="zameen-text">Homes</span>
+														</span>
+														<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
+															<path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
+														</svg>
+													</div>
+												</div>
+											</div>
+											<div className="zameen-filter-field" aria-label="Price filter" name="Price (PKR)">
+												<div className="zameen-field-wrapper">
+													<label className="zameen-field-label" htmlFor="filter-title">Price (PKR)</label>
+													<div className="zameen-dropdown" role="button" aria-haspopup="true">
+														<span className="zameen-dropdown-text">
+															<span className="zameen-text-min" aria-label="Min value">0</span>
+															<span className="zameen-text-to">to</span>
+															<span className="zameen-text-max" aria-label="Max value">Any</span>
+														</span>
+														<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
+															<path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
+														</svg>
+													</div>
+												</div>
+											</div>
+											<div className="zameen-filter-field" aria-label="Area filter" name="AREA (Marla)">
+												<div className="zameen-field-wrapper">
+													<label className="zameen-field-label" htmlFor="filter-title">AREA (Marla)</label>
+													<div className="zameen-dropdown" role="button" aria-haspopup="true" aria-label="Area filter">
+														<span className="zameen-dropdown-text">
+															<span className="zameen-text-min" aria-label="Min value">0</span>
+															<span className="zameen-text-to">to</span>
+															<span className="zameen-text-max" aria-label="Max value">Any</span>
+														</span>
+														<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
+															<path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
+														</svg>
+													</div>
+												</div>
+											</div>
+											<div className="zameen-filter-field" aria-label="Beds filter" name="beds">
+												<div className="zameen-field-wrapper">
+													<label className="zameen-field-label" htmlFor="filter-title">beds</label>
+													<div className="zameen-dropdown" role="button" aria-haspopup="true">
+														<span className="zameen-dropdown-text">
+															<span className="zameen-text">All</span>
+														</span>
+														<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
+															<path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
+														</svg>
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										<div className="zameen-filter-options">
+											<button className="zameen-more-btn">
+												<span className="zameen-more-icon" aria-label="Collapse expand button">
+													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 7" className="zameen-arrow-icon">
+														<path d="M11 7a1 1 0 0 1-.71-.29L6 2.41l-4.29 4.3A1 1 0 0 1 .29 5.29l5-5a1 1 0 0 1 1.41 0l5 5A1 1 0 0 1 11 7z"></path>
+													</svg>
+												</span>
+												<span className="zameen-more-text">Less Options</span>
+											</button>
+											<button className="zameen-option-btn" aria-label="Change currency">Change Currency (PKR)</button>
+											<button className="zameen-option-btn" aria-label="Change area unit">Change Area Unit</button>
+											<button className="zameen-option-btn">Reset Search</button>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 	 </div>

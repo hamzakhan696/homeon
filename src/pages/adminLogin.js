@@ -7,10 +7,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavLink} from 'react-router-dom';
 import 'font-awesome/css/font-awesome.min.css'; // Only if installed via npm
 import { faClock,faEnvelopeOpen,faPhoneVolume ,faMapMarkerAlt  } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -29,16 +31,27 @@ const AdminLogin = () => {
     setIsLoading(true);
     setError('');
 
-    // Simulate login process
-    setTimeout(() => {
-      if (formData.username === 'admin' && formData.password === 'admin123') {
+    try {
+      const response = await axios.post('http://192.168.1.61:3002/api/auth/login', {
+        email: formData.email,
+        password: formData.password
+      });
+
+      if (response.status === 201) {
+        // Login successful
         localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminToken', response.data.token || 'logged-in');
         navigate('/admin-dashboard');
-      } else {
-        setError('Invalid username or password');
       }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        setError('Invalid email or password');
+      } else {
+        setError('Login failed. Please try again.');
+      }
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -78,17 +91,17 @@ const AdminLogin = () => {
             )}
 
             <div className="form-group">
-              <label htmlFor="username">
-                <i className="fas fa-user"></i>
-                Username
+              <label htmlFor="email">
+                <i className="fas fa-envelope"></i>
+                Email
               </label>
               <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
-                placeholder="Enter your username"
+                placeholder="Enter your email"
                 required
               />
             </div>
@@ -139,7 +152,7 @@ const AdminLogin = () => {
 
           <div className="admin-login-footer">
             <p>Demo Credentials:</p>
-            <p><strong>Username:</strong> admin</p>
+            <p><strong>Email:</strong> admin@homeon.pk</p>
             <p><strong>Password:</strong> admin123</p>
           </div>
         </div>

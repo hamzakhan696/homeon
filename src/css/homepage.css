@@ -6,7 +6,12 @@
 .banner-three .banner-inner .banner-content {
     position: relative;
     padding: 50px 0 50px 50px;
-    z-index: 1;
+    z-index: 2;
+}
+
+.banner-three .banner-inner {
+    position: relative;
+    z-index: 2;
 }
 @keyframes fadeInUp {
     0% {
@@ -32,8 +37,155 @@
     background-size: contain;
     z-index: -1;
 }
+/* Enhanced Banner Visual Effects */
+.banner-three {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.3),
+        rgba(0, 0, 0, 0.2)
+    ), url('/public/assets/CH2_page-0002.webp');
+    height: 800px;
+    position: relative;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    overflow: hidden;
+    animation: bannerGlow 8s ease-in-out infinite alternate;
+}
+
+@keyframes bannerGlow {
+    0% {
+        box-shadow: inset 0 0 100px rgba(99, 179, 48, 0.1);
+    }
+    100% {
+        box-shadow: inset 0 0 150px rgba(99, 179, 48, 0.2);
+    }
+}
+
+.banner-three::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(99, 179, 48, 0.1) 0%,
+        rgba(0, 0, 0, 0.1) 50%,
+        rgba(99, 179, 48, 0.05) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+    animation: gradientShift 10s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.banner-three::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 30% 70%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%
+    );
+    pointer-events: none;
+    z-index: 1;
+    animation: lightShift 12s ease-in-out infinite;
+}
+
+@keyframes lightShift {
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+    }
+    50% {
+        transform: translateX(20px) translateY(-10px);
+    }
+}
+
+/* Enhanced Text Styling */
 .banner-three .banner-content .title {
     text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.banner-three .banner-content .title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #63b330, #4a8a24);
+    border-radius: 2px;
+    animation: titleUnderline 3s ease-in-out infinite;
+}
+
+@keyframes titleUnderline {
+    0%, 100% {
+        width: 60px;
+        opacity: 1;
+    }
+    50% {
+        width: 80px;
+        opacity: 0.8;
+    }
+}
+
+/* Enhanced Button Styling */
+.banner-three .btn-custom {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(99, 179, 48, 0.3);
+}
+
+.banner-three .btn-custom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.banner-three .btn-custom:hover::before {
+    left: 100%;
+}
+
+.banner-three .btn-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 179, 48, 0.4);
+}
+
+/* Enhanced Filter Container */
+.banner-three .zameen-filter-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.banner-three .zameen-filter-container:hover {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
 }
 .m-b20 {
     margin-bottom: 20px;
@@ -100,12 +252,50 @@
 }
 
 .banner-three {
-    background-image: url('/public/assets/CH2_page-0002.webp');
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.3),
+        rgba(0, 0, 0, 0.2)
+    ), url('/public/assets/CH2_page-0002.webp');
     height: 800px;
     position: relative;
-    background-position: bottom, top;
+    background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+
+.banner-three::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(99, 179, 48, 0.1) 0%,
+        rgba(0, 0, 0, 0.1) 50%,
+        rgba(99, 179, 48, 0.05) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.banner-three::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 30% 70%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%
+    );
+    pointer-events: none;
+    z-index: 1;
 }
 @media only screen and (max-width: 991px) {
     .banner-three {
@@ -847,6 +1037,248 @@ line-height: 10px;
   .search-tab {
     width: 100px;
     padding: 5px 10px;
+    font-size: 10px;
+  }
+}
+
+/* Zameen.com Style Filter CSS */
+.zameen-filter-container {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 20px 0;
+}
+
+.zameen-filter-main {
+  margin-bottom: 15px;
+}
+
+.zameen-filter-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.zameen-filter-field {
+  flex: 1;
+}
+
+.zameen-field-wrapper {
+  position: relative;
+}
+
+.zameen-field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.zameen-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.zameen-dropdown:hover {
+  border-color: #63b330;
+}
+
+.zameen-dropdown-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #333;
+}
+
+.zameen-text {
+  font-weight: 500;
+}
+
+.zameen-text-min,
+.zameen-text-max {
+  font-weight: 500;
+}
+
+.zameen-text-to {
+  color: #999;
+  font-size: 11px;
+}
+
+.zameen-dropdown-icon {
+  width: 12px;
+  height: 6px;
+  fill: #666;
+  transition: transform 0.2s ease;
+}
+
+.zameen-dropdown:hover .zameen-dropdown-icon {
+  transform: rotate(180deg);
+}
+
+.zameen-input-wrapper {
+  position: relative;
+}
+
+.zameen-input-container {
+  position: relative;
+}
+
+.zameen-input-field {
+  position: relative;
+}
+
+.zameen-text-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #333;
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.zameen-text-input:focus {
+  outline: none;
+  border-color: #63b330;
+}
+
+.zameen-text-input::placeholder {
+  color: #999;
+}
+
+.zameen-find-btn {
+  display: inline-block;
+  background: #63b330;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 10px;
+}
+
+.zameen-find-btn:hover {
+  background: #4a8a24;
+  color: white;
+  text-decoration: none;
+}
+
+.zameen-filter-secondary {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.zameen-filter-options {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.zameen-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #63b330;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.zameen-more-btn:hover {
+  color: #4a8a24;
+}
+
+.zameen-more-icon {
+  display: flex;
+  align-items: center;
+}
+
+.zameen-arrow-icon {
+  width: 12px;
+  height: 7px;
+  fill: currentColor;
+  transition: transform 0.2s ease;
+}
+
+.zameen-more-btn:hover .zameen-arrow-icon {
+  transform: rotate(180deg);
+}
+
+.zameen-option-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+  text-decoration: underline;
+}
+
+.zameen-option-btn:hover {
+  color: #63b330;
+}
+
+/* Responsive Design for Zameen Filter */
+@media (max-width: 768px) {
+  .zameen-filter-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .zameen-filter-secondary {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .zameen-filter-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .zameen-filter-container {
+    padding: 15px;
+    margin: 15px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .zameen-filter-container {
+    padding: 12px;
+  }
+  
+  .zameen-dropdown,
+  .zameen-text-input {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .zameen-field-label {
     font-size: 10px;
   }
 }
