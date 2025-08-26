@@ -11,6 +11,11 @@ import axios from 'axios';
 
 
 const AdminLogin = () => {
+  // API Configuration
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
+  console.log('Environment API URL:', process.env.REACT_APP_API_URL);
+  console.log('Using API URL:', API_BASE_URL);
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -32,7 +37,7 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://192.168.1.61:3002/api/auth/login', {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         email: formData.email,
         password: formData.password
       });
