@@ -232,6 +232,24 @@ const ProjectsTab = () => {
     }
   };
 
+  // Delete project
+  const handleDeleteProject = async (id) => {
+    if (!id) return;
+    if (!window.confirm('Delete this project?')) return;
+    try {
+      setIsListLoading(true);
+      await axios.delete(`${API_BASE_URL}/admin/projects/${id}`);
+      alert('Project deleted successfully');
+      await fetchProjects();
+    } catch (err) {
+      console.error('Delete project failed:', err);
+      const msg = err?.response?.data?.message || 'Failed to delete project';
+      alert(msg);
+    } finally {
+      setIsListLoading(false);
+    }
+  };
+
   // Auto-load when switching to list tab
   useEffect(() => {
     if (activeProjectsTab === 'list') {
@@ -257,6 +275,37 @@ const ProjectsTab = () => {
     const base = MEDIA_BASE_URL.replace(/\/$/, '');
     const file = String(name).replace(/^\//, '');
     return `${base}/${file}`;
+  };
+
+  const getProjectThumb = (project) => {
+    const candidates = [];
+    if (project?.coverImage) candidates.push(project.coverImage);
+
+    if (Array.isArray(project?.projectImages)) {
+      const first = project.projectImages[0];
+      candidates.push(first?.url || first?.name || first);
+    } else if (typeof project?.projectImages === 'string' && project.projectImages.trim()) {
+      const s = project.projectImages.trim();
+      try {
+        const arr = JSON.parse(s);
+        if (Array.isArray(arr) && arr.length > 0) {
+          const first = arr[0];
+          candidates.push(first?.url || first?.name || first);
+        } else {
+          candidates.push(s);
+        }
+      } catch {
+        candidates.push(s);
+      }
+    }
+
+    for (const c of candidates) {
+      if (!c) continue;
+      if (typeof c === 'string' && /^data:image\//i.test(c)) return c;
+      const resolved = resolveMediaUrl(c);
+      if (resolved) return resolved;
+    }
+    return '';
   };
 
   // Client-side validation
@@ -1156,6 +1205,7 @@ const ProjectsTab = () => {
               <table className="attractive-table">
                 <thead>
                   <tr style={{ background: '#63b330', color: '#fff' }}>
+                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Image</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Title</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Purpose</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Type</th>
@@ -1167,12 +1217,16 @@ const ProjectsTab = () => {
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Bedrooms</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Bathrooms</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Installments</th>
-                    <th style={{ padding: '12px' }}>Created</th>
+                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Created</th>
+                    <th style={{ padding: '12px' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {projects.map((p) => (
+                  {projects.map((p) => {
+                    const thumb = getProjectThumb(p);
+                    return (
                     <tr key={p.id} style={{ background: '#fff', transition: 'background 0.3s', borderBottom: '1px solid #ecf0f1' }}>
+                      <td style={{ padding: '8px' }}>{thumb ? <img src={thumb} alt={p.title} style={{ width: 64, height: 40, objectFit: 'cover', borderRadius: 4 }} /> : '-'}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.title}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.purpose}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.propertyType}</td>
@@ -1185,8 +1239,13 @@ const ProjectsTab = () => {
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bathrooms || '-'}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.availableOnInstallments ? 'Yes' : 'No'}</td>
                       <td style={{ padding: '12px', color: '#7f8c8d' }}>{p.createdAt ? new Date(p.createdAt).toLocaleString() : '-'}</td>
+                      <td style={{ padding: '12px' }}>
+                        <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteProject(p.id)} title="Delete project">
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </td>
                     </tr>
-                  ))}
+                  )})}
                 </tbody>
               </table>
             </div>

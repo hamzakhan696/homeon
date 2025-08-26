@@ -3,6 +3,7 @@ import axios from 'axios';
 
 // API Base URL (adjust as per your environment)
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
+const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 
 const BlogTab = () => {
   // State for form data
@@ -27,6 +28,17 @@ const BlogTab = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Helpers
+  const resolveMediaUrl = (name, fileObj) => {
+    if (name && /^data:image\//i.test(String(name))) return name;
+    if (fileObj?.url) return fileObj.url;
+    if (!name) return '';
+    if (/^https?:\/\//i.test(String(name))) return name;
+    const base = MEDIA_BASE_URL.replace(/\/$/, '');
+    const file = String(name).replace(/^\//, '');
+    return `${base}/${file}`;
+  };
 
   // Refs for file inputs
   const blogImageInputRef = useRef(null);
@@ -103,22 +115,74 @@ const BlogTab = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
-    const formDataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      formDataToSend.append(key, value);
-    });
-    if (blogFeaturedImage) {
-      formDataToSend.append('featuredImage', blogFeaturedImage.file);
-    }
-    blogImages.forEach((image, index) => {
-      formDataToSend.append(`images[${index}]`, image.file);
-    });
-
+  
     try {
-      const response = await axios.post(`${API_BASE_URL}/admin/blogs`, formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const {
+        title, content, category, description, tags,
+        metaTitle, metaDescription, slug, status,
+        publishDate, allowComments, featureOnHomepage
+      } = formData;
+  
+      if (!title?.trim() || !content?.trim()) {
+        setError('Title and content are required.');
+        setLoading(false);
+        return;
+      }
+  
+      const hasFiles = Boolean(blogFeaturedImage || (blogImages && blogImages.length > 0));
+  
+      let response;
+      if (!hasFiles) {
+        // JSON path (no images)
+        const payload = {
+          title: String(title).trim(),
+          content: String(content).trim(),
+          ...(category ? { category: String(category).trim() } : {}),
+          ...(description ? { description: String(description).trim() } : {}),
+          ...(tags ? { tags: String(tags).trim() } : {}),
+          ...(metaTitle ? { metaTitle: String(metaTitle).trim() } : {}),
+          ...(metaDescription ? { metaDescription: String(metaDescription).trim() } : {}),
+          ...(slug ? { slug: String(slug).trim() } : {}),
+          ...(status ? { status } : {}),
+          ...(publishDate ? { publishDate } : {}),
+          allowComments: Boolean(allowComments),
+          featureOnHomepage: Boolean(featureOnHomepage),
+        };
+  
+        response = await axios.post(`${API_BASE_URL}/admin/blogs`, payload, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } else {
+        // Multipart path (images present)
+        const fd = new FormData();
+        const appendStr = (k, v) => v != null && v !== '' ? fd.append(k, String(v)) : null;
+  
+        appendStr('title', title);
+        appendStr('content', content);
+        appendStr('category', category);
+        appendStr('description', description);
+        appendStr('tags', tags);
+        appendStr('metaTitle', metaTitle);
+        appendStr('metaDescription', metaDescription);
+        appendStr('slug', slug);
+        appendStr('status', status);
+        appendStr('publishDate', publishDate); // backend transforms to Date
+        appendStr('allowComments', allowComments ? 'true' : 'false');
+        appendStr('featureOnHomepage', featureOnHomepage ? 'true' : 'false');
+  
+        // Files: first file will be treated as featured by backend
+        if (blogFeaturedImage?.file) {
+          fd.append('files', blogFeaturedImage.file);
+        }
+        (blogImages || []).forEach(img => {
+          if (img?.file) fd.append('files', img.file);
+        });
+  
+        response = await axios.post(`${API_BASE_URL}/admin/blogs/create-with-media`, fd, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      }
+  
       alert('Blog created successfully!');
       setFormData({
         title: '',
@@ -138,7 +202,10 @@ const BlogTab = () => {
       setBlogImages([]);
       fetchBlogs();
     } catch (err) {
-      setError('Failed to create blog. Please try again.');
+      const serverMsg = err?.response?.data?.message;
+      if (Array.isArray(serverMsg)) setError(serverMsg.join(', '));
+      else if (typeof serverMsg === 'string') setError(serverMsg);
+      else setError('Failed to create blog. Please try again.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -151,10 +218,28 @@ const BlogTab = () => {
     setError(null);
     try {
       const response = await axios.get(`${API_BASE_URL}/admin/blogs`);
-      setBlogs(response.data);
+      setBlogs(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       setError('Failed to load blogs.');
       console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete blog
+  const handleDeleteBlog = async (id) => {
+    if (!id) return;
+    if (!window.confirm('Delete this blog?')) return;
+    try {
+      setLoading(true);
+      await axios.delete(`${API_BASE_URL}/admin/blogs/${id}`);
+      alert('Blog deleted successfully');
+      await fetchBlogs();
+    } catch (err) {
+      console.error('Delete blog failed:', err);
+      const msg = err?.response?.data?.message || 'Failed to delete blog';
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -517,13 +602,13 @@ const BlogTab = () => {
 
         {/* Submit Button */}
         <div className="form-actions">
-          <button 
+          {/* <button 
             className="btn btn-primary btn-lg"
             onClick={handleCreateBlog}
             disabled={loading}
           >
             {loading ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : <><i className="fas fa-save"></i> Save as Draft</>}
-          </button>
+          </button> */}
           <button 
             className="btn btn-success btn-lg"
             onClick={handleCreateBlog}
@@ -536,7 +621,15 @@ const BlogTab = () => {
 
       {/* All Blogs Section */}
       <div className="all-blogs-section">
-        <h2>All Blogs</h2>
+        <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <h2 style={{ margin: 0 }}>All Blogs</h2>
+            <span className="badge badge-success" style={{ background: '#27ae60', color: '#fff', padding: '5px 10px', borderRadius: 12 }}>{blogs.length}</span>
+          </div>
+          <button type="button" className="btn btn-outline" onClick={fetchBlogs} disabled={loading}>
+            {loading ? <><i className="fas fa-spinner fa-spin"></i> Refreshing...</> : <><i className="fas fa-sync"></i> Refresh</>}
+          </button>
+        </div>
         {error && <p className="text-danger">{error}</p>}
         {loading && <p><i className="fas fa-spinner fa-spin"></i> Loading...</p>}
         {!loading && !error && blogs.length === 0 && <p>No blogs found.</p>}
@@ -544,24 +637,54 @@ const BlogTab = () => {
           <div className="blogs-table-container">
             <table className="attractive-table">
               <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Publish Date</th>
-                  <th>Created At</th>
+                <tr style={{ background: '#63b330', color: '#fff' }}>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Image</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Title</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Description</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Category</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Status</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Slug</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Tags</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Meta Title</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Publish Date</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Allow Comments</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Featured</th>
+                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Created At</th>
+                  <th style={{ padding: '12px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {blogs.map((blog) => (
-                  <tr key={blog.id}>
-                    <td>{blog.title}</td>
-                    <td>{blog.category}</td>
-                    <td>{blog.status}</td>
-                    <td>{blog.publishDate ? new Date(blog.publishDate).toLocaleString() : '-'}</td>
-                    <td>{new Date(blog.createdAt).toLocaleString()}</td>
-                  </tr>
-                ))}
+                {blogs.map((blog) => {
+                  const imgSrc = resolveMediaUrl(blog.featuredImage);
+                  let images = [];
+                  try {
+                    if (Array.isArray(blog.images)) images = blog.images;
+                    else if (typeof blog.images === 'string' && blog.images.trim()) images = JSON.parse(blog.images);
+                  } catch {}
+                  const firstImage = images && images.length > 0 ? resolveMediaUrl(images[0]) : '';
+                  const finalImg = imgSrc || firstImage || '';
+                  return (
+                    <tr key={blog.id} style={{ background: '#fff', transition: 'background 0.3s', borderBottom: '1px solid #ecf0f1' }}>
+                      <td style={{ padding: '8px' }}>{finalImg ? <img src={finalImg} alt={blog.title} style={{ width: 64, height: 40, objectFit: 'cover', borderRadius: 4 }} /> : '-'}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.title}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.description || '-'}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.category || '-'}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.status}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.slug || '-'}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.tags || '-'}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.metaTitle || '-'}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.publishDate ? new Date(blog.publishDate).toLocaleString() : '-'}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.allowComments ? 'Yes' : 'No'}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.featureOnHomepage ? 'Yes' : 'No'}</td>
+                      <td style={{ padding: '12px', color: '#7f8c8d' }}>{blog.createdAt ? new Date(blog.createdAt).toLocaleString() : '-'}</td>
+                      <td style={{ padding: '12px' }}>
+                        <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteBlog(blog.id)} title="Delete blog">
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
