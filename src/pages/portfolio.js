@@ -1,8 +1,12 @@
-import React, {} from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/portfolio.css'
 import NavBar from '../layout/header';
 import Footer from '../layout/footer';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { apiGet } from '../api';
+import { getProjectThumb } from '../media';
+import { showToast } from '../toast';
+import { useLocation } from 'react-router-dom';
 const Portfolio = () => {
     const scrollLeft = () => {
     const myTab = document.getElementById("myTab");
@@ -19,6 +23,49 @@ const Portfolio = () => {
       behavior: "smooth",
     });
   };
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState('');
+  const navigate = useNavigate();
+  const locationHook = useLocation();
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams(locationHook.search);
+        const filters = Object.fromEntries(params.entries());
+        const hasFilters = Array.from(params.keys()).length > 0 && Object.values(filters).some(v => v);
+        if (hasFilters) {
+          const base = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
+          const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+            city: filters.city || undefined,
+            location: filters.location || undefined,
+            propertyType: filters.propertyType || undefined,
+            bedrooms: filters.bedrooms || undefined,
+            minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
+            maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
+            minArea: filters.minArea ? Number(filters.minArea) : undefined,
+            maxArea: filters.maxArea ? Number(filters.maxArea) : undefined,
+          })});
+          const data = await res.json();
+          if (mounted) setItems(Array.isArray(data) ? data : []);
+        } else {
+          const d = await apiGet('/admin/projects');
+          if (mounted) setItems(Array.isArray(d) ? d : []);
+        }
+      } catch (e) {
+        if (mounted) setErr('Failed to load');
+        showToast('Failed to load projects','error');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    load();
+    return () => { mounted = false; };
+  }, [locationHook.search]);
+
   return (
     <div className='overflow-hidden'>
         <div className='contactUs-bg'>
@@ -198,198 +245,25 @@ const Portfolio = () => {
                 >
                  <div className="clearfix">
         <div className='row mt-5 mb-5'>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio1.jpg' alt="portfolio" className='img-fluid' />
+          {loading && <p style={{ textAlign:'center' }}><i className="fas fa-spinner fa-spin"></i> Loading...</p>}
+          {!loading && err && <p className='text-danger' style={{ textAlign:'center' }}>{err}</p>}
+          {!loading && !err && items.map((p) => (
+            <div key={p.id} className='col-lg-3 col-md-4 col-6 p-0'>
+              <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1" onClick={() => navigate(`/project/${p.id}`)} style={{ cursor:'pointer' }}>
+                <img src={getProjectThumb(p) || 'assets/image-coming-soon-placeholder.png'} alt={p.title} className='img-fluid' />
                 <div className="overlay-bx">
                   <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
+                    <span>{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ''}</span>
+                    <h3 className="port-title mt-2">{p.title}</h3>
+                    <button className="btn-custom portfolio-btn mt-2">View Project</button>
                   </div>
                 </div>
               </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio2.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio3.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio4.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio5.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio6.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio7.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio8.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio9.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio10.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio11.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio12.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
+            </div>
+          ))}
+          {!loading && !err && items.length === 0 && (
+            <p style={{ textAlign:'center' }}>No projects yet.</p>
+          )}
         </div>
     </div>
                 </div>

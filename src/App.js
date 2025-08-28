@@ -8,6 +8,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import ContactUs from "./pages/contactUs";
 import Blog from "./pages/blog";
 import Portfolio from "./pages/portfolio";
+import ProjectDetail from "./pages/ProjectDetail";
 import CurrentProject from "./pages/services/currentProject";
 import Consultancy from "./pages/services/consultancy";
 import ProjectSelling from "./pages/services/projectSelling";
@@ -31,6 +32,7 @@ function App() {
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/currentProject" element={<CurrentProject />} />
             <Route path="/consultancy" element={<Consultancy />} />
             <Route path="/projectSelling" element={<ProjectSelling />} />

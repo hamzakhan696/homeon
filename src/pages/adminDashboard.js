@@ -7,6 +7,7 @@ import ProjectsTab from '../components/admin/ProjectsTab';
 import BlogTab from '../components/admin/BlogTab';
 import ReportsTab from '../components/admin/ReportsTab';
 import SettingsTab from '../components/admin/SettingsTab';
+import BookingsTab from '../components/admin/BookingsTab';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -63,6 +64,12 @@ const AdminDashboard = () => {
                 {!sidebarCollapsed && <span>Blog</span>}
               </button>
             </li>
+            <li className={activeTab === 'bookings' ? 'active' : ''}>
+              <button onClick={() => setActiveTab('bookings')}>
+                <i className="fas fa-calendar-check"></i>
+                {!sidebarCollapsed && <span>Bookings</span>}
+              </button>
+            </li>
             <li className={activeTab === 'reports' ? 'active' : ''}>
               <button onClick={() => setActiveTab('reports')}>
                 <i className="fas fa-chart-bar"></i>
@@ -113,6 +120,7 @@ const AdminDashboard = () => {
           {activeTab === 'properties' && <PropertiesTab />}
           {activeTab === 'projects' && <ProjectsTab />}
           {activeTab === 'blog' && <BlogTab />}
+          {activeTab === 'bookings' && <BookingsTab />}
           {activeTab === 'reports' && <ReportsTab />}
           {activeTab === 'settings' && <SettingsTab />}
         </div>
