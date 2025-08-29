@@ -1042,243 +1042,258 @@ line-height: 10px;
 }
 
 /* Zameen.com Style Filter CSS */
+/* Professional Property Search Filter Styles */
 .zameen-filter-container {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin: 20px 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 16px; /* was 30px */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 16px 0; /* was 20px */
+  position: relative;
+  overflow: hidden;
+}
+
+.zameen-filter-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #63b330, #4a8a24, #63b330);
+  border-radius: 16px 16px 0 0;
+}
+
+.zameen-filter-header {
+  text-align: center;
+  margin-bottom: 16px; /* was 25px */
+}
+
+.zameen-filter-header h3 {
+  color: #2c3e50;
+  font-size: 20px; /* was 24px */
+  font-weight: 700;
+  margin: 0 0 6px 0; /* was 8px */
+  letter-spacing: -0.5px;
+}
+
+.zameen-filter-header p {
+  color: #7f8c8d;
+  font-size: 12px; /* was 14px */
+  margin: 0;
+  font-weight: 400;
 }
 
 .zameen-filter-main {
-  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* was 20px */
 }
 
 .zameen-filter-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.zameen-filter-field {
-  flex: 1;
-}
-
-.zameen-field-wrapper {
-  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px; /* was 20px */
 }
 
 .zameen-field-label {
-  display: block;
-  font-size: 11px;
+  color: #2c3e50;
+  font-size: 11px; /* was 12px */
   font-weight: 600;
-  color: #666;
-  margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-.zameen-dropdown {
+  margin-bottom: 4px; /* was 8px */
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
+  gap: 6px;
 }
 
-.zameen-dropdown:hover {
-  border-color: #63b330;
+.zameen-field-label::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: #63b330;
+  border-radius: 50%;
 }
 
-.zameen-dropdown-text {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  color: #333;
-}
-
-.zameen-text {
-  font-weight: 500;
-}
-
-.zameen-text-min,
-.zameen-text-max {
-  font-weight: 500;
-}
-
-.zameen-text-to {
-  color: #999;
-  font-size: 11px;
-}
-
-.zameen-dropdown-icon {
-  width: 12px;
-  height: 6px;
-  fill: #666;
-  transition: transform 0.2s ease;
-}
-
-.zameen-dropdown:hover .zameen-dropdown-icon {
-  transform: rotate(180deg);
-}
-
-.zameen-input-wrapper {
-  position: relative;
-}
-
-.zameen-input-container {
-  position: relative;
-}
-
-.zameen-input-field {
-  position: relative;
-}
-
-.zameen-text-input {
+.zameen-select,
+.zameen-input {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 13px;
-  color: #333;
+  padding: 10px 14px; /* was 12px 16px */
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 13px; /* was 14px */
+  color: #2c3e50;
   background: white;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
-.zameen-text-input:focus {
+.zameen-select:focus,
+.zameen-input:focus {
   outline: none;
   border-color: #63b330;
+  box-shadow: 0 0 0 3px rgba(99, 179, 48, 0.1);
+  transform: translateY(-1px);
 }
 
-.zameen-text-input::placeholder {
-  color: #999;
+.zameen-select:hover,
+.zameen-input:hover {
+  border-color: #63b330;
 }
 
-.zameen-find-btn {
-  display: inline-block;
-  background: #63b330;
-  color: white;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
+.zameen-select {
   cursor: pointer;
-  transition: background 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.zameen-range-inputs {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px; /* was 12px */
+  align-items: center;
+}
+
+.zameen-range-input {
+  width: 100%;
+  padding: 10px 14px; /* was 12px 16px */
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 13px; /* was 14px */
+  color: #2c3e50;
+  background: white;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-align: center;
+}
+
+.zameen-range-input:focus {
+  outline: none;
+  border-color: #63b330;
+  box-shadow: 0 0 0 3px rgba(99, 179, 48, 0.1);
+  transform: translateY(-1px);
+}
+
+.zameen-range-input:hover {
+  border-color: #63b330;
+}
+
+.zameen-range-separator {
+  color: #7f8c8d;
+  font-size: 13px; /* was 14px */
+  font-weight: 500;
+  text-align: center;
+  user-select: none;
+}
+
+.zameen-filter-actions {
+  display: flex;
+  justify-content: center;
   margin-top: 10px;
 }
 
-.zameen-find-btn:hover {
-  background: #4a8a24;
+.zameen-find-btn {
+  background: linear-gradient(135deg, #63b330 0%, #4a8a24 100%);
   color: white;
-  text-decoration: none;
+  border: none;
+  padding: 8px 16px; /* was 16px 32px */
+  border-radius: 10px; /* was 12px */
+  font-size: 15px; /* was 16px */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 16px rgba(99, 179, 48, 0.28); /* slightly reduced */
+  position: relative;
+  overflow: hidden;
+  min-width: 180px; /* was 200px */
 }
 
-.zameen-filter-secondary {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+.zameen-find-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.zameen-find-btn:hover::before {
+  left: 100%;
+}
+
+.zameen-find-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(99, 179, 48, 0.4);
+}
+
+.zameen-find-btn:active {
+  transform: translateY(0);
 }
 
 .zameen-filter-options {
   display: flex;
-  align-items: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.zameen-more-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: none;
-  color: #63b330;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.2s ease;
-}
-
-.zameen-more-btn:hover {
-  color: #4a8a24;
-}
-
-.zameen-more-icon {
-  display: flex;
-  align-items: center;
-}
-
-.zameen-arrow-icon {
-  width: 12px;
-  height: 7px;
-  fill: currentColor;
-  transition: transform 0.2s ease;
-}
-
-.zameen-more-btn:hover .zameen-arrow-icon {
-  transform: rotate(180deg);
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
 }
 
 .zameen-option-btn {
   background: none;
   border: none;
-  color: #666;
-  font-size: 11px;
+  color: #7f8c8d;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  padding: 0;
-  transition: color 0.2s ease;
-  text-decoration: underline;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+}
+
+.zameen-option-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #63b330;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
 }
 
 .zameen-option-btn:hover {
   color: #63b330;
+  background: rgba(99, 179, 48, 0.05);
 }
 
-/* Responsive Design for Zameen Filter */
+.zameen-option-btn:hover::after {
+  width: 100%;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .zameen-filter-row {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .zameen-filter-secondary {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .zameen-filter-options {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  
-  .zameen-filter-container {
-    padding: 15px;
-    margin: 15px 0;
-  }
+  .zameen-filter-container { padding: 16px; }
+  .zameen-filter-row { gap: 12px; grid-template-columns: 1fr; }
+  .zameen-select,
+  .zameen-input,
+  .zameen-range-input { padding: 9px 12px; font-size: 12.5px; }
+  .zameen-find-btn { padding: 11px 20px; font-size: 14px; min-width: 160px; }
 }
 
 @media (max-width: 480px) {
-  .zameen-filter-container {
-    padding: 12px;
-  }
-  
-  .zameen-dropdown,
-  .zameen-text-input {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-  
-  .zameen-field-label {
-    font-size: 10px;
-  }
+  .zameen-filter-container { padding: 14px; }
+  .zameen-field-label { font-size: 10.5px; }
 }

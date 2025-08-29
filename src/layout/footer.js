@@ -14,7 +14,7 @@ const Footer = () => {
   return (
     <div>
                         <div className="container-fluid px-0 mt-4">
-  <img src="assets/Website-img1.webp" className="img-fluid" alt="Background View" />
+  <img src="/assets/Website-img1.webp" className="img-fluid" alt="Background View" />
 </div>
 <footer className="site-footer" id="footer">
   <div className="footer-top pt-5 pb-5">

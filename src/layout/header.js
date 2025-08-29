@@ -29,11 +29,11 @@ const Header = () => {
     </div>
     <div className='container'>
     <nav className="row navbar navbar-expand-lg">
-            <div className='col-2 d-flex justify-content-start'><NavLink to={'/'}><img src="assets/logo.webp" alt="Logo" width="90" /></NavLink></div>
+            <div className='col-2 d-flex justify-content-start'><NavLink to={'/'}><img src="/assets/logo.webp" alt="Logo" width="90" /></NavLink></div>
             <div className='col-7 d-flex justify-content-center'>
             <div className="offcanvas offcanvas-start" tabIndex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
             <div className="offcanvas-header d-flex justify-content-center d-lg-none d-block">
-            <NavLink to={'/'}> <img src="assets/logo.webp" alt="Logo" width="90" /></NavLink>
+            <NavLink to={'/'}> <img src="/assets/logo.webp" alt="Logo" width="90" /></NavLink>
             </div>
             <div className="offcanvas-body">
                 <ul className="navbar-nav justify-content-center flex-grow-1 pe-3">

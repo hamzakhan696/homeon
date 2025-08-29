@@ -16,7 +16,7 @@ const HomePage = () => {
   const [activeTab, setActiveTab] = useState("1");
   const [city, setCity] = useState('Lahore');
   const [location, setLocation] = useState('');
-  const [propertyType, setPropertyType] = useState('home');
+  const [propertyType, setPropertyType] = useState('');
   const [beds, setBeds] = useState('All');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -77,156 +77,208 @@ const HomePage = () => {
 								</div>
 								<div className="col-md-6">
 									<div className="zameen-filter-container">
+										<div className="zameen-filter-header">
+											<h3>Find Your Property</h3>
+											<p>Search from thousands of properties</p>
+										</div>
+										
 										<div className="zameen-filter-main">
+											{/* First Row - City and Location */}
 											<div className="zameen-filter-row">
-												<div className="zameen-filter-field" name="City">
-													<div className="zameen-field-wrapper">
-														<label className="zameen-field-label" htmlFor="filter-title">City</label>
-														<div className="zameen-dropdown" role="button" aria-haspopup="true" aria-label="City filter">
-                                                            <select className="zameen-text-input" value={city} onChange={(e)=>setCity(e.target.value)}>
-                                                                <option value="Lahore">Lahore</option>
-                                                                <option value="Karachi">Karachi</option>
-                                                                <option value="Islamabad">Islamabad</option>
-                                                                <option value="Rawalpindi">Rawalpindi</option>
-                                                            </select>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
-                                                                <path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
-                                                            </svg>
-                                                        </div>
+												<div className="zameen-filter-field">
+													<label className="zameen-field-label">City</label>
+													<select 
+														className="zameen-select" 
+														value={city} 
+														onChange={(e)=>setCity(e.target.value)}
+													>
+														<option value="Lahore">Lahore</option>
+														<option value="Karachi">Karachi</option>
+														<option value="Islamabad">Islamabad</option>
+														<option value="Rawalpindi">Rawalpindi</option>
+													</select>
+												</div>
+												<div className="zameen-filter-field">
+													<label className="zameen-field-label">Location</label>
+													<input 
+														type="text" 
+														className="zameen-input" 
+														value={location} 
+														onChange={(e)=>setLocation(e.target.value)} 
+														placeholder="Enter location" 
+													/>
+												</div>
+											</div>
+											
+											{/* Second Row - Property Type and Beds */}
+											<div className="zameen-filter-row">
+												<div className="zameen-filter-field">
+													<label className="zameen-field-label">Property Type</label>
+													<select 
+														className="zameen-select" 
+														value={propertyType} 
+														onChange={(e)=>setPropertyType(e.target.value)}
+													>
+														<option value="">All Types</option>
+														<option value="home">Homes</option>
+														<option value="plots">Plots</option>
+														<option value="commercial">Commercial</option>
+													</select>
+												</div>
+												<div className="zameen-filter-field">
+													<label className="zameen-field-label">Bedrooms</label>
+													<select 
+														className="zameen-select" 
+														value={beds} 
+														onChange={(e)=>setBeds(e.target.value)}
+													>
+														<option value="All">All</option>
+														<option value="Studio">Studio</option>
+														<option value="1">1</option>
+														<option value="2">2</option>
+														<option value="3">3</option>
+														<option value="4">4</option>
+														<option value="5">5</option>
+														<option value="6">6</option>
+														<option value="7">7</option>
+														<option value="8">8</option>
+														<option value="9">9</option>
+														<option value="10">10</option>
+														<option value="10+">10+</option>
+													</select>
+												</div>
+											</div>
+											
+											{/* Third Row - Price Range */}
+											<div className="zameen-filter-row">
+												<div className="zameen-filter-field">
+													<label className="zameen-field-label">Price Range (PKR)</label>
+													<div className="zameen-range-inputs">
+														<input 
+															type="number" 
+															className="zameen-range-input" 
+															placeholder="Min Price" 
+															value={minPrice} 
+															onChange={(e)=>setMinPrice(e.target.value)} 
+														/>
+														<span className="zameen-range-separator">to</span>
+														<input 
+															type="number" 
+															className="zameen-range-input" 
+															placeholder="Max Price" 
+															value={maxPrice} 
+															onChange={(e)=>setMaxPrice(e.target.value)} 
+														/>
 													</div>
 												</div>
-												<div className="zameen-filter-field" aria-label="Location filter" name="location">
-													<div className="zameen-field-wrapper">
-														<label className="zameen-field-label" htmlFor="filter-title">location</label>
-														<div className="zameen-input-wrapper">
-															<div className="zameen-input-container">
-																<div aria-label="Location filter" className="zameen-input-field">
-																	<input type="text" value={location} onChange={(e)=>setLocation(e.target.value)} autoComplete="off" spellCheck="false" className="zameen-text-input" placeholder="Enter location" />
-																</div>
-															</div>
-														</div>
+											</div>
+											
+											{/* Fourth Row - Area Range */}
+											<div className="zameen-filter-row">
+												<div className="zameen-filter-field">
+													<label className="zameen-field-label">Area Range (Marla)</label>
+													<div className="zameen-range-inputs">
+														<input 
+															type="number" 
+															className="zameen-range-input" 
+															placeholder="Min Area" 
+															value={minArea} 
+															onChange={(e)=>setMinArea(e.target.value)} 
+														/>
+														<span className="zameen-range-separator">to</span>
+														<input 
+															type="number" 
+															className="zameen-range-input" 
+															placeholder="Max Area" 
+															value={maxArea} 
+															onChange={(e)=>setMaxArea(e.target.value)} 
+														/>
 													</div>
 												</div>
 											</div>
-											<button type="button" onClick={async ()=>{
-                                                const payload = {
-                                                  city,
-                                                  location,
-                                                  propertyType,
-                                                  bedrooms: beds,
-                                                  minPrice: minPrice ? Number(minPrice) : undefined,
-                                                  maxPrice: maxPrice ? Number(maxPrice) : undefined,
-                                                  minArea: minArea ? Number(minArea) : undefined,
-                                                  maxArea: maxArea ? Number(maxArea) : undefined,
-                                                };
-                                                const base = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
-                                                try {
-                                                  const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-                                                  const data = await res.json();
-                                                  if (Array.isArray(data) && data.length > 0) {
-                                                    const query = new URLSearchParams({
-                                                      city: city || '',
-                                                      location: location || '',
-                                                      propertyType: propertyType || '',
-                                                      bedrooms: beds || '',
-                                                      minPrice: String(minPrice || ''),
-                                                      maxPrice: String(maxPrice || ''),
-                                                      minArea: String(minArea || ''),
-                                                      maxArea: String(maxArea || ''),
-                                                    }).toString();
-                                                    navigate(`/portfolio?${query}`);
-                                                  } else {
-                                                    showToast('No matching project found', 'info');
-                                                  }
-                                                } catch (e) { showToast('Search failed', 'error'); }
-                                            }} role="button" language="en" className="zameen-find-btn" aria-label="Find button">Find</button>
-										</div>
-										
-										<div className="zameen-filter-secondary">
-											<div className="zameen-filter-field" name="property type">
-												<div className="zameen-field-wrapper">
-													<label className="zameen-field-label" htmlFor="filter-title">property type</label>
-													<div className="zameen-dropdown" role="button" aria-haspopup="true" aria-label="Category filter">
-                                                        <select className="zameen-text-input" value={propertyType} onChange={(e)=>setPropertyType(e.target.value)}>
-                                                            <option value="home">Homes</option>
-                                                            <option value="plots">Plots</option>
-                                                            <option value="commercial">Commercial</option>
-                                                        </select>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
-                                                            <path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
-                                                        </svg>
-                                                    </div>
-												</div>
+											
+											{/* Find Button */}
+											<div className="zameen-filter-actions">
+												<button 
+													type="button" 
+													onClick={async ()=>{
+														const payload = {
+															city: city || undefined,
+															location: location || undefined,
+															propertyType: propertyType || undefined,
+															bedrooms: beds !== 'All' ? beds : undefined,
+															minPrice: minPrice ? Number(minPrice) : undefined,
+															maxPrice: maxPrice ? Number(maxPrice) : undefined,
+															minArea: minArea ? Number(minArea) : undefined,
+															maxArea: maxArea ? Number(maxArea) : undefined,
+														};
+														
+														// Remove undefined values from payload
+														Object.keys(payload).forEach(key => {
+															if (payload[key] === undefined) {
+																delete payload[key];
+															}
+														});
+														
+														const base = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
+														try {
+															const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+															const data = await res.json();
+															if (Array.isArray(data) && data.length > 0) {
+																const query = new URLSearchParams({
+																	city: city || '',
+																	location: location || '',
+																	propertyType: propertyType || '',
+																	bedrooms: beds || '',
+															minPrice: String(minPrice || ''),
+															maxPrice: String(maxPrice || ''),
+															minArea: String(minArea || ''),
+															maxArea: String(maxArea || ''),
+																}).toString();
+																navigate(`/portfolio?${query}`);
+															} else {
+																showToast('No matching project found', 'info');
+															}
+														} catch (e) { showToast('Search failed', 'error'); }
+													}} 
+													className="zameen-find-btn"
+												>
+													<i className="fas fa-search me-2"></i>
+													Find Properties
+												</button>
 											</div>
-											<div className="zameen-filter-field" aria-label="Price filter" name="Price (PKR)">
-												<div className="zameen-field-wrapper">
-													<label className="zameen-field-label" htmlFor="filter-title">Price (PKR)</label>
-													<div className="zameen-dropdown" role="button" aria-haspopup="true">
-                                                        <div className="d-flex align-items-center" style={{ gap:0 }}>
-                                                            <input type="number" className="zameen-text-input" placeholder="Min" value={minPrice} onChange={(e)=>setMinPrice(e.target.value)} />
-                                                            <span className="zameen-text-to">to</span>
-                                                            <input type="number" className="zameen-text-input" placeholder="Max" value={maxPrice} onChange={(e)=>setMaxPrice(e.target.value)} />
-                                                        </div>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
-                                                            <path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
-                                                        </svg>
-                                                    </div>
-												</div>
+											
+											{/* Additional Options */}
+											<div className="zameen-filter-options">
+												<button 
+													className="zameen-option-btn" 
+													onClick={() => {
+														setCity('Lahore');
+														setLocation('');
+														setPropertyType('');
+														setBeds('All');
+														setMinPrice('');
+														setMaxPrice('');
+														setMinArea('');
+														setMaxArea('');
+														showToast('Search filters reset', 'info');
+													}}
+												>
+													Reset Search
+												</button>
+												<button 
+													className="zameen-option-btn"
+													onClick={() => showToast('Currency: PKR (Pakistani Rupees)', 'info')}
+												>
+													Currency: PKR
+												</button>
+												<button 
+													className="zameen-option-btn"
+													onClick={() => showToast('Area Unit: Marla', 'info')}
+												>
+													Area: Marla
+												</button>
 											</div>
-											<div className="zameen-filter-field" aria-label="Area filter" name="AREA (Marla)">
-												<div className="zameen-field-wrapper">
-													<label className="zameen-field-label" htmlFor="filter-title">AREA (Marla)</label>
-													<div className="zameen-dropdown" role="button" aria-haspopup="true" aria-label="Area filter">
-                                                        <div className="d-flex align-items-center" style={{ gap:8 }}>
-                                                            <input type="number" className="zameen-text-input" placeholder="Min" value={minArea} onChange={(e)=>setMinArea(e.target.value)} />
-                                                            <span className="zameen-text-to">to</span>
-                                                            <input type="number" className="zameen-text-input" placeholder="Max" value={maxArea} onChange={(e)=>setMaxArea(e.target.value)} />
-                                                        </div>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
-                                                            <path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
-                                                        </svg>
-                                                    </div>
-												</div>
-											</div>
-											<div className="zameen-filter-field" aria-label="Beds filter" name="beds">
-												<div className="zameen-field-wrapper">
-													<label className="zameen-field-label" htmlFor="filter-title">beds</label>
-													<div className="zameen-dropdown" role="button" aria-haspopup="true">
-                                                        <select className="zameen-text-input" value={beds} onChange={(e)=>setBeds(e.target.value)}>
-                                                            <option>All</option>
-                                                            <option>Studio</option>
-                                                            <option>1</option>
-                                                            <option>2</option>
-                                                            <option>3</option>
-                                                            <option>4</option>
-                                                            <option>5</option>
-                                                            <option>6</option>
-                                                            <option>7</option>
-                                                            <option>8</option>
-                                                            <option>9</option>
-                                                            <option>10</option>
-                                                            <option>10+</option>
-                                                        </select>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" className="zameen-dropdown-icon">
-                                                            <path className="cls-1" d="M12 6L6 0 0 6h12z"></path>
-                                                        </svg>
-                                                    </div>
-												</div>
-											</div>
-										</div>
-										
-										<div className="zameen-filter-options">
-											<button className="zameen-more-btn">
-												<span className="zameen-more-icon" aria-label="Collapse expand button">
-													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 7" className="zameen-arrow-icon">
-														<path d="M11 7a1 1 0 0 1-.71-.29L6 2.41l-4.29 4.3A1 1 0 0 1 .29 5.29l5-5a1 1 0 0 1 1.41 0l5 5A1 1 0 0 1 11 7z"></path>
-													</svg>
-												</span>
-												<span className="zameen-more-text">Less Options</span>
-											</button>
-											<button className="zameen-option-btn" aria-label="Change currency">Change Currency (PKR)</button>
-											<button className="zameen-option-btn" aria-label="Change area unit">Change Area Unit</button>
-											<button className="zameen-option-btn">Reset Search</button>
 										</div>
 									</div>
 								</div>
