@@ -154,6 +154,7 @@ export default function ProjectDetail() {
 										nomineeOccupation: form.nomineeOccupation?.value || null,
 									};
 									try {
+<<<<<<< HEAD
 										const fd = new FormData();
 										Object.entries(payload).forEach(([k,v])=> fd.append(k, v == null ? '' : String(v)));
 										if (form.applicantCnicFront?.files?.[0]) fd.append('applicantCnicFront', form.applicantCnicFront.files[0]);
@@ -162,6 +163,13 @@ export default function ProjectDetail() {
 										if (form.nomineeCnicBack?.files?.[0]) fd.append('nomineeCnicBack', form.nomineeCnicBack.files[0]);
                                         if (form.applicantPhoto?.files?.[0]) fd.append('applicantPhoto', form.applicantPhoto.files[0]);
 										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002'}/admin/bookings/create-with-cnic`, { method: 'POST', body: fd });
+=======
+										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002'}/admin/bookings`, {
+											method: 'POST',
+											headers: { 'Content-Type': 'application/json' },
+											body: JSON.stringify(payload),
+										});
+>>>>>>> 240320556e5d9e2ca7aba0d769ca38f578a7300a
 										
 										if (!response.ok) {
 											throw new Error(`HTTP error! status: ${response.status}`);
