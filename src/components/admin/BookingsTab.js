@@ -81,6 +81,8 @@ export default function BookingsTab() {
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Name</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Email</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Phone</th>
+                <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>CNIC</th>
+                <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Type</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Project</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>City</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Location</th>
@@ -101,6 +103,8 @@ export default function BookingsTab() {
                   <td style={{ padding: '12px', color: '#2c3e50' }}>{b.fullName}</td>
                   <td style={{ padding: '12px', color: '#2c3e50' }}>{b.email}</td>
                   <td style={{ padding: '12px', color: '#2c3e50' }}>{b.phone || '-'}</td>
+                  <td style={{ padding: '12px', color: '#2c3e50' }}>{b.cnic || '-'}</td>
+                  <td style={{ padding: '12px', color: '#2c3e50' }}>{b.applicantType || '-'}</td>
                   <td style={{ padding: '12px', color: '#2c3e50' }}>
                     #{b.projectId} - {b.projectTitle}
                   </td>

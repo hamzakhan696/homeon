@@ -7,8 +7,10 @@ import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import ContactUs from "./pages/contactUs";
 import Blog from "./pages/blog";
+import BlogDetail from "./pages/BlogDetail";
 import Portfolio from "./pages/portfolio";
 import ProjectDetail from "./pages/ProjectDetail";
+import SubmitProject from "./pages/SubmitProject";
 import CurrentProject from "./pages/services/currentProject";
 import Consultancy from "./pages/services/consultancy";
 import ProjectSelling from "./pages/services/projectSelling";
@@ -31,7 +33,9 @@ function App() {
             {/* <Route path="/" element={<LandingPage />} /> */}
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/submit-project" element={<SubmitProject />} />
             <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/currentProject" element={<CurrentProject />} />
             <Route path="/consultancy" element={<Consultancy />} />

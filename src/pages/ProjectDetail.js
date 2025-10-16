@@ -102,7 +102,7 @@ export default function ProjectDetail() {
 			</div>
 
 			<div className="modal fade" id="bookingModal" tabIndex="-1" aria-hidden="true">
-				<div className="modal-dialog modal-lg modal-dialog-centered">
+				<div className="modal-dialog modal-xl modal-dialog-centered">
 					<div className="modal-content">
 						<div className="modal-header">
 							<h5 className="modal-title">Book Project</h5>
@@ -117,66 +117,243 @@ export default function ProjectDetail() {
 									submitBtn.disabled = true;
 									submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 									const payload = {
+										// Basic information
 										fullName: form.fullName.value,
 										email: form.email.value,
 										phone: form.phone.value,
 										message: form.message.value,
-										projectId: p.id,
+										projectId: Number(p.id),
 										projectTitle: p.title,
 										city: p.city,
 										location: p.location,
-										price: p.price,
+										price: Number(p.price),
 										currency: p.currency,
+										
+										// Additional applicant information
+										applicantType: form.applicantType?.value || null,
+										gender: form.gender?.value || null,
+										referenceId: form.referenceId?.value || null,
+										fatherName: form.fatherName?.value || null,
+										cnic: form.cnic?.value || null,
+										dateOfBirth: form.dateOfBirth?.value || null,
+										secondaryPhone: form.secondaryPhone?.value || null,
+										address: form.address?.value || null,
+										occupation: form.occupation?.value || null,
+										
+										// Nominee/Joint Applicant Information
+										nomineeType: form.nomineeType?.value || null,
+										nomineeGender: form.nomineeGender?.value || null,
+										nomineeFullName: form.nomineeFullName?.value || null,
+										nomineeFatherName: form.nomineeFatherName?.value || null,
+										nomineeCnic: form.nomineeCnic?.value || null,
+										nomineeDateOfBirth: form.nomineeDateOfBirth?.value || null,
+										nomineePrimaryPhone: form.nomineePrimaryPhone?.value || null,
+										nomineeSecondaryPhone: form.nomineeSecondaryPhone?.value || null,
+										nomineeAddress: form.nomineeAddress?.value || null,
+										nomineeRelationship: form.nomineeRelationship?.value || null,
+										nomineeOccupation: form.nomineeOccupation?.value || null,
 									};
-									await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002'}/admin/bookings`, {
-										method: 'POST',
-										headers: { 'Content-Type': 'application/json' },
-										body: JSON.stringify(payload),
-									});
-									if (window.bootstrap && window.bootstrap.Modal) {
-										const el = document.getElementById('bookingModal');
-										const modal = window.bootstrap.Modal.getInstance(el) || new window.bootstrap.Modal(el);
-										modal.hide();
+									try {
+										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://172.23.128.1:3002'}/admin/bookings`, {
+											method: 'POST',
+											headers: { 'Content-Type': 'application/json' },
+											body: JSON.stringify(payload),
+										});
+										
+										if (!response.ok) {
+											throw new Error(`HTTP error! status: ${response.status}`);
+										}
+										
+										if (window.bootstrap && window.bootstrap.Modal) {
+											const el = document.getElementById('bookingModal');
+											const modal = window.bootstrap.Modal.getInstance(el) || new window.bootstrap.Modal(el);
+											modal.hide();
+										}
+										showToast('Booking submitted successfully. We will contact you soon.','success');
+										form.reset();
+									} catch (error) {
+										console.error('Booking submission error:', error);
+										showToast('Failed to submit booking. Please try again.','error');
+									} finally {
+										submitBtn.disabled = false;
+										submitBtn.innerHTML = 'Submit Booking';
 									}
-									showToast('Booking submitted. We will contact you soon.','success');
-									form.reset();
-									submitBtn.disabled = false;
-									submitBtn.innerHTML = 'Submit Booking';
 								}}>
-									<div className="row g-3">
-										<div className="col-md-6">
-											<label className="form-label">Full Name</label>
-											<input name="fullName" className="form-control" required />
-										</div>
-										<div className="col-md-6">
-											<label className="form-label">Email</label>
-											<input type="email" name="email" className="form-control" required />
-										</div>
-										<div className="col-md-6">
-											<label className="form-label">Phone</label>
-											<input name="phone" className="form-control" />
-										</div>
-										<div className="col-md-6">
-											<label className="form-label">Project</label>
-											<input className="form-control" value={p.title} readOnly />
-										</div>
-										<div className="col-md-6">
-											<label className="form-label">City</label>
-											<input className="form-control" value={p.city} readOnly />
-										</div>
-										<div className="col-md-6">
-											<label className="form-label">Location</label>
-											<input className="form-control" value={p.location} readOnly />
-										</div>
-										<div className="col-md-6">
-											<label className="form-label">Price</label>
-											<input className="form-control" value={`${p.currency} ${Number(p.price).toLocaleString()}`} readOnly />
-										</div>
-										<div className="col-12">
-											<label className="form-label">Message</label>
-											<textarea name="message" className="form-control" rows="3" placeholder="Any notes"></textarea>
+									{/* APPLICANT SECTION */}
+									<div className="mb-4">
+										<h6 className="text-primary mb-3" style={{ borderBottom: '2px solid #63b330', paddingBottom: '8px' }}>
+											<i className="fas fa-user me-2"></i>APPLICANT INFORMATION
+										</h6>
+										<div className="row g-3">
+											<div className="col-md-6">
+												<label className="form-label">Type of Applicant</label>
+												<div className="d-flex gap-3">
+													<div className="form-check">
+														<input className="form-check-input" type="radio" name="applicantType" value="LOCAL" id="local" />
+														<label className="form-check-label" htmlFor="local">LOCAL</label>
+													</div>
+													<div className="form-check">
+														<input className="form-check-input" type="radio" name="applicantType" value="OVERSEAS" id="overseas" />
+														<label className="form-check-label" htmlFor="overseas">OVERSEAS</label>
+													</div>
+												</div>
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Gender</label>
+												<div className="d-flex gap-3">
+													<div className="form-check">
+														<input className="form-check-input" type="radio" name="gender" value="MALE" id="male" />
+														<label className="form-check-label" htmlFor="male">MALE</label>
+													</div>
+													<div className="form-check">
+														<input className="form-check-input" type="radio" name="gender" value="FEMALE" id="female" />
+														<label className="form-check-label" htmlFor="female">FEMALE</label>
+													</div>
+												</div>
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Reference ID</label>
+												<input name="referenceId" className="form-control" placeholder="Enter reference ID" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Full Name</label>
+												<input name="fullName" className="form-control" required />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">S/O, D/O, W/O</label>
+												<input name="fatherName" className="form-control" placeholder="Father/Husband name" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">CNIC No</label>
+												<input name="cnic" className="form-control" placeholder="12345-1234567-1" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Date of Birth</label>
+												<input type="date" name="dateOfBirth" className="form-control" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Primary Phone</label>
+												<input name="phone" className="form-control" required />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Secondary Phone</label>
+												<input name="secondaryPhone" className="form-control" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Email Address</label>
+												<input type="email" name="email" className="form-control" required />
+											</div>
+											<div className="col-12">
+												<label className="form-label">Address</label>
+												<textarea name="address" className="form-control" rows="2" placeholder="Enter complete address"></textarea>
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Occupation</label>
+												<input name="occupation" className="form-control" placeholder="Enter occupation" />
+											</div>
 										</div>
 									</div>
+
+									{/* NOMINEE/JOINT APPLICATION SECTION */}
+									<div className="mb-4">
+										<h6 className="text-primary mb-3" style={{ borderBottom: '2px solid #63b330', paddingBottom: '8px' }}>
+											<i className="fas fa-users me-2"></i>NOMINEE / JOINT APPLICATION INFORMATION
+										</h6>
+										<div className="row g-3">
+											<div className="col-md-6">
+												<label className="form-label">Type of Nominee/Joint Applicant</label>
+												<div className="d-flex gap-3">
+													<div className="form-check">
+														<input className="form-check-input" type="radio" name="nomineeType" value="LOCAL" id="nomineeLocal" />
+														<label className="form-check-label" htmlFor="nomineeLocal">LOCAL</label>
+													</div>
+													<div className="form-check">
+														<input className="form-check-input" type="radio" name="nomineeType" value="OVERSEAS" id="nomineeOverseas" />
+														<label className="form-check-label" htmlFor="nomineeOverseas">OVERSEAS</label>
+													</div>
+												</div>
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Gender</label>
+												<div className="d-flex gap-3">
+													<div className="form-check">
+														<input className="form-check-input" type="radio" name="nomineeGender" value="MALE" id="nomineeMale" />
+														<label className="form-check-label" htmlFor="nomineeMale">MALE</label>
+													</div>
+													<div className="form-check">
+														<input className="form-check-input" type="radio" name="nomineeGender" value="FEMALE" id="nomineeFemale" />
+														<label className="form-check-label" htmlFor="nomineeFemale">FEMALE</label>
+													</div>
+												</div>
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Full Name</label>
+												<input name="nomineeFullName" className="form-control" placeholder="Nominee full name" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">S/O, D/O, W/O</label>
+												<input name="nomineeFatherName" className="form-control" placeholder="Father/Husband name" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">CNIC No</label>
+												<input name="nomineeCnic" className="form-control" placeholder="12345-1234567-1" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Date of Birth</label>
+												<input type="date" name="nomineeDateOfBirth" className="form-control" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Primary Phone</label>
+												<input name="nomineePrimaryPhone" className="form-control" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Secondary Phone</label>
+												<input name="nomineeSecondaryPhone" className="form-control" />
+											</div>
+											<div className="col-12">
+												<label className="form-label">Address</label>
+												<textarea name="nomineeAddress" className="form-control" rows="2" placeholder="Enter complete address"></textarea>
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Relationship with Applicant</label>
+												<input name="nomineeRelationship" className="form-control" placeholder="e.g., Father, Mother, Spouse" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Occupation</label>
+												<input name="nomineeOccupation" className="form-control" placeholder="Enter occupation" />
+											</div>
+										</div>
+									</div>
+
+									{/* PROJECT INFORMATION SECTION */}
+									<div className="mb-4">
+										<h6 className="text-primary mb-3" style={{ borderBottom: '2px solid #63b330', paddingBottom: '8px' }}>
+											<i className="fas fa-building me-2"></i>PROJECT INFORMATION
+										</h6>
+										<div className="row g-3">
+											<div className="col-md-6">
+												<label className="form-label">Project</label>
+												<input className="form-control" value={p.title} readOnly />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">City</label>
+												<input className="form-control" value={p.city} readOnly />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Location</label>
+												<input className="form-control" value={p.location} readOnly />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Price</label>
+												<input className="form-control" value={`${p.currency} ${Number(p.price).toLocaleString()}`} readOnly />
+											</div>
+											<div className="col-12">
+												<label className="form-label">Message</label>
+												<textarea name="message" className="form-control" rows="3" placeholder="Any notes or additional information"></textarea>
+											</div>
+										</div>
+									</div>
+
 									<div className="mt-3 d-flex justify-content-end">
 										<button type="submit" className="btn btn-primary" style={{ background:'#63b330', borderColor:'#63b330' }}>Submit Booking</button>
 									</div>

@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3002';
 
 export async function apiGet(path, opts) {
 	const r = await fetch(`${API_BASE_URL}${path}`, { headers: { Accept: 'application/json' }, ...opts });

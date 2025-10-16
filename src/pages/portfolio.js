@@ -38,7 +38,7 @@ const Portfolio = () => {
         const filters = Object.fromEntries(params.entries());
         const hasFilters = Array.from(params.keys()).length > 0 && Object.values(filters).some(v => v);
         if (hasFilters) {
-          const base = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
+          const base = process.env.REACT_APP_API_URL || 'http://172.23.128.1:3002';
           const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
             city: filters.city || undefined,
             location: filters.location || undefined,
@@ -52,7 +52,7 @@ const Portfolio = () => {
           const data = await res.json();
           if (mounted) setItems(Array.isArray(data) ? data : []);
         } else {
-          const d = await apiGet('/admin/projects');
+          const d = await apiGet('/projects');
           if (mounted) setItems(Array.isArray(d) ? d : []);
         }
       } catch (e) {

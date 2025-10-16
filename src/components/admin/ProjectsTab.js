@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { showToast } from '../../toast';
 
 // API Base URL from environment variable
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://172.23.128.1:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 const USE_MULTIPART_UPLOAD = (process.env.REACT_APP_UPLOAD_MODE || 'json').toLowerCase() === 'multipart';
 console.log('Environment API URL:', process.env.REACT_APP_API_URL);
@@ -58,6 +59,16 @@ const ProjectsTab = () => {
   // Refs for file inputs
   const projectImageInputRef = useRef(null);
   const projectVideoInputRef = useRef(null);
+
+  // Confirm dialog state
+  const [confirmState, setConfirmState] = useState({ open: false, title: '', message: '', onConfirm: null });
+  const closeConfirm = () => setConfirmState({ open: false, title: '', message: '', onConfirm: null });
+  const openConfirm = ({ title, message, onConfirm }) => setConfirmState({ open: true, title, message, onConfirm });
+
+  // Media gallery modal state
+  const [mediaModal, setMediaModal] = useState({ open: false, title: '', images: [], videos: [] });
+  const openMediaModal = (title, images, videos) => setMediaModal({ open: true, title, images, videos });
+  const closeMediaModal = () => setMediaModal({ open: false, title: '', images: [], videos: [] });
 
   // Property subtypes mapping
   const propertySubtypes = {
@@ -233,21 +244,51 @@ const ProjectsTab = () => {
   };
 
   // Delete project
-  const handleDeleteProject = async (id) => {
+  const handleDeleteProject = (id) => {
     if (!id) return;
-    if (!window.confirm('Delete this project?')) return;
-    try {
-      setIsListLoading(true);
-      await axios.delete(`${API_BASE_URL}/admin/projects/${id}`);
-      alert('Project deleted successfully');
-      await fetchProjects();
-    } catch (err) {
-      console.error('Delete project failed:', err);
-      const msg = err?.response?.data?.message || 'Failed to delete project';
-      alert(msg);
-    } finally {
-      setIsListLoading(false);
-    }
+    openConfirm({
+      title: 'Delete Project',
+      message: 'Are you sure you want to delete this project?',
+      onConfirm: async () => {
+        try {
+          setIsListLoading(true);
+          await axios.delete(`${API_BASE_URL}/admin/projects/${id}`);
+          showToast('Project deleted', 'success');
+          await fetchProjects();
+        } catch (err) {
+          console.error('Delete project failed:', err);
+          const msg = err?.response?.data?.message || 'Failed to delete project';
+          showToast(msg, 'error');
+        } finally {
+          setIsListLoading(false);
+          closeConfirm();
+        }
+      },
+    });
+  };
+
+  // Approve project
+  const handleApproveProject = (id) => {
+    if (!id) return;
+    openConfirm({
+      title: 'Approve Project',
+      message: 'Do you want to approve this project?',
+      onConfirm: async () => {
+        try {
+          setIsListLoading(true);
+          await axios.patch(`${API_BASE_URL}/admin/projects/${id}/approve`);
+          showToast('Project approved', 'success');
+          await fetchProjects();
+        } catch (err) {
+          console.error('Approve project failed:', err);
+          const msg = err?.response?.data?.message || 'Failed to approve project';
+          showToast(msg, 'error');
+        } finally {
+          setIsListLoading(false);
+          closeConfirm();
+        }
+      },
+    });
   };
 
   // Auto-load when switching to list tab
@@ -275,6 +316,59 @@ const ProjectsTab = () => {
     const base = MEDIA_BASE_URL.replace(/\/$/, '');
     const file = String(name).replace(/^\//, '');
     return `${base}/${file}`;
+  };
+
+  // Extractors for images/videos arrays
+  const extractImageUrls = (project) => {
+    const urls = [];
+    if (Array.isArray(project?.projectImages)) {
+      for (const item of project.projectImages) {
+        const candidate = (item && (item.url || item.name)) || item;
+        const u = resolveMediaUrl(candidate);
+        if (u) urls.push(u);
+      }
+    } else if (typeof project?.projectImages === 'string' && project.projectImages.trim()) {
+      try {
+        const arr = JSON.parse(project.projectImages);
+        if (Array.isArray(arr)) {
+          for (const item of arr) {
+            const candidate = (item && (item.url || item.name)) || item;
+            const u = resolveMediaUrl(candidate);
+            if (u) urls.push(u);
+          }
+        }
+      } catch {
+        const u = resolveMediaUrl(project.projectImages);
+        if (u) urls.push(u);
+      }
+    }
+    return urls;
+  };
+
+  const extractVideoUrls = (project) => {
+    const urls = [];
+    if (Array.isArray(project?.projectVideos)) {
+      for (const item of project.projectVideos) {
+        const candidate = (item && (item.url || item.name)) || item;
+        const u = /^https?:\/\//i.test(candidate) ? candidate : resolveMediaUrl(candidate);
+        if (u) urls.push(u);
+      }
+    } else if (typeof project?.projectVideos === 'string' && project.projectVideos.trim()) {
+      try {
+        const arr = JSON.parse(project.projectVideos);
+        if (Array.isArray(arr)) {
+          for (const item of arr) {
+            const candidate = (item && (item.url || item.name)) || item;
+            const u = /^https?:\/\//i.test(candidate) ? candidate : resolveMediaUrl(candidate);
+            if (u) urls.push(u);
+          }
+        }
+      } catch {
+        const u = resolveMediaUrl(project.projectVideos);
+        if (u) urls.push(u);
+      }
+    }
+    return urls;
   };
 
   const getProjectThumb = (project) => {
@@ -1205,7 +1299,7 @@ const ProjectsTab = () => {
               <table className="attractive-table">
                 <thead>
                   <tr style={{ background: '#63b330', color: '#fff' }}>
-                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Image</th>
+                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Media</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Title</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Purpose</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Type</th>
@@ -1217,16 +1311,45 @@ const ProjectsTab = () => {
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Bedrooms</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Bathrooms</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Installments</th>
+                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Status</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Created</th>
                     <th style={{ padding: '12px' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {projects.map((p) => {
-                    const thumb = getProjectThumb(p);
+                    const imageUrls = extractImageUrls(p);
+                    const videoUrls = extractVideoUrls(p);
+                    const thumb = imageUrls[0] || getProjectThumb(p);
                     return (
                     <tr key={p.id} style={{ background: '#fff', transition: 'background 0.3s', borderBottom: '1px solid #ecf0f1' }}>
-                      <td style={{ padding: '8px' }}>{thumb ? <img src={thumb} alt={p.title} style={{ width: 64, height: 40, objectFit: 'cover', borderRadius: 4 }} /> : '-'}</td>
+                      <td style={{ padding: '8px', minWidth: 180 }}>
+                        {imageUrls.length === 0 && videoUrls.length === 0 && '-'}
+                        {(imageUrls.length > 0 || videoUrls.length > 0) && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <div style={{ display: 'flex', gap: 6 }}>
+                              {imageUrls.slice(0, 3).map((url, idx) => (
+                                <img key={idx} src={url} alt={`img-${idx}`} style={{ width: 48, height: 36, objectFit: 'cover', borderRadius: 4, border: '1px solid #eee' }} />
+                              ))}
+                              {imageUrls.length > 3 && (
+                                <span style={{ alignSelf: 'center', fontSize: 12, background: '#ecf0f1', color: '#2c3e50', padding: '2px 6px', borderRadius: 10 }}>+{imageUrls.length - 3}</span>
+                              )}
+                            </div>
+                            {videoUrls.length > 0 && (
+                              <span title={`${videoUrls.length} video(s)`} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f6f8fa', color: '#2c3e50', border: '1px solid #e1e4e8', borderRadius: 6, padding: '2px 6px' }}>
+                                <i className="fas fa-video"></i>{videoUrls.length}
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline"
+                              onClick={() => openMediaModal(p.title, imageUrls, videoUrls)}
+                            >
+                              View
+                            </button>
+                          </div>
+                        )}
+                      </td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.title}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.purpose}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.propertyType}</td>
@@ -1238,8 +1361,34 @@ const ProjectsTab = () => {
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bedrooms || '-'}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bathrooms || '-'}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.availableOnInstallments ? 'Yes' : 'No'}</td>
+                      <td style={{ padding: '12px' }}>
+                        <span
+                          className="badge"
+                          style={{
+                            padding: '4px 8px',
+                            borderRadius: 8,
+                            background:
+                              p.status === 'approved' ? '#27ae60' : p.status === 'rejected' ? '#e74c3c' : '#f1c40f',
+                            color: '#fff',
+                            textTransform: 'capitalize',
+                          }}
+                        >
+                          {p.status || 'pending'}
+                        </span>
+                      </td>
                       <td style={{ padding: '12px', color: '#7f8c8d' }}>{p.createdAt ? new Date(p.createdAt).toLocaleString() : '-'}</td>
                       <td style={{ padding: '12px' }}>
+                        {(!p.status || p.status === 'pending') && (
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-success"
+                            onClick={() => handleApproveProject(p.id)}
+                            title="Approve project"
+                            style={{ marginRight: 8 }}
+                          >
+                            <i className="fas fa-check"></i>
+                          </button>
+                        )}
                         <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteProject(p.id)} title="Delete project">
                           <i className="fas fa-trash"></i>
                         </button>
@@ -1250,6 +1399,68 @@ const ProjectsTab = () => {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {confirmState.open && (
+        <div className="modal" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10000 }}>
+          <div className="modal-content" style={{ background: '#fff', width: 400, borderRadius: 10, overflow: 'hidden', boxShadow: '0 12px 32px rgba(0,0,0,0.2)' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #eee' }}>
+              <h3 style={{ margin: 0, fontSize: 18 }}>{confirmState.title}</h3>
+            </div>
+            <div style={{ padding: '18px 20px', color: '#2c3e50' }}>
+              {confirmState.message}
+            </div>
+            <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'flex-end', gap: 10, borderTop: '1px solid #eee' }}>
+              <button type="button" className="btn btn-outline" onClick={closeConfirm}>Cancel</button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => confirmState.onConfirm && confirmState.onConfirm()}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mediaModal.open && (
+        <div className="modal" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10000 }}>
+          <div className="modal-content" style={{ background: '#fff', width: '80%', maxWidth: 1000, maxHeight: '85vh', overflow: 'auto', borderRadius: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #eee' }}>
+              <h3 style={{ margin: 0, fontSize: 18 }}>{mediaModal.title || 'Media'}</h3>
+              <button type="button" className="btn btn-outline" onClick={closeMediaModal}>Close</button>
+            </div>
+            <div style={{ padding: 16 }}>
+              {mediaModal.images.length > 0 && (
+                <>
+                  <h4 style={{ margin: '10px 0' }}>Images ({mediaModal.images.length})</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
+                    {mediaModal.images.map((url, idx) => (
+                      <img key={idx} src={url} alt={`img-${idx}`} style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }} />
+                    ))}
+                  </div>
+                </>
+              )}
+              {mediaModal.videos.length > 0 && (
+                <>
+                  <h4 style={{ margin: '16px 0 10px' }}>Videos ({mediaModal.videos.length})</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+                    {mediaModal.videos.map((url, idx) => (
+                      <video key={idx} controls style={{ width: '100%', height: 180, borderRadius: 6, border: '1px solid #eee', background: '#000' }}>
+                        <source src={url} />
+                        Your browser does not support the video tag.
+                      </video>
+                    ))}
+                  </div>
+                </>
+              )}
+              {mediaModal.images.length === 0 && mediaModal.videos.length === 0 && (
+                <p style={{ color: '#7f8c8d' }}>No media available.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

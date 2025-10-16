@@ -4,7 +4,7 @@ import NavBar from '../layout/header';
 import Footer from '../layout/footer';
 import { NavLink } from 'react-router-dom';
 import axios from 'axios';
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://172.23.128.1:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 const Blog = () => {  
   const [currentPage, setCurrentPage] = useState(1);
@@ -130,9 +130,14 @@ const Blog = () => {
                           </ul>
                         </div>
                         <h3 className="dlab-title-blog">{blog.title}</h3>
-                        <p className='dlab-blog-text1'>{blog.description || ''}</p>
+                        <p className='dlab-blog-text1'>
+                          {blog.descriptions && blog.descriptions.length > 0 
+                            ? blog.descriptions[0] 
+                            : blog.description || ''
+                          }
+                        </p>
                         <div className="dlab-readmore">
-                          <a className="readmore"><i className="las la-plus"></i> Read More</a>
+                          <NavLink to={`/blog/${blog.id}`} className="readmore"><i className="las la-plus"></i> Read More</NavLink>
                         </div>
                       </div>
                     </div>

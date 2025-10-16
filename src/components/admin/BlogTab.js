@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 // API Base URL (adjust as per your environment)
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.61:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://172.23.128.1:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 
 const BlogTab = () => {
@@ -11,6 +11,7 @@ const BlogTab = () => {
     title: '',
     category: '',
     description: '',
+    descriptions: [], // Array to store multiple descriptions
     content: '',
     tags: '',
     metaTitle: '',
@@ -110,6 +111,28 @@ const BlogTab = () => {
     }));
   };
 
+  // Handle multiple descriptions
+  const handleDescriptionChange = (index, value) => {
+    setFormData(prev => ({
+      ...prev,
+      descriptions: prev.descriptions.map((desc, i) => i === index ? value : desc)
+    }));
+  };
+
+  const addDescription = () => {
+    setFormData(prev => ({
+      ...prev,
+      descriptions: [...prev.descriptions, '']
+    }));
+  };
+
+  const removeDescription = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      descriptions: prev.descriptions.filter((_, i) => i !== index)
+    }));
+  };
+
   // Handle blog creation
   const handleCreateBlog = async (e) => {
     e.preventDefault();
@@ -118,7 +141,7 @@ const BlogTab = () => {
   
     try {
       const {
-        title, content, category, description, tags,
+        title, content, category, description, descriptions, tags,
         metaTitle, metaDescription, slug, status,
         publishDate, allowComments, featureOnHomepage
       } = formData;
@@ -139,6 +162,7 @@ const BlogTab = () => {
           content: String(content).trim(),
           ...(category ? { category: String(category).trim() } : {}),
           ...(description ? { description: String(description).trim() } : {}),
+          ...(descriptions && descriptions.length > 0 ? { descriptions: descriptions.filter(d => d.trim()).map(d => String(d).trim()) } : {}),
           ...(tags ? { tags: String(tags).trim() } : {}),
           ...(metaTitle ? { metaTitle: String(metaTitle).trim() } : {}),
           ...(metaDescription ? { metaDescription: String(metaDescription).trim() } : {}),
@@ -161,6 +185,11 @@ const BlogTab = () => {
         appendStr('content', content);
         appendStr('category', category);
         appendStr('description', description);
+        if (descriptions && descriptions.length > 0) {
+          descriptions.filter(d => d.trim()).forEach((desc, index) => {
+            fd.append(`descriptions[${index}]`, String(desc).trim());
+          });
+        }
         appendStr('tags', tags);
         appendStr('metaTitle', metaTitle);
         appendStr('metaDescription', metaDescription);
@@ -188,6 +217,7 @@ const BlogTab = () => {
         title: '',
         category: '',
         description: '',
+        descriptions: [],
         content: '',
         tags: '',
         metaTitle: '',
@@ -301,6 +331,66 @@ const BlogTab = () => {
               value={formData.description}
               onChange={handleInputChange}
             ></textarea>
+            
+            {/* Multiple Descriptions Section */}
+            <div style={{ marginTop: '15px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                <label style={{ margin: 0, fontWeight: 'bold' }}>Additional Descriptions</label>
+                <button 
+                  type="button" 
+                  className="btn btn-sm btn-success"
+                  onClick={addDescription}
+                  style={{ 
+                    borderRadius: '50%', 
+                    width: '30px', 
+                    height: '30px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    padding: 0
+                  }}
+                  title="Add another description"
+                >
+                  <i className="fas fa-plus"></i>
+                </button>
+              </div>
+              
+              {formData.descriptions.map((desc, index) => (
+                <div key={index} style={{ marginBottom: '10px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                  <textarea 
+                    className="form-control" 
+                    rows="3"
+                    placeholder={`Additional description ${index + 1}`}
+                    value={desc}
+                    onChange={(e) => handleDescriptionChange(index, e.target.value)}
+                    style={{ flex: 1 }}
+                  ></textarea>
+                  <button 
+                    type="button" 
+                    className="btn btn-sm btn-danger"
+                    onClick={() => removeDescription(index)}
+                    style={{ 
+                      borderRadius: '50%', 
+                      width: '30px', 
+                      height: '30px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      padding: 0
+                    }}
+                    title="Remove this description"
+                  >
+                    <i className="fas fa-trash"></i>
+                  </button>
+                </div>
+              ))}
+              
+              {formData.descriptions.length > 0 && (
+                <small className="text-muted">
+                  First description will be shown on blog listing page. All descriptions will be shown on blog detail page.
+                </small>
+              )}
+            </div>
           </div>
 
           <div className="form-group">

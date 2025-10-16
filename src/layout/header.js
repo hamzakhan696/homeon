@@ -86,8 +86,32 @@ const Header = () => {
             </div>
         </div>
             </div>
-            <div className='col-3 d-flex justify-content-end'>
-            <button className="btn-custom d-lg-block d-none">Book Now</button>
+            <div className='col-3 d-flex justify-content-end gap-2'>
+            {(() => {
+  const common = {
+    whiteSpace: 'nowrap',
+    height: 42,
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 16px',
+    borderRadius: 8,
+    fontWeight: 600,
+    border: '1px solid #27ae60',
+    textDecoration: 'none'  // Yeh line add ki gayi hai
+  };
+  const primary = {
+    ...common,
+    background: '#27ae60',
+    color: '#fff'
+  };
+  return (
+    <>
+      <NavLink to={'/submit-project'} style={primary}>List your property</NavLink>
+      <NavLink to={'/contact'} style={primary}>Book Now</NavLink>
+    </>
+  );
+})()}
+
             <button className="navbar-toggler custom-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
     <span className="navbar-toggler-icon"></span>
 </button>
