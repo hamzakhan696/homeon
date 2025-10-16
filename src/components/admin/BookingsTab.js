@@ -82,7 +82,10 @@ export default function BookingsTab() {
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Email</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Phone</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>CNIC</th>
+                <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Applicant CNIC</th>
+                <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Applicant Photo</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Type</th>
+                <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Nominee CNIC</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Project</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>City</th>
                 <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Location</th>
@@ -100,11 +103,50 @@ export default function BookingsTab() {
                   <td style={{ padding: '12px', color: '#2c3e50' }}>
                     {b.createdAt ? new Date(b.createdAt).toLocaleString() : '-'}
                   </td>
+                  <td style={{ padding: '12px', color: '#2c3e50' }}>
+                    {b.applicantPhotoUrl ? (
+                      <a href={b.applicantPhotoUrl} target="_blank" rel="noreferrer">
+                        <img src={b.applicantPhotoUrl} alt="photo" style={{ width:48, height:48, objectFit:'cover', borderRadius:'50%', border:'1px solid #eee' }} />
+                      </a>
+                    ) : '-'}
+                  </td>
                   <td style={{ padding: '12px', color: '#2c3e50' }}>{b.fullName}</td>
                   <td style={{ padding: '12px', color: '#2c3e50' }}>{b.email}</td>
                   <td style={{ padding: '12px', color: '#2c3e50' }}>{b.phone || '-'}</td>
                   <td style={{ padding: '12px', color: '#2c3e50' }}>{b.cnic || '-'}</td>
+                  <td style={{ padding: '12px', color: '#2c3e50' }}>
+                    {(b.applicantCnicFrontUrl || b.applicantCnicBackUrl) ? (
+                      <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+                        {b.applicantCnicFrontUrl && (
+                          <a href={b.applicantCnicFrontUrl} target="_blank" rel="noreferrer">
+                            <img src={b.applicantCnicFrontUrl} alt="front" style={{ width:48, height:32, objectFit:'cover', borderRadius:4, border:'1px solid #eee' }} />
+                          </a>
+                        )}
+                        {b.applicantCnicBackUrl && (
+                          <a href={b.applicantCnicBackUrl} target="_blank" rel="noreferrer">
+                            <img src={b.applicantCnicBackUrl} alt="back" style={{ width:48, height:32, objectFit:'cover', borderRadius:4, border:'1px solid #eee' }} />
+                          </a>
+                        )}
+                      </div>
+                    ) : '-'}
+                  </td>
                   <td style={{ padding: '12px', color: '#2c3e50' }}>{b.applicantType || '-'}</td>
+                  <td style={{ padding: '12px', color: '#2c3e50' }}>
+                    {(b.nomineeCnicFrontUrl || b.nomineeCnicBackUrl) ? (
+                      <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+                        {b.nomineeCnicFrontUrl && (
+                          <a href={b.nomineeCnicFrontUrl} target="_blank" rel="noreferrer">
+                            <img src={b.nomineeCnicFrontUrl} alt="front" style={{ width:48, height:32, objectFit:'cover', borderRadius:4, border:'1px solid #eee' }} />
+                          </a>
+                        )}
+                        {b.nomineeCnicBackUrl && (
+                          <a href={b.nomineeCnicBackUrl} target="_blank" rel="noreferrer">
+                            <img src={b.nomineeCnicBackUrl} alt="back" style={{ width:48, height:32, objectFit:'cover', borderRadius:4, border:'1px solid #eee' }} />
+                          </a>
+                        )}
+                      </div>
+                    ) : '-'}
+                  </td>
                   <td style={{ padding: '12px', color: '#2c3e50' }}>
                     #{b.projectId} - {b.projectTitle}
                   </td>

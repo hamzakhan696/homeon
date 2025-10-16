@@ -154,11 +154,14 @@ export default function ProjectDetail() {
 										nomineeOccupation: form.nomineeOccupation?.value || null,
 									};
 									try {
-										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://172.23.128.1:3002'}/admin/bookings`, {
-											method: 'POST',
-											headers: { 'Content-Type': 'application/json' },
-											body: JSON.stringify(payload),
-										});
+										const fd = new FormData();
+										Object.entries(payload).forEach(([k,v])=> fd.append(k, v == null ? '' : String(v)));
+										if (form.applicantCnicFront?.files?.[0]) fd.append('applicantCnicFront', form.applicantCnicFront.files[0]);
+										if (form.applicantCnicBack?.files?.[0]) fd.append('applicantCnicBack', form.applicantCnicBack.files[0]);
+                                        if (form.nomineeCnicFront?.files?.[0]) fd.append('nomineeCnicFront', form.nomineeCnicFront.files[0]);
+										if (form.nomineeCnicBack?.files?.[0]) fd.append('nomineeCnicBack', form.nomineeCnicBack.files[0]);
+                                        if (form.applicantPhoto?.files?.[0]) fd.append('applicantPhoto', form.applicantPhoto.files[0]);
+										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002'}/admin/bookings/create-with-cnic`, { method: 'POST', body: fd });
 										
 										if (!response.ok) {
 											throw new Error(`HTTP error! status: ${response.status}`);
@@ -228,13 +231,25 @@ export default function ProjectDetail() {
 												<input name="cnic" className="form-control" placeholder="12345-1234567-1" />
 											</div>
 											<div className="col-md-6">
+												<label className="form-label">Applicant CNIC Front</label>
+												<input type="file" name="applicantCnicFront" accept="image/jpeg,image/jpg,image/png" className="form-control" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Applicant CNIC Back</label>
+												<input type="file" name="applicantCnicBack" accept="image/jpeg,image/jpg,image/png" className="form-control" />
+											</div>
+											<div className="col-md-6">
 												<label className="form-label">Date of Birth</label>
 												<input type="date" name="dateOfBirth" className="form-control" />
 											</div>
-											<div className="col-md-6">
+                                            <div className="col-md-6">
 												<label className="form-label">Primary Phone</label>
 												<input name="phone" className="form-control" required />
 											</div>
+                                            <div className="col-md-6">
+                                                <label className="form-label">Applicant Photo</label>
+                                                <input type="file" name="applicantPhoto" accept="image/jpeg,image/jpg,image/png" className="form-control" />
+                                            </div>
 											<div className="col-md-6">
 												<label className="form-label">Secondary Phone</label>
 												<input name="secondaryPhone" className="form-control" />
@@ -296,7 +311,15 @@ export default function ProjectDetail() {
 											</div>
 											<div className="col-md-6">
 												<label className="form-label">CNIC No</label>
-												<input name="nomineeCnic" className="form-control" placeholder="12345-1234567-1" />
+												<input name="nomineeCnic" className="form-control" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Nominee CNIC Front</label>
+												<input type="file" name="nomineeCnicFront" accept="image/jpeg,image/jpg,image/png" className="form-control" />
+											</div>
+											<div className="col-md-6">
+												<label className="form-label">Nominee CNIC Back</label>
+												<input type="file" name="nomineeCnicBack" accept="image/jpeg,image/jpg,image/png" className="form-control" />
 											</div>
 											<div className="col-md-6">
 												<label className="form-label">Date of Birth</label>

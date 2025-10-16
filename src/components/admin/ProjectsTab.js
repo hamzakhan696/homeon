@@ -3,7 +3,7 @@ import axios from 'axios';
 import { showToast } from '../../toast';
 
 // API Base URL from environment variable
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://172.23.128.1:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 const USE_MULTIPART_UPLOAD = (process.env.REACT_APP_UPLOAD_MODE || 'json').toLowerCase() === 'multipart';
 console.log('Environment API URL:', process.env.REACT_APP_API_URL);
@@ -29,6 +29,9 @@ const ProjectsTab = () => {
   const [projectImages, setProjectImages] = useState([]);
   const [projectVideos, setProjectVideos] = useState([]);
   const [youtubeLinks, setYoutubeLinks] = useState([]);
+
+  // Editing state
+  const [editingProjectId, setEditingProjectId] = useState(null);
 
   // State for form inputs
   const [formData, setFormData] = useState({
@@ -480,6 +483,7 @@ const ProjectsTab = () => {
     setIsLoading(true);
     setErrors({});
 
+    // Keep names for existing images and add cover marker if selected
     const coverImage = projectImages.find((img) => img.isCover)?.name || '';
     const payload = {
       title: String(formData.title).trim(),
@@ -498,8 +502,8 @@ const ProjectsTab = () => {
       bedrooms: String(selectedBedrooms),
       bathrooms: String(selectedBathrooms),
       amenities: formData.amenities,
-      projectImages: [], // Files will be sent separately in FormData
-      projectVideos: [], // Files will be sent separately in FormData
+      projectImages: projectImages.filter((x) => !x.file).map((x) => x.name),
+      projectVideos: projectVideos.filter((x) => !x.file).map((x) => x.name),
       youtubeLinks: youtubeLinks.map((l) => l.url),
       coverImage: coverImage || undefined,
       email: String(formData.email).trim(),
@@ -517,18 +521,27 @@ const ProjectsTab = () => {
 
       // Append files to FormData
       projectImages.forEach((image) => {
-        fd.append('files', image.file, image.name);
+        if (image.file) fd.append('files', image.file, image.name);
       });
       projectVideos.forEach((video) => {
-        fd.append('files', video.file, video.name);
+        if (video.file) fd.append('files', video.file, video.name);
       });
 
-      const response = await axios.post(`${API_BASE_URL}/admin/projects/create-with-media`, fd, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-
-      if (response.status === 201) {
-        alert('Project created successfully!');
+      // If editing, send multipart update-with-media to merge existing + new
+      if (editingProjectId) {
+        const response = await axios.put(`${API_BASE_URL}/admin/projects/${editingProjectId}/update-with-media`, fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        if (response.status === 200) {
+          alert('Project updated successfully!');
+        }
+      } else {
+        const response = await axios.post(`${API_BASE_URL}/admin/projects/create-with-media`, fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        if (response.status === 201) {
+          alert('Project created successfully!');
+        }
         setFormData({
           title: '',
           description: '',
@@ -553,6 +566,7 @@ const ProjectsTab = () => {
         setActivePropertyTab('home');
         setActiveSubtype('house');
         setSelectedPurpose('sell');
+        setEditingProjectId(null);
       }
     } catch (err) {
       if (err.response?.status === 400 && Array.isArray(err.response.data?.message)) {
@@ -570,6 +584,80 @@ const ProjectsTab = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Begin editing an existing project (prefill basic fields)
+  const handleEditProject = (project) => {
+    if (!project) return;
+    setActiveProjectsTab('create');
+    setEditingProjectId(project.id);
+    setFormData({
+      title: project.title || '',
+      description: project.description || '',
+      city: project.city || '',
+      location: project.location || '',
+      areaSize: String(project.areaSize ?? ''),
+      areaUnit: (project.areaUnit || 'marla'),
+      price: String(project.price ?? ''),
+      currency: project.currency || 'PKR',
+      availableOnInstallments: Boolean(project.availableOnInstallments),
+      readyForPossession: Boolean(project.readyForPossession),
+      email: project.email || '',
+      mobile: project.mobile || '',
+      landline: project.landline || '',
+      amenities: Array.isArray(project.amenities) ? project.amenities : [],
+    });
+    setSelectedPurpose(project.purpose || 'sell');
+    setActivePropertyTab(project.propertyType || 'home');
+    setActiveSubtype(project.propertySubtype || 'house');
+    setSelectedBedrooms(String(project.bedrooms || 'Studio'));
+    setSelectedBathrooms(String(project.bathrooms || '1'));
+    // Build existing images into preview items
+    try {
+      const existingImages = [];
+      if (Array.isArray(project?.projectImages)) {
+        for (const item of project.projectImages) {
+          const name = (item && (item.name || item.url)) || item;
+          const url = resolveMediaUrl(name);
+          existingImages.push({ id: `exist-${Math.random()}`, file: null, name: String(name), size: 0, url, isCover: project.coverImage === name });
+        }
+      } else if (typeof project?.projectImages === 'string' && project.projectImages.trim()) {
+        try {
+          const arr = JSON.parse(project.projectImages);
+          if (Array.isArray(arr)) {
+            for (const item of arr) {
+              const name = (item && (item.name || item.url)) || item;
+              const url = resolveMediaUrl(name);
+              existingImages.push({ id: `exist-${Math.random()}`, file: null, name: String(name), size: 0, url, isCover: project.coverImage === name });
+            }
+          }
+        } catch {
+          const s = String(project.projectImages);
+          existingImages.push({ id: `exist-${Math.random()}`, file: null, name: s, size: 0, url: resolveMediaUrl(s), isCover: project.coverImage === s });
+        }
+      }
+      setProjectImages(existingImages);
+    } catch { setProjectImages([]); }
+
+    // Build existing videos into preview items
+    try {
+      const existingVideos = [];
+      if (Array.isArray(project?.projectVideos)) {
+        for (const item of project.projectVideos) {
+          const name = (item && (item.name || item.url)) || item;
+          const url = /^https?:\/\//i.test(String(name)) ? String(name) : resolveMediaUrl(String(name));
+          existingVideos.push({ id: `existv-${Math.random()}`, file: null, name: String(name), size: 0, url });
+        }
+      }
+      setProjectVideos(existingVideos);
+    } catch { setProjectVideos([]); }
+    setYoutubeLinks(Array.isArray(project.youtubeLinks) ? project.youtubeLinks.map((url, idx) => ({ id: idx + 1, url, title: `Video ${idx + 1}` })) : []);
+    showToast('Loaded project into form. Update and click "Submit Project" to save.', 'info');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProjectId(null);
+    showToast('Edit cancelled.', 'info');
   };
 
   // Handle amenities addition with modal
@@ -1239,10 +1327,13 @@ const ProjectsTab = () => {
                   </>
                 ) : (
                   <>
-                    <i className="fas fa-paper-plane"></i> Submit Project
+                    <i className="fas fa-paper-plane"></i> {editingProjectId ? 'Update Project' : 'Submit Project'}
                   </>
                 )}
               </button>
+              {editingProjectId && (
+                <button type="button" className="btn btn-outline" style={{ marginLeft: 10 }} onClick={handleCancelEdit}>Cancel</button>
+              )}
             </div>
           </form>
 
@@ -1389,6 +1480,15 @@ const ProjectsTab = () => {
                             <i className="fas fa-check"></i>
                           </button>
                         )}
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-primary"
+                          onClick={() => handleEditProject(p)}
+                          title="Edit project"
+                          style={{ marginRight: 8 }}
+                        >
+                          <i className="fas fa-edit"></i>
+                        </button>
                         <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteProject(p.id)} title="Delete project">
                           <i className="fas fa-trash"></i>
                         </button>
