@@ -154,7 +154,7 @@ export default function ProjectDetail() {
 										nomineeOccupation: form.nomineeOccupation?.value || null,
 									};
 									try {
-										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://172.23.128.1:3002'}/admin/bookings`, {
+										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002'}/admin/bookings`, {
 											method: 'POST',
 											headers: { 'Content-Type': 'application/json' },
 											body: JSON.stringify(payload),

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 // API Base URL (adjust as per your environment)
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://172.23.128.1:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 
 const BlogTab = () => {
@@ -29,6 +29,7 @@ const BlogTab = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [editingBlogId, setEditingBlogId] = useState(null);
 
   // Helpers
   const resolveMediaUrl = (name, fileObj) => {
@@ -155,7 +156,7 @@ const BlogTab = () => {
       const hasFiles = Boolean(blogFeaturedImage || (blogImages && blogImages.length > 0));
   
       let response;
-      if (!hasFiles) {
+      if (!hasFiles && !editingBlogId) {
         // JSON path (no images)
         const payload = {
           title: String(title).trim(),
@@ -174,6 +175,29 @@ const BlogTab = () => {
         };
   
         response = await axios.post(`${API_BASE_URL}/admin/blogs`, payload, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } else if (editingBlogId && !hasFiles) {
+        // Simple JSON update
+        const payload = {
+          title: String(title).trim(),
+          content: String(content).trim(),
+          ...(category ? { category: String(category).trim() } : {}),
+          ...(description ? { description: String(description).trim() } : {}),
+          ...(descriptions && descriptions.length > 0 ? { descriptions: descriptions.filter(d => d.trim()).map(d => String(d).trim()) } : {}),
+          ...(tags ? { tags: String(tags).trim() } : {}),
+          ...(metaTitle ? { metaTitle: String(metaTitle).trim() } : {}),
+          ...(metaDescription ? { metaDescription: String(metaDescription).trim() } : {}),
+          ...(slug ? { slug: String(slug).trim() } : {}),
+          ...(status ? { status } : {}),
+          ...(publishDate ? { publishDate } : {}),
+          allowComments: Boolean(allowComments),
+          featureOnHomepage: Boolean(featureOnHomepage),
+          // Keep existing images if any
+          ...(blogFeaturedImage && !blogFeaturedImage.file ? { featuredImage: blogFeaturedImage.name } : {}),
+          ...(blogImages && blogImages.length > 0 ? { images: blogImages.filter(i => !i.file).map(i => i.name) } : {}),
+        };
+        response = await axios.put(`${API_BASE_URL}/admin/blogs/${editingBlogId}`, payload, {
           headers: { 'Content-Type': 'application/json' }
         });
       } else {
@@ -200,19 +224,18 @@ const BlogTab = () => {
         appendStr('featureOnHomepage', featureOnHomepage ? 'true' : 'false');
   
         // Files: first file will be treated as featured by backend
-        if (blogFeaturedImage?.file) {
-          fd.append('files', blogFeaturedImage.file);
-        }
-        (blogImages || []).forEach(img => {
-          if (img?.file) fd.append('files', img.file);
-        });
+        if (blogFeaturedImage && blogFeaturedImage.file) fd.append('files', blogFeaturedImage.file);
+        (blogImages || []).forEach(img => { if (img?.file) fd.append('files', img.file); });
+        // Preserve existing image names
+        fd.append('existingImages', JSON.stringify((blogImages || []).filter(i => !i.file).map(i => i.name)));
   
+        // For editing with files, use the same create-with-media endpoint (backend should handle if updating existing)
         response = await axios.post(`${API_BASE_URL}/admin/blogs/create-with-media`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
       }
   
-      alert('Blog created successfully!');
+      alert(editingBlogId ? 'Blog updated successfully!' : 'Blog created successfully!');
       setFormData({
         title: '',
         category: '',
@@ -230,6 +253,7 @@ const BlogTab = () => {
       });
       setBlogFeaturedImage(null);
       setBlogImages([]);
+      setEditingBlogId(null);
       fetchBlogs();
     } catch (err) {
       const serverMsg = err?.response?.data?.message;
@@ -255,6 +279,58 @@ const BlogTab = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Begin editing an existing blog
+  const handleEditBlog = async (blog) => {
+    if (!blog?.id) return;
+    setEditingBlogId(blog.id);
+    setFormData({
+      title: blog.title || '',
+      category: blog.category || '',
+      description: blog.description || '',
+      descriptions: Array.isArray(blog.descriptions) ? blog.descriptions : [],
+      content: blog.content || '',
+      tags: blog.tags || '',
+      metaTitle: blog.metaTitle || '',
+      metaDescription: blog.metaDescription || '',
+      slug: blog.slug || '',
+      status: blog.status || 'draft',
+      publishDate: blog.publishDate ? String(blog.publishDate).slice(0,16) : '',
+      allowComments: Boolean(blog.allowComments),
+      featureOnHomepage: Boolean(blog.featureOnHomepage),
+    });
+    // Build previews for existing media
+    try {
+      const featured = blog.featuredImage ? { id: `existf-${Math.random()}`, file: null, name: String(blog.featuredImage), size: 0, url: resolveMediaUrl(blog.featuredImage) } : null;
+      setBlogFeaturedImage(featured);
+    } catch { setBlogFeaturedImage(null); }
+    try {
+      const imgs = [];
+      if (Array.isArray(blog.images)) {
+        for (const item of blog.images) {
+          const name = (item && (item.name || item.url)) || item;
+          imgs.push({ id: `exist-${Math.random()}`, file: null, name: String(name), size: 0, url: resolveMediaUrl(name) });
+        }
+      } else if (typeof blog.images === 'string' && blog.images.trim()) {
+        try {
+          const arr = JSON.parse(blog.images);
+          if (Array.isArray(arr)) {
+            for (const item of arr) {
+              const name = (item && (item.name || item.url)) || item;
+              imgs.push({ id: `exist-${Math.random()}`, file: null, name: String(name), size: 0, url: resolveMediaUrl(name) });
+            }
+          }
+        } catch {
+          imgs.push({ id: `exist-${Math.random()}`, file: null, name: blog.images, size: 0, url: resolveMediaUrl(blog.images) });
+        }
+      }
+      setBlogImages(imgs);
+    } catch { setBlogImages([]); }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingBlogId(null);
   };
 
   // Delete blog
@@ -704,8 +780,11 @@ const BlogTab = () => {
             onClick={handleCreateBlog}
             disabled={loading}
           >
-            {loading ? <><i className="fas fa-spinner fa-spin"></i> Publishing...</> : <><i className="fas fa-paper-plane"></i> Publish Blog</>}
+            {loading ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : <><i className="fas fa-paper-plane"></i> {editingBlogId ? 'Update Blog' : 'Publish Blog'}</>}
           </button>
+          {editingBlogId && (
+            <button className="btn btn-outline ms-2" onClick={handleCancelEdit}>Cancel</button>
+          )}
         </div>
       </div>
 
@@ -768,6 +847,9 @@ const BlogTab = () => {
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.featureOnHomepage ? 'Yes' : 'No'}</td>
                       <td style={{ padding: '12px', color: '#7f8c8d' }}>{blog.createdAt ? new Date(blog.createdAt).toLocaleString() : '-'}</td>
                       <td style={{ padding: '12px' }}>
+                        <button type="button" className="btn btn-sm btn-primary" onClick={() => handleEditBlog(blog)} title="Edit blog" style={{ marginRight: 8 }}>
+                          <i className="fas fa-edit"></i>
+                        </button>
                         <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteBlog(blog.id)} title="Delete blog">
                           <i className="fas fa-trash"></i>
                         </button>
