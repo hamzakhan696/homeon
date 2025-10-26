@@ -3,7 +3,7 @@ import axios from 'axios';
 import { showToast } from '../../toast';
 
 // API Base URL from environment variable
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 const USE_MULTIPART_UPLOAD = (process.env.REACT_APP_UPLOAD_MODE || 'json').toLowerCase() === 'multipart';
 console.log('Environment API URL:', process.env.REACT_APP_API_URL);

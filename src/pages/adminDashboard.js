@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/adminDashboard.css';
 import OverviewTab from '../components/admin/OverviewTab';
@@ -15,7 +15,6 @@ const AdminDashboard = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
-    // Check if admin is logged in
     const isLoggedIn = localStorage.getItem('adminLoggedIn');
     if (!isLoggedIn) {
       navigate('/admin-login');
@@ -27,15 +26,31 @@ const AdminDashboard = () => {
     navigate('/admin-login');
   };
 
+ const [dynamicCollapse, setDynamicCollapse] = useState(false);
+  const sidebarRef = useRef(null);
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+      setDynamicCollapse(true);
+      setSidebarCollapsed(false);
+    } else {
+      setDynamicCollapse(false);
+    }
+  };
+  document.addEventListener("click", handleClickOutside);
+  return () => document.removeEventListener("click", handleClickOutside);
+}, []);
+
 
 
   return (
     <div className="admin-dashboard">
       {/* Sidebar */}
-      <div className={`admin-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+      <div ref={sidebarRef}
+        className={`admin-sidebar ${sidebarCollapsed ? "collapsed" : ""} ${dynamicCollapse ? "dynamic-collapse" : ""}`}>
         <div className="sidebar-header">
           <img src="assets/logo.webp" alt="Homeon Logo" className="sidebar-logo" />
-          {!sidebarCollapsed && <h3>Admin Panel</h3>}
         </div>
         
         <nav className="sidebar-nav">
@@ -43,70 +58,74 @@ const AdminDashboard = () => {
             <li className={activeTab === 'overview' ? 'active' : ''}>
               <button onClick={() => setActiveTab('overview')}>
                 <i className="fas fa-tachometer-alt"></i>
-                {!sidebarCollapsed && <span>Overview</span>}
+                  <span className="d-lg-none">Overview</span>
+  {!sidebarCollapsed && <span className="d-none d-lg-inline">Overview</span>}
               </button>
             </li>
             <li className={activeTab === 'properties' ? 'active' : ''}>
               <button onClick={() => setActiveTab('properties')}>
                 <i className="fas fa-home"></i>
-                {!sidebarCollapsed && <span>Properties</span>}
+                <span className="d-lg-none">Properties</span>
+                {!sidebarCollapsed && <span className="d-none d-lg-inline">Properties</span>}
               </button>
             </li>
             <li className={activeTab === 'projects' ? 'active' : ''}>
               <button onClick={() => setActiveTab('projects')}>
                 <i className="fas fa-building"></i>
-                {!sidebarCollapsed && <span>Projects</span>}
+                <span className="d-lg-none">Projects</span>
+                {!sidebarCollapsed && <span className="d-none d-lg-inline">Projects</span>}
               </button>
             </li>
             <li className={activeTab === 'blog' ? 'active' : ''}>
               <button onClick={() => setActiveTab('blog')}>
                 <i className="fas fa-blog"></i>
-                {!sidebarCollapsed && <span>Blog</span>}
+                <span className="d-lg-none">Blog</span>
+                {!sidebarCollapsed && <span className="d-none d-lg-inline">Blog</span>}
               </button>
             </li>
             <li className={activeTab === 'bookings' ? 'active' : ''}>
               <button onClick={() => setActiveTab('bookings')}>
                 <i className="fas fa-calendar-check"></i>
-                {!sidebarCollapsed && <span>Bookings</span>}
+                <span className="d-lg-none">Bookings</span>
+                {!sidebarCollapsed && <span className="d-none d-lg-inline">Bookings</span>}
               </button>
             </li>
             <li className={activeTab === 'reports' ? 'active' : ''}>
               <button onClick={() => setActiveTab('reports')}>
                 <i className="fas fa-chart-bar"></i>
-                {!sidebarCollapsed && <span>Reports</span>}
+                <span className="d-lg-none">Reports</span>
+                {!sidebarCollapsed && <span className="d-none d-lg-inline">Reports</span>}
               </button>
             </li>
             <li className={activeTab === 'settings' ? 'active' : ''}>
               <button onClick={() => setActiveTab('settings')}>
                 <i className="fas fa-cog"></i>
-                {!sidebarCollapsed && <span>Settings</span>}
+                <span className="d-lg-none">Settings</span>
+                {!sidebarCollapsed && <span className="d-none d-lg-inline">Settings</span>}
               </button>
             </li>
           </ul>
         </nav>
       </div>
-
-      {/* Main Content */}
       <div className="admin-main">
-        {/* Header */}
-        <header className="admin-header">
+        <header className="admin-header d-flex">
           <div className="header-left">
             <button 
               className="sidebar-toggle"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+  onClick={(e) => {
+    e.stopPropagation();
+    setSidebarCollapsed(prev => !prev);
+    setDynamicCollapse(false);
+  }}
             >
-              <i className="fas fa-bars"></i>
+                        Dashboard
+              <i className="fas fa-bars ms-2"></i>
             </button>
-            <h1>Dashboard</h1>
           </div>
           
           <div className="header-right">
             <div className="admin-profile">
               <img src="assets/astronaut.jpg" alt="Admin" className="admin-avatar" />
-              <div className="admin-info">
-                <span className="admin-name">Admin User</span>
-                <span className="admin-role">Administrator</span>
-              </div>
               <button className="logout-btn" onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt"></i>
               </button>

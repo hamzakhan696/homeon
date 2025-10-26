@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 // API Base URL (adjust as per your environment)
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 
 const BlogTab = () => {
-  // State for form data
+  const [showEditBlog, setShowEditBlog] = useState(false);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+const [showCreateBlog, setShowCreateBlog] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -22,6 +24,8 @@ const BlogTab = () => {
     allowComments: false,
     featureOnHomepage: false,
   });
+  const [editBlog, setEditBlog] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   // State for file uploads
   const [blogFeaturedImage, setBlogFeaturedImage] = useState(null);
@@ -29,7 +33,6 @@ const BlogTab = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [editingBlogId, setEditingBlogId] = useState(null);
 
   // Helpers
   const resolveMediaUrl = (name, fileObj) => {
@@ -41,6 +44,7 @@ const BlogTab = () => {
     const file = String(name).replace(/^\//, '');
     return `${base}/${file}`;
   };
+
 
   // Refs for file inputs
   const blogImageInputRef = useRef(null);
@@ -156,7 +160,7 @@ const BlogTab = () => {
       const hasFiles = Boolean(blogFeaturedImage || (blogImages && blogImages.length > 0));
   
       let response;
-      if (!hasFiles && !editingBlogId) {
+      if (!hasFiles) {
         // JSON path (no images)
         const payload = {
           title: String(title).trim(),
@@ -175,29 +179,6 @@ const BlogTab = () => {
         };
   
         response = await axios.post(`${API_BASE_URL}/admin/blogs`, payload, {
-          headers: { 'Content-Type': 'application/json' }
-        });
-      } else if (editingBlogId && !hasFiles) {
-        // Simple JSON update
-        const payload = {
-          title: String(title).trim(),
-          content: String(content).trim(),
-          ...(category ? { category: String(category).trim() } : {}),
-          ...(description ? { description: String(description).trim() } : {}),
-          ...(descriptions && descriptions.length > 0 ? { descriptions: descriptions.filter(d => d.trim()).map(d => String(d).trim()) } : {}),
-          ...(tags ? { tags: String(tags).trim() } : {}),
-          ...(metaTitle ? { metaTitle: String(metaTitle).trim() } : {}),
-          ...(metaDescription ? { metaDescription: String(metaDescription).trim() } : {}),
-          ...(slug ? { slug: String(slug).trim() } : {}),
-          ...(status ? { status } : {}),
-          ...(publishDate ? { publishDate } : {}),
-          allowComments: Boolean(allowComments),
-          featureOnHomepage: Boolean(featureOnHomepage),
-          // Keep existing images if any
-          ...(blogFeaturedImage && !blogFeaturedImage.file ? { featuredImage: blogFeaturedImage.name } : {}),
-          ...(blogImages && blogImages.length > 0 ? { images: blogImages.filter(i => !i.file).map(i => i.name) } : {}),
-        };
-        response = await axios.put(`${API_BASE_URL}/admin/blogs/${editingBlogId}`, payload, {
           headers: { 'Content-Type': 'application/json' }
         });
       } else {
@@ -224,18 +205,19 @@ const BlogTab = () => {
         appendStr('featureOnHomepage', featureOnHomepage ? 'true' : 'false');
   
         // Files: first file will be treated as featured by backend
-        if (blogFeaturedImage && blogFeaturedImage.file) fd.append('files', blogFeaturedImage.file);
-        (blogImages || []).forEach(img => { if (img?.file) fd.append('files', img.file); });
-        // Preserve existing image names
-        fd.append('existingImages', JSON.stringify((blogImages || []).filter(i => !i.file).map(i => i.name)));
+        if (blogFeaturedImage?.file) {
+          fd.append('files', blogFeaturedImage.file);
+        }
+        (blogImages || []).forEach(img => {
+          if (img?.file) fd.append('files', img.file);
+        });
   
-        // For editing with files, use the same create-with-media endpoint (backend should handle if updating existing)
         response = await axios.post(`${API_BASE_URL}/admin/blogs/create-with-media`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
       }
   
-      alert(editingBlogId ? 'Blog updated successfully!' : 'Blog created successfully!');
+      alert('Blog created successfully!');
       setFormData({
         title: '',
         category: '',
@@ -253,7 +235,6 @@ const BlogTab = () => {
       });
       setBlogFeaturedImage(null);
       setBlogImages([]);
-      setEditingBlogId(null);
       fetchBlogs();
     } catch (err) {
       const serverMsg = err?.response?.data?.message;
@@ -273,64 +254,13 @@ const BlogTab = () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/admin/blogs`);
       setBlogs(Array.isArray(response.data) ? response.data : []);
+      console.log("Blogs",response)
     } catch (err) {
       setError('Failed to load blogs.');
       console.error(err);
     } finally {
       setLoading(false);
     }
-  };
-
-  // Begin editing an existing blog
-  const handleEditBlog = async (blog) => {
-    if (!blog?.id) return;
-    setEditingBlogId(blog.id);
-    setFormData({
-      title: blog.title || '',
-      category: blog.category || '',
-      description: blog.description || '',
-      descriptions: Array.isArray(blog.descriptions) ? blog.descriptions : [],
-      content: blog.content || '',
-      tags: blog.tags || '',
-      metaTitle: blog.metaTitle || '',
-      metaDescription: blog.metaDescription || '',
-      slug: blog.slug || '',
-      status: blog.status || 'draft',
-      publishDate: blog.publishDate ? String(blog.publishDate).slice(0,16) : '',
-      allowComments: Boolean(blog.allowComments),
-      featureOnHomepage: Boolean(blog.featureOnHomepage),
-    });
-    // Build previews for existing media
-    try {
-      const featured = blog.featuredImage ? { id: `existf-${Math.random()}`, file: null, name: String(blog.featuredImage), size: 0, url: resolveMediaUrl(blog.featuredImage) } : null;
-      setBlogFeaturedImage(featured);
-    } catch { setBlogFeaturedImage(null); }
-    try {
-      const imgs = [];
-      if (Array.isArray(blog.images)) {
-        for (const item of blog.images) {
-          const name = (item && (item.name || item.url)) || item;
-          imgs.push({ id: `exist-${Math.random()}`, file: null, name: String(name), size: 0, url: resolveMediaUrl(name) });
-        }
-      } else if (typeof blog.images === 'string' && blog.images.trim()) {
-        try {
-          const arr = JSON.parse(blog.images);
-          if (Array.isArray(arr)) {
-            for (const item of arr) {
-              const name = (item && (item.name || item.url)) || item;
-              imgs.push({ id: `exist-${Math.random()}`, file: null, name: String(name), size: 0, url: resolveMediaUrl(name) });
-            }
-          }
-        } catch {
-          imgs.push({ id: `exist-${Math.random()}`, file: null, name: blog.images, size: 0, url: resolveMediaUrl(blog.images) });
-        }
-      }
-      setBlogImages(imgs);
-    } catch { setBlogImages([]); }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingBlogId(null);
   };
 
   // Delete blog
@@ -354,20 +284,92 @@ const BlogTab = () => {
   useEffect(() => {
     fetchBlogs();
   }, []);
+  const handleEditBlog = (id) => {
+  const selectedBlog = blogs.find((b) => b.id === id);
+  if (selectedBlog) {
+    setEditBlog(selectedBlog);
+    setShowEditBlog(true);
+  }
+};
+
+// ✅ Corrected: handleUpdateBlog
+const handleUpdateBlog = async () => {
+  if (!editBlog?.id) return alert('No blog selected');
+
+  try {
+    setLoading(true);
+
+    // ✅ Only include fields that backend accepts
+    const updatedData = {
+      title: editBlog.title,
+      description: editBlog.description,
+        descriptions: editBlog.descriptions,
+      category: editBlog.category,
+      category: editBlog.content,
+      status: editBlog.status,
+      slug: editBlog.slug,
+      metaTitle: editBlog.metaTitle,
+      metaDescription: editBlog.metaDescription,
+      allowComments: editBlog.allowComments,
+      featureOnHomepage: editBlog.featureOnHomepage,
+      tags: editBlog.tags,
+      publishDate: editBlog.publishDate,
+      content: editBlog.content,
+      // ❌ featuredImage removed (backend doesn’t accept it)
+    };
+
+    // 🟩 API call
+    const response = await axios.put(
+      `${API_BASE_URL}/admin/blogs/${editBlog.id}`,
+      updatedData
+    );
+
+    alert('✅ Blog updated successfully!');
+    console.log("Update response:", response.data);
+    setShowModal(false);
+
+    // 🔄 Refresh blog list after update
+    await fetchBlogs();
+
+  } catch (err) {
+    console.error('Update blog failed:', err);
+
+    // Show proper backend message if available
+    alert(err?.response?.data?.message || 'Failed to update blog.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
-    <div className="blog-section">
-      <h2>Blog Management</h2>
-
-      {/* Blog Form */}
+    <div>
+      <h3 className='mb-3'>Blog Management</h3>
+       <button
+    className={`${showCreateBlog ? 'btn-custom' : 'btn-custom'}`}
+    onClick={() => setShowCreateBlog(!showCreateBlog)}
+  >
+    {showCreateBlog ? (
+      <>
+        <i className="fas fa-arrow-left me-2"></i> Back to Blogs
+      </>
+    ) : (
+      <>
+        <i className="fas fa-plus me-2"></i> Create Blog
+      </>
+    )}
+  </button>
+  {showCreateBlog ? (
+ <div className="blog-section mt-3">
       <div className="blog-form">
         <div className="form-section">
+          <div className='row'>
           <div className="section-header">
             <i className="fas fa-edit"></i>
-            <h3>Blog Information</h3>
+            <h3 c>Blog Information</h3>
           </div>
-          
-          <div className="form-group">
+          </div>
+<div className='row'>
+  <div className='col-md-6 col-12'><div className="form-group">
             <label>Blog Title</label>
             <input 
               type="text" 
@@ -377,9 +379,8 @@ const BlogTab = () => {
               value={formData.title}
               onChange={handleInputChange}
             />
-          </div>
-
-          <div className="form-group">
+          </div></div>
+  <div className='col-md-6 col-12'><div className="form-group">
             <label>Blog Category</label>
             <select 
               name="category"
@@ -395,86 +396,67 @@ const BlogTab = () => {
               <option value="Legal Advice">Legal Advice</option>
               <option value="Tips & Guides">Tips & Guides</option>
             </select>
-          </div>
+          </div></div>
+</div>
+<div className="form-group">
+  <label>Blog Description</label>
+  <textarea 
+    name="description"
+    className="form-control" 
+    rows="4"
+    placeholder="Enter a brief description of the blog post"
+    value={formData.description}
+    onChange={handleInputChange}
+  ></textarea>
 
-          <div className="form-group">
-            <label>Blog Description</label>
-            <textarea 
-              name="description"
-              className="form-control" 
-              rows="4"
-              placeholder="Enter a brief description of the blog post"
-              value={formData.description}
-              onChange={handleInputChange}
-            ></textarea>
-            
-            {/* Multiple Descriptions Section */}
-            <div style={{ marginTop: '15px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                <label style={{ margin: 0, fontWeight: 'bold' }}>Additional Descriptions</label>
-                <button 
-                  type="button" 
-                  className="btn btn-sm btn-success"
-                  onClick={addDescription}
-                  style={{ 
-                    borderRadius: '50%', 
-                    width: '30px', 
-                    height: '30px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    padding: 0
-                  }}
-                  title="Add another description"
-                >
-                  <i className="fas fa-plus"></i>
-                </button>
-              </div>
-              
-              {formData.descriptions.map((desc, index) => (
-                <div key={index} style={{ marginBottom: '10px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                  <textarea 
-                    className="form-control" 
-                    rows="3"
-                    placeholder={`Additional description ${index + 1}`}
-                    value={desc}
-                    onChange={(e) => handleDescriptionChange(index, e.target.value)}
-                    style={{ flex: 1 }}
-                  ></textarea>
-                  <button 
-                    type="button" 
-                    className="btn btn-sm btn-danger"
-                    onClick={() => removeDescription(index)}
-                    style={{ 
-                      borderRadius: '50%', 
-                      width: '30px', 
-                      height: '30px', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      padding: 0
-                    }}
-                    title="Remove this description"
-                  >
-                    <i className="fas fa-trash"></i>
-                  </button>
-                </div>
-              ))}
-              
-              {formData.descriptions.length > 0 && (
-                <small className="text-muted">
-                  First description will be shown on blog listing page. All descriptions will be shown on blog detail page.
-                </small>
-              )}
-            </div>
-          </div>
+  <div className="mt-3">
+    <div className="d-flex align-items-center gap-2 mb-2">
+      <label className="m-0 fw-bold">Additional Descriptions</label>
+      <button 
+        type="button" 
+        className="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center add-desc-btn"
+        onClick={addDescription}
+        title="Add another description"
+      >
+        <i className="fas fa-plus"></i>
+      </button>
+    </div>
+
+    {formData.descriptions.map((desc, index) => (
+      <div key={index} className="mb-2 d-flex gap-2 align-items-start desc-item">
+        <textarea 
+          className="form-control flex-grow-1" 
+          rows="3"
+          placeholder={`Additional description ${index + 1}`}
+          value={desc}
+          onChange={(e) => handleDescriptionChange(index, e.target.value)}
+        ></textarea>
+        <button 
+          type="button" 
+          className="btn btn-sm btn-danger rounded-circle d-flex align-items-center justify-content-center remove-desc-btn"
+          onClick={() => removeDescription(index)}
+          title="Remove this description"
+        >
+          <i className="fas fa-trash"></i>
+        </button>
+      </div>
+    ))}
+
+    {formData.descriptions.length > 0 && (
+      <small className="text-muted">
+        First description will be shown on blog listing page. All descriptions will be shown on blog detail page.
+      </small>
+    )}
+  </div>
+</div>
+
 
           <div className="form-group">
             <label>Blog Content</label>
             <textarea 
               name="content"
               className="form-control" 
-              rows="12"
+              rows="4"
               placeholder="Write your blog content here..."
               value={formData.content}
               onChange={handleInputChange}
@@ -495,7 +477,6 @@ const BlogTab = () => {
           </div>
         </div>
 
-        {/* Blog Images Section */}
         <div className="form-section">
           <div className="section-header">
             <i className="fas fa-images"></i>
@@ -508,14 +489,11 @@ const BlogTab = () => {
               <p>Upload Featured Image for Blog</p>
               <div className="upload-buttons">
                 <button 
-                  className="btn btn-primary"
+                  className="btn-custom"
                   onClick={() => blogFeaturedImageInputRef.current?.click()}
                 >
-                  <i className="fas fa-upload"></i>
+                  <i className="fas fa-upload me-2"></i>
                   Upload Featured Image
-                </button>
-                <button className="btn btn-outline">
-                  Image Bank
                 </button>
               </div>
               <small>Max size 5MB, .jpg .png only</small>
@@ -524,20 +502,19 @@ const BlogTab = () => {
                 type="file"
                 accept="image/jpeg,image/jpg,image/png"
                 onChange={handleBlogFeaturedImageUpload}
-                style={{ display: 'none' }}
+                className='d-none'
               />
             </div>
             
-            {/* Featured Image Display */}
             {blogFeaturedImage && (
               <div className="uploaded-files">
                 <h4>Featured Image</h4>
                 <div className="file-item featured">
-                  <img src={blogFeaturedImage.url} alt={blogFeaturedImage.name} />
+                  <span className="featured-badge mb-2">Featured</span>
+                  <img src={blogFeaturedImage.url} alt={blogFeaturedImage.name} className='img-fluid'/>
                   <div className="file-info">
                     <span className="file-name">{blogFeaturedImage.name}</span>
                     <span className="file-size">{formatFileSize(blogFeaturedImage.size)}</span>
-                    <span className="featured-badge">Featured</span>
                   </div>
                   <div className="file-actions">
                     <button 
@@ -551,8 +528,7 @@ const BlogTab = () => {
                 </div>
               </div>
             )}
-            
-            <div className="upload-tips">
+                        <div className="upload-tips d-flex justify-content-center">
               <div className="tip">
                 <i className="fas fa-check"></i>
                 <span>Blogs with images get 3x more engagement.</span>
@@ -568,7 +544,6 @@ const BlogTab = () => {
             </div>
           </div>
           
-          {/* Additional Blog Images Section */}
           <div className="form-section">
             <div className="section-header">
               <i className="fas fa-images"></i>
@@ -581,14 +556,11 @@ const BlogTab = () => {
                 <p>Upload Additional Images for Blog</p>
                 <div className="upload-buttons">
                   <button 
-                    className="btn btn-primary"
+                    className="btn-custom"
                     onClick={() => blogImageInputRef.current?.click()}
                   >
-                    <i className="fas fa-upload"></i>
+                    <i className="fas fa-upload me-2"></i>
                     Upload Images
-                  </button>
-                  <button className="btn btn-outline">
-                    Image Bank
                   </button>
                 </div>
                 <small>Max size 5MB, .jpg .png only</small>
@@ -601,15 +573,13 @@ const BlogTab = () => {
                   style={{ display: 'none' }}
                 />
               </div>
-              
-              {/* Additional Images Display */}
               {blogImages.length > 0 && (
                 <div className="uploaded-files">
                   <h4>Additional Images ({blogImages.length})</h4>
                   <div className="file-grid">
                     {blogImages.map((image) => (
                       <div key={image.id} className="file-item">
-                        <img src={image.url} alt={image.name} />
+                        <img src={image.url} alt={image.name} className='img-fluid' />
                         <div className="file-info">
                           <span className="file-name">{image.name}</span>
                           <span className="file-size">{formatFileSize(image.size)}</span>
@@ -628,8 +598,7 @@ const BlogTab = () => {
                   </div>
                 </div>
               )}
-              
-              <div className="upload-tips">
+                            <div className="upload-tips d-flex justify-content-center">
                 <div className="tip">
                   <i className="fas fa-check"></i>
                   <span>Additional images help tell your story better.</span>
@@ -647,7 +616,6 @@ const BlogTab = () => {
           </div>
         </div>
 
-        {/* SEO Section */}
         <div className="form-section">
           <div className="section-header">
             <i className="fas fa-search"></i>
@@ -690,17 +658,15 @@ const BlogTab = () => {
             />
           </div>
         </div>
-
-        {/* Publishing Options */}
         <div className="form-section">
           <div className="section-header">
-            <i className="fas fa-publish"></i>
+          <i class="fas fa-rocket"></i>
             <h3>Publishing Options</h3>
           </div>
           
           <div className="form-group">
             <label>Publish Status</label>
-            <div className="radio-group">
+            <div className="radio-group radio-grp-cstm">
               <label className={`radio-option ${formData.status === 'draft' ? 'active' : ''}`}>
                 <input 
                   type="radio" 
@@ -709,8 +675,7 @@ const BlogTab = () => {
                   checked={formData.status === 'draft'}
                   onChange={handleInputChange}
                 />
-                <span className="radio-custom"></span>
-                <i className="fas fa-save"></i>
+                <i className="fas fa-save me-2"></i>
                 Draft
               </label>
               <label className={`radio-option ${formData.status === 'published' ? 'active' : ''}`}>
@@ -721,8 +686,7 @@ const BlogTab = () => {
                   checked={formData.status === 'published'}
                   onChange={handleInputChange}
                 />
-                <span className="radio-custom"></span>
-                <i className="fas fa-globe"></i>
+                <i className="fas fa-globe me-2"></i>
                 Published
               </label>
             </div>
@@ -739,7 +703,7 @@ const BlogTab = () => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group checkbox-label-cstm">
             <label className="checkbox-label">
               <input 
                 type="checkbox" 
@@ -752,7 +716,7 @@ const BlogTab = () => {
             </label>
           </div>
 
-          <div className="form-group">
+          <div className="form-group checkbox-label-cstm">
             <label className="checkbox-label">
               <input 
                 type="checkbox" 
@@ -765,31 +729,216 @@ const BlogTab = () => {
             </label>
           </div>
         </div>
-
-        {/* Submit Button */}
         <div className="form-actions">
-          {/* <button 
-            className="btn btn-primary btn-lg"
-            onClick={handleCreateBlog}
-            disabled={loading}
-          >
-            {loading ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : <><i className="fas fa-save"></i> Save as Draft</>}
-          </button> */}
           <button 
-            className="btn btn-success btn-lg"
+            className="btn-custom"
             onClick={handleCreateBlog}
             disabled={loading}
           >
-            {loading ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : <><i className="fas fa-paper-plane"></i> {editingBlogId ? 'Update Blog' : 'Publish Blog'}</>}
+            {loading ? <><i className="fas fa-spinner fa-spin me-2"></i>Publishing...</> : <><i className="fas fa-paper-plane me-2"></i>Publish Blog</>}
           </button>
-          {editingBlogId && (
-            <button className="btn btn-outline ms-2" onClick={handleCancelEdit}>Cancel</button>
-          )}
         </div>
       </div>
 
-      {/* All Blogs Section */}
-      <div className="all-blogs-section">
+      </div>
+      )
+      :showEditBlog ? (
+  <div className="edit-blog-section mt-4">
+    <div className="d-flex justify-content-between align-items-center mb-3">
+      <h3>Edit Blog - {editBlog?.title}</h3>
+      <button className="btn-custom" onClick={() => setShowEditBlog(false)}>
+        <i className="fas fa-arrow-left me-2"></i> Back
+      </button>
+    </div>
+
+    <div className="card p-4 shadow-sm">
+      <div className="mb-3">
+        <label className="form-label">Title</label>
+        <input
+          type="text"
+          className="form-control"
+          value={editBlog?.title || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, title: e.target.value })}
+        />
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">Description</label>
+        <textarea
+          className="form-control"
+          rows="3"
+          value={editBlog?.description || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, description: e.target.value })}
+        ></textarea>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">Category</label>
+        <input
+          type="text"
+          className="form-control"
+          value={editBlog?.category || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, category: e.target.value })}
+        />
+      </div>
+            <div className="mb-3">
+        <label className="form-label">Content</label>
+        <input
+          type="text"
+          className="form-control"
+          value={editBlog?.content || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, content: e.target.value })}
+        />
+      </div>
+{editBlog?.descriptions?.map((desc, index) => (
+  <div className="mb-3" key={index}>
+    <label className="form-label">Description {index + 1}</label>
+    <textarea
+      className="form-control"
+      rows="2"
+      value={desc}
+      onChange={(e) => {
+        const updatedDescriptions = [...editBlog.descriptions];
+        updatedDescriptions[index] = e.target.value;
+        setEditBlog({ ...editBlog, descriptions: updatedDescriptions });
+      }}
+    ></textarea>
+  </div>
+))}
+<button
+  type="button"
+  className="btn btn-outline-primary mb-3"
+  onClick={() =>
+    setEditBlog({
+      ...editBlog,
+      descriptions: [...(editBlog.descriptions || []), ""],
+    })
+  }
+>
+  <i className="fas fa-plus me-2"></i> Add Description
+</button>
+
+      <div className="mb-3">
+        <label className="form-label">Status</label>
+        <select
+          className="form-select"
+          value={editBlog?.status || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, status: e.target.value })}
+        >
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
+        </select>
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">Slug</label>
+        <input
+          type="text"
+          className="form-control"
+          value={editBlog?.slug || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, slug: e.target.value })}
+        />
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">Meta Title</label>
+        <input
+          type="text"
+          className="form-control"
+          value={editBlog?.metaTitle || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, metaTitle: e.target.value })}
+        />
+      </div>
+          <div className="mb-3">
+        <label className="form-label">Meta Description</label>
+        <input
+          type="text"
+          className="form-control"
+          value={editBlog?.metaDescription || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, metaDescription: e.target.value })}
+        />
+      </div>
+                <div className="mb-3">
+        <label className="form-label">Tags</label>
+        <input
+          type="text"
+          className="form-control"
+          value={editBlog?.tags || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, tags: e.target.value })}
+        />
+      </div>
+
+{/* 🏞️ Featured Image */}
+{editBlog?.featuredImage && (
+  <div className="featured-image mb-4">
+    <label className="form-label fw-bold">Featured Image</label>
+    <div className="d-flex align-items-center gap-3">
+      <img
+        src={editBlog.featuredImage}
+        alt="Featured"
+        style={{
+          width: 120,
+          height: 80,
+          objectFit: "cover",
+          borderRadius: 8,
+          border: "1px solid #ddd",
+        }}
+      />
+    </div>
+  </div>
+)}
+
+      {/* 🖼️ Show Images */}
+      {editBlog?.images && editBlog.images.length > 0 && (
+        <div className="blog-images mb-4">
+          <label className="form-label fw-bold">Images</label>
+          <div className="d-flex flex-wrap gap-2">
+            {editBlog.images.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt="Blog"
+                style={{
+                  width: 100,
+                  height: 70,
+                  objectFit: "cover",
+                  borderRadius: 6,
+                  border: "1px solid #ddd",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="form-check mb-2">
+        <input
+          type="checkbox"
+          className="form-check-input"
+          checked={editBlog?.allowComments || false}
+          onChange={(e) => setEditBlog({ ...editBlog, allowComments: e.target.checked })}
+        />
+        <label className="form-check-label">Allow Comments</label>
+      </div>
+
+      <div className="form-check mb-3">
+        <input
+          type="checkbox"
+          className="form-check-input"
+          checked={editBlog?.featureOnHomepage || false}
+          onChange={(e) => setEditBlog({ ...editBlog, featureOnHomepage: e.target.checked })}
+        />
+        <label className="form-check-label">Feature on Homepage</label>
+      </div>
+      <div className="text-end">
+        <button className="btn btn-success" onClick={handleUpdateBlog}>
+          <i className="fas fa-save me-2"></i> Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+)
+      : (
+            <div className="all-blogs-section mt-3">
         <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <h2 style={{ margin: 0 }}>All Blogs</h2>
@@ -800,68 +949,215 @@ const BlogTab = () => {
           </button>
         </div>
         {error && <p className="text-danger">{error}</p>}
-        {loading && <p><i className="fas fa-spinner fa-spin"></i> Loading...</p>}
+        {loading && <p><i className="fas fa-spinner fa-spin"></i>Loading blogs...</p>}
         {!loading && !error && blogs.length === 0 && <p>No blogs found.</p>}
         {!loading && !error && blogs.length > 0 && (
-          <div className="blogs-table-container">
-            <table className="attractive-table">
-              <thead>
-                <tr style={{ background: '#63b330', color: '#fff' }}>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Image</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Title</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Description</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Category</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Status</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Slug</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Tags</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Meta Title</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Publish Date</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Allow Comments</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Featured</th>
-                  <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Created At</th>
-                  <th style={{ padding: '12px' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {blogs.map((blog) => {
-                  const imgSrc = resolveMediaUrl(blog.featuredImage);
-                  let images = [];
-                  try {
-                    if (Array.isArray(blog.images)) images = blog.images;
-                    else if (typeof blog.images === 'string' && blog.images.trim()) images = JSON.parse(blog.images);
-                  } catch {}
-                  const firstImage = images && images.length > 0 ? resolveMediaUrl(images[0]) : '';
-                  const finalImg = imgSrc || firstImage || '';
-                  return (
-                    <tr key={blog.id} style={{ background: '#fff', transition: 'background 0.3s', borderBottom: '1px solid #ecf0f1' }}>
-                      <td style={{ padding: '8px' }}>{finalImg ? <img src={finalImg} alt={blog.title} style={{ width: 64, height: 40, objectFit: 'cover', borderRadius: 4 }} /> : '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.title}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.description || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.category || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.status}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.slug || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.tags || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.metaTitle || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.publishDate ? new Date(blog.publishDate).toLocaleString() : '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.allowComments ? 'Yes' : 'No'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{blog.featureOnHomepage ? 'Yes' : 'No'}</td>
-                      <td style={{ padding: '12px', color: '#7f8c8d' }}>{blog.createdAt ? new Date(blog.createdAt).toLocaleString() : '-'}</td>
-                      <td style={{ padding: '12px' }}>
-                        <button type="button" className="btn btn-sm btn-primary" onClick={() => handleEditBlog(blog)} title="Edit blog" style={{ marginRight: 8 }}>
-                          <i className="fas fa-edit"></i>
-                        </button>
-                        <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteBlog(blog.id)} title="Delete blog">
-                          <i className="fas fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+<div className="blogs-section">
+<div className="table-responsive shadow-sm rounded bg-white">
+  <table className="table table-hover align-middle mb-0">
+    <thead className="bg-success text-white text-center">
+      <tr>
+        <th>Image</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody className="text-center">
+      {blogs.map((blog) => {
+        const imgSrc = resolveMediaUrl(blog.featuredImage);
+        return (
+          <tr key={blog.id}>
+            <td>
+              {imgSrc ? (
+                <img
+                  src={imgSrc}
+                  alt={blog.title}
+                  className="rounded"
+                  width="70"
+                  height="45"
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                '-'
+              )}
+            </td>
+            <td>{blog.title}</td>
+            <td>
+              {blog.description?.length > 50
+                ? blog.description.slice(0, 50) + '...'
+                : blog.description || '-'}
+            </td>
+            <td>
+              <span
+                className={`badge ${
+                  blog.status === 'published'
+                    ? 'bg-success'
+                    : 'bg-secondary'
+                }`}
+              >
+                {blog.status}
+              </span>
+            </td>
+            <td className='action-buttons-custom'>
+              <div className='action-button-flex'>
+              <button
+                  className="btn btn-sm btn-primary me-2"
+                  data-bs-toggle="modal"
+                  data-bs-target="#viewBlogModal"
+                  onClick={() => setSelectedBlog(blog)}
+                >
+                  <i className="fas fa-eye"></i>
+                </button>
+              <button
+                className="btn btn-sm btn-success me-2"
+                onClick={() => handleEditBlog(blog.id)}
+              >
+                <i className="fas fa-edit"></i>
+              </button>
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={() => handleDeleteBlog(blog.id)}
+              >
+                <i className="fas fa-trash"></i>
+              </button>
+              </div>
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+ <div
+        className="modal fade"
+        id="viewBlogModal"
+        tabIndex="-1"
+        aria-labelledby="viewBlogModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header bg-success text-white">
+              <h5 className="modal-title" id="viewBlogModalLabel">
+                {selectedBlog?.title || "Blog Details"}
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <div className="modal-body">
+              {selectedBlog ? (
+                <>
+                  <div className="mb-3 text-center">
+                    {selectedBlog.featuredImage && (
+                      <img
+                        src={selectedBlog.featuredImage}
+                        alt="Featured"
+                        className="img-fluid rounded"
+                        style={{ maxHeight: "300px", objectFit: "cover" }}
+                      />
+                    )}
+                  </div>
+
+                  <p>
+                    <strong>Category:</strong> {selectedBlog.category}
+                  </p>
+                  <p>
+                    <strong>Status:</strong>{" "}
+                    <span
+                      className={`badge ${
+                        selectedBlog.status === "published"
+                          ? "bg-success"
+                          : "bg-secondary"
+                      }`}
+                    >
+                      {selectedBlog.status}
+                    </span>
+                  </p>
+                  <p>
+                    <strong>Description:</strong> {selectedBlog.description}
+                  </p>
+                  {selectedBlog.descriptions.map((desc, index) => (
+  <div key={index} className="mb-2">
+    <strong>Description {index + 1}:</strong>
+    <p>{desc}</p>
+  </div>
+))}
+                  <p>
+                    <strong>Content:</strong> {selectedBlog.content}
+                  </p>
+                  <p>
+                    <strong>Meta Title:</strong> {selectedBlog.metaTitle}
+                  </p>
+                 <p>
+  <strong>Comments:</strong>{' '}
+  {selectedBlog.allowComments ? 'Allowed' : 'Not Allowed'}
+</p>
+                 <p>
+  <strong>Feature On Homepage:</strong>{' '}
+  {selectedBlog.featureOnHomepage ? 'Allowed' : 'Not Allowed'}
+</p>
+
+                  <p>
+                    <strong>Meta Description:</strong>{" "}
+                    {selectedBlog.metaDescription}
+                  </p>
+                  <p>
+                    <strong>Tags:</strong> {selectedBlog.tags}
+                  </p>
+                   <p>
+                    <strong>Slug Url:</strong> {selectedBlog.slug}
+                  </p>
+
+                  {/* ✅ Show Gallery Images */}
+                  {selectedBlog.images && selectedBlog.images.length > 0 && (
+                    <>
+                      <h6 className="mt-4 fw-bold">Gallery Images:</h6>
+                      <div className="d-flex flex-wrap gap-2">
+                        {selectedBlog.images.map((img, idx) => (
+                          <img
+                            key={idx}
+                            src={img}
+                            alt="Blog"
+                            className="rounded"
+                            width="100"
+                            height="70"
+                            style={{ objectFit: "cover" }}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                <p>No blog selected.</p>
+              )}
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
           </div>
+        </div>
+      </div>
+</div>
+
         )}
       </div>
+      )}
+
     </div>
   );
 };
