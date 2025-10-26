@@ -433,12 +433,9 @@
 /* Project Form Styles */
 .progress-steps {
   display: flex;
-  justify-content: center;
   margin-bottom: 30px;
   background: white;
   border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
 .step {
@@ -680,7 +677,7 @@
 }
 
 .input-group .btn {
-  padding: 12px 15px;
+  padding: 0px 10px;
 }
 
 /* Button Group */
@@ -794,6 +791,7 @@
   margin-top: 15px;
   color: #63b330;
   font-weight: 500;
+  font-size: 12px;
 }
 
 .quality-tip i {
@@ -817,9 +815,6 @@
 
 /* Upload Section */
 .upload-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
   margin-bottom: 20px;
 }
 
@@ -853,6 +848,7 @@
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
+  flex-direction: column;
 }
 
 .upload-buttons .btn {
@@ -875,7 +871,7 @@
   align-items: center;
   gap: 8px;
   color: #666;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .tip i {
@@ -886,9 +882,7 @@
 /* Video Section */
 .video-section {
   margin-top: 20px;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
+
 }
 
 .video-section .section-header {
@@ -1290,16 +1284,14 @@
 
 /* Upload Functionality Styles */
 .uploaded-files {
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+     border-top: 1px solid #e0e0e0;
+     padding-top: 13px;
 }
 
 .uploaded-files h4 {
   margin-bottom: 15px;
   color: #333;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -1575,4 +1567,161 @@ width: 30px !important;
   .action-button-flex{
     display: flex;
   }
+}
+.project-form .radio-option{
+  color: #666 !important;
+  background-color:  #f8f9fa;
+  font-size: 10px !important;
+}
+.project-form .radio-option i{
+  color: #666 !important;
+  background-color:  #f8f9fa;
+  font-size: 12px !important;
+}
+.project-form .active,.project-form .active i{
+  color: #63b330 !important;
+  background-color: white;
+}
+.radio-option-cstm{
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 2px solid #f8f9fa;
+}
+.custom-padding-proect-section{
+  padding: 0px 24px;
+}
+.project-custom-svg{
+  background: #f8f9fa;
+    padding: 5px;
+    display: flex;
+    border-radius: 8px;
+}
+.project-form .form-group label{
+  font-size: 12px;
+}
+
+.property-tabs1 {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 2px solid #e0e0e0; /* single gray line under all tabs */
+}
+
+.tab-btn1 {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  padding: 10px 0;
+  position: relative;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.tab-btn1:hover {
+  color: #63b330;
+}
+
+.tab-btn1.active {
+  color: #63b330;
+  font-weight: 600;
+}
+
+/* Green underline aligned with text */
+.tab-btn1.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px; /* sits on the gray line */
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #63b330;
+  border-radius: 2px;
+}
+.projects-input-custom{
+    padding: 8px 15px !important; 
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    font-size: 10px !important;
+    transition: all 0.3s ease !important;
+    background: #fff !important;
+}
+.projects-input-custom:focus{
+  outline: none !important;
+  border-color: #63b330 !important; 
+  background: white !important;
+  box-shadow: 0 0 0 3px rgba(99, 179, 48, 0.1) !important;
+}
+.disabled-color{
+  background-color: #f8f9fa !important;
+}
+.custom-p{
+  font-size: 12px !important;
+  color: black !important;
+  text-transform: none !important;
+}
+.custom-span{
+  color: grey !important;
+  text-transform: none !important;
+  font-size: 12px;
+}
+
+.custom-project-label{
+      font-size: 12px;
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+}
+.upload-buttons .btn-custom-projects{
+  font-size: 12px;
+  padding: 10px 15px;
+  background-color: #63b330;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.upload-buttons .btn-custom-projects1{
+  font-size: 12px;
+  padding: 10px 15px;
+  background-color: transparent;
+  border: 1px solid grey;
+  color: black;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.project-section-custom .upload-area i {
+  margin-bottom: 0px !important;
+}
+.file-actions .btn-sm i{
+  font-size: 14px;
+}
+.file-actions .btn-danger{
+  background-color: transparent !important;
+  border: none;
+}
+.file-actions .fa-trash{
+  color: red !important;
+}
+.video-upload-buttons .btn{
+  font-size: 12px;
+}
+.video-upload-buttons .btn-primary{
+  background-color: #63b330 !important;
+  border: none;
+}
+.video-upload-buttons .btn-outline{
+  background-color: transparent !important;
+  border: 1px solid grey;
+}
+.video-upload-buttons .btn-outline:hover{
+  border: 1px solid grey;
+}
+.btn-outline-cstm{
+  background-color: transparent !important;
+  border: 1px solid #63b330 !important;
+  color: #63b330 !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
 }
