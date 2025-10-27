@@ -6,6 +6,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import ContactUs from "./pages/contactUs";
+import ScheduleMeeting from "./pages/ScheduleMeeting";
 import Blog from "./pages/blog";
 import BlogDetail from "./pages/BlogDetail";
 import Portfolio from "./pages/portfolio";
@@ -32,6 +33,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             {/* <Route path="/" element={<LandingPage />} /> */}
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/schedule-meeting" element={<ScheduleMeeting />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<BlogDetail />} />
             <Route path="/portfolio" element={<Portfolio />} />

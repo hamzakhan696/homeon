@@ -30,7 +30,7 @@ const Header = () => {
     <div className='container'>
     <nav className="row navbar navbar-expand-lg">
             <div className='col-2 d-flex justify-content-start'><NavLink to={'/'}><img src="/assets/logo.webp" alt="Logo" width="90" /></NavLink></div>
-            <div className='col-7 d-flex justify-content-center'>
+            <div className='col-6 d-flex justify-content-center'>
             <div className="offcanvas offcanvas-start" tabIndex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
             <div className="offcanvas-header d-flex justify-content-center d-lg-none d-block">
             <NavLink to={'/'}> <img src="/assets/logo.webp" alt="Logo" width="90" /></NavLink>
@@ -86,18 +86,20 @@ const Header = () => {
             </div>
         </div>
             </div>
-            <div className='col-3 d-flex justify-content-end gap-2'>
+            <div className='col-4 d-flex justify-content-end gap-3 flex-wrap'>
             {(() => {
   const common = {
     whiteSpace: 'nowrap',
-    height: 42,
+    height: 40,
     display: 'flex',
     alignItems: 'center',
-    padding: '0 16px',
-    borderRadius: 8,
+    padding: '0 12px',
+    borderRadius: 6,
     fontWeight: 600,
     border: '1px solid #27ae60',
-    textDecoration: 'none'  // Yeh line add ki gayi hai
+    textDecoration: 'none',
+    fontSize: '13px',
+    minWidth: 'fit-content'
   };
   const primary = {
     ...common,
@@ -106,7 +108,8 @@ const Header = () => {
   };
   return (
     <>
-      <NavLink to={'/submit-project'} style={primary}>List your property</NavLink>
+      <NavLink to={'/submit-project'} style={primary}>List Property</NavLink>
+      <NavLink to={'/schedule-meeting'} style={primary}>Schedule Meeting</NavLink>
       <NavLink to={'/contact'} style={primary}>Book Now</NavLink>
     </>
   );

@@ -1,9 +1,8 @@
-import React, {useRef,useState,useEffect } from 'react';
+import React, {useState,useEffect } from 'react';
 import '../css/contactUs.css'
 import NavBar from '../layout/header';
 import Footer from '../layout/footer';
 import { NavLink } from 'react-router-dom';
-import emailjs from '@emailjs/browser';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 import PhoneInput from 'react-phone-number-input';
@@ -17,10 +16,12 @@ const ContactUs = () => {
     const [email, setEmail] = useState('');
     const [isEmailValid, setIsEmailValid] = useState(true);
     const [userName, setUserName] = useState('');
-  const [subject, setSubject] = useState('');
-  const [userNameError, setUserNameError] = useState('');
-  const [subjectError, setSubjectError] = useState('');
-  const pattern = /^[A-Za-z\s]*$/;
+    const [subject, setSubject] = useState('');
+    const [message, setMessage] = useState('');
+    const [userNameError, setUserNameError] = useState('');
+    const [subjectError, setSubjectError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const pattern = /^[A-Za-z\s]*$/;
 
   const handleUserNameChange = (e) => {
     const value = e.target.value;
@@ -42,12 +43,48 @@ const ContactUs = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userNameError && !subjectError && userName && subject) {
-      console.log('Form submitted');
-    } else {
-      console.log('Fix the errors');
+    
+    if (!isPhoneValid || !isEmailValid || !userName || !subject) {
+      toastr.error('Please fill all required fields correctly.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const payload = {
+        fullName: userName,
+        email,
+        phone: phoneNumber,
+        subject,
+        message: message || null,
+      };
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.10.30:3002'}/admin/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Contact inquiry submitted:', data);
+      
+      toastr.success('Your message has been sent successfully!');
+      navigate('/thankYou');
+      window.scrollTo(0, 0);
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      toastr.error('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,30 +98,11 @@ const ContactUs = () => {
         setIsPhoneValid(isValidPhoneNumber(phoneNumber));
       }
     }, [phoneNumber]);
-    const form = useRef();
     toastr.options = {
         positionClass: "toast-top-right",
         timeOut: 5000,
         closeButton: true,
         progressBar: true, 
-      };  
-      
-    const sendEmail = (e) => {
-      e.preventDefault();
-  
-      emailjs
-        .sendForm('service_fbk7jkt', 'template_zsa0xvj', form.current, 'XN-NjblC65BYr5V8m')
-        .then(
-          () => {
-            console.log('succeed');
-            navigate('/thankYou');
-            window.scrollTo(0, 0);
-          },
-          (error) => {
-            toastr.error("Failed to send email. Please try again.");
-            console.error('EmailJS Error:', error);
-          }
-        );
     };
   return (
     <div>
@@ -159,7 +177,7 @@ const ContactUs = () => {
         </div>
         </div>
         <div className="col-lg-8 col-md-7 col-12 mt-md-0 mt-3">
-        <form ref={form} onSubmit={sendEmail} className="contact-box dzForm p-a30 border-1">
+        <form onSubmit={handleSubmit} className="contact-box dzForm p-a30 border-1">
     <h3 className="title-box">
       Write us a few words about your project, and we’ll prepare a proposal for you within 24 hours
     </h3>
@@ -253,14 +271,16 @@ const ContactUs = () => {
               rows="4"
               className="form-control"
               placeholder="Tell us about your project or idea"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               required
             ></textarea>
           </div>
         </div>
       </div>
       <div className="col-lg-12 col-md-12">
-        <button type="submit" className="btn-custom">
-          Get In Touch
+        <button type="submit" className="btn-custom" disabled={isSubmitting}>
+          {isSubmitting ? 'Sending...' : 'Get In Touch'}
         </button>
       </div>
     </div>
