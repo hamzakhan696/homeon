@@ -3,7 +3,7 @@ import axios from 'axios';
 import { showToast } from '../../toast';
 
 // API Base URL from environment variable
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.10.30:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 const USE_MULTIPART_UPLOAD = (process.env.REACT_APP_UPLOAD_MODE || 'json').toLowerCase() === 'multipart';
 console.log('Environment API URL:', process.env.REACT_APP_API_URL);
@@ -11,6 +11,7 @@ console.log('Using API URL:', API_BASE_URL);
 
 const ProjectsTab = () => {
   // State for projects form tabs
+  
   const [activePropertyTab, setActivePropertyTab] = useState('home');
   const [activeSubtype, setActiveSubtype] = useState('house');
   const [selectedBedrooms, setSelectedBedrooms] = useState('Studio');
@@ -931,7 +932,7 @@ const ProjectsTab = () => {
                     <input
                       type="number"
                       name="areaSize"
-                      className="form-control projects-input-custom w-75"
+                      className="form-control projects-input-custom w-md-75 w-50"
                       placeholder="Enter Unit"
                       value={formData.areaSize}
                       onChange={handleInputChange}
@@ -972,7 +973,7 @@ const ProjectsTab = () => {
                     <input
                       type="number"
                       name="price"
-                      className="form-control projects-input-custom w-75"
+                      className="form-control projects-input-custom w-md-75 w-50"
                       placeholder="Enter Price"
                       value={formData.price}
                       onChange={handleInputChange}
@@ -1006,32 +1007,125 @@ const ProjectsTab = () => {
                       </div>
                   </div>
                 </div>
-
-              <div className="form-group">
-                <div className="d-flex gap-3">
-                  <div>
-                    <div className="project-custom-svg">
-                      <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none"><path d="M7.78 13.31a2.686 2.686 0 0 0 2.531 2.814 2.686 2.686 0 0 0 2.531-2.813 2.686 2.686 0 0 0-2.531-2.812A2.686 2.686 0 0 0 7.78 13.31Zm3.938 0A1.568 1.568 0 0 1 10.312 15a1.568 1.568 0 0 1-1.406-1.688 1.568 1.568 0 0 1 1.406-1.687 1.568 1.568 0 0 1 1.406 1.687Zm9.281-.983a2.672 2.672 0 0 0-2.531-2.665v-.851a.563.563 0 0 0-.562-.562H16.5V6.562A.563.563 0 0 0 15.937 6H3.562A.563.563 0 0 0 3 6.563v.563a.562.562 0 1 0 1.124 0h11.25v1.126H3.562A.563.563 0 0 0 3 8.815v9a.563.563 0 0 0 .562.563h10.687a.562.562 0 1 0 .001-1.125H6.887a3.378 3.378 0 0 0-2.762-2.761V12.14a3.377 3.377 0 0 0 2.762-2.762h7.7c.045.271.122.536.231.788a.56.56 0 0 0 .739.294.563.563 0 0 0 .295-.74v-.004a2.258 2.258 0 0 1-.112-.338h1.613v.472a2.666 2.666 0 0 0-1.467 3.539 2.676 2.676 0 1 0 3.778 1.259 2.67 2.67 0 0 0 1.335-2.321ZM5.738 17.249H4.124v-1.613a2.254 2.254 0 0 1 1.614 1.613Zm-1.614-6.261V9.374h1.614a2.254 2.254 0 0 1-1.614 1.613Zm13.807 6.082c-.224.12-.475.181-.729.18a1.544 1.544 0 0 1-.662-2.942 2.658 2.658 0 0 0 2.029.679 1.54 1.54 0 0 1-.638 2.082Zm.4-3.2a1.547 1.547 0 1 1 1.43-.953 1.547 1.547 0 0 1-1.434.957l.004-.004Zm-3.516-.563a.562.562 0 1 1-.166-.394.562.562 0 0 1 .162.398l.004-.004Zm-7.875 0a.561.561 0 1 1-.165-.394.564.564 0 0 1 .162.398l.003-.004Z" fill="currentColor"></path></svg>
-                    </div>
+    <div className="form-group">
+      <div className="d-flex gap-3">
+        <div>
+          <div className="project-custom-svg">
+ <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none"><path d="M7.78 13.31a2.686 2.686 0 0 0 2.531 2.814 2.686 2.686 0 0 0 2.531-2.813 2.686 2.686 0 0 0-2.531-2.812A2.686 2.686 0 0 0 7.78 13.31Zm3.938 0A1.568 1.568 0 0 1 10.312 15a1.568 1.568 0 0 1-1.406-1.688 1.568 1.568 0 0 1 1.406-1.687 1.568 1.568 0 0 1 1.406 1.687Zm9.281-.983a2.672 2.672 0 0 0-2.531-2.665v-.851a.563.563 0 0 0-.562-.562H16.5V6.562A.563.563 0 0 0 15.937 6H3.562A.563.563 0 0 0 3 6.563v.563a.562.562 0 1 0 1.124 0h11.25v1.126H3.562A.563.563 0 0 0 3 8.815v9a.563.563 0 0 0 .562.563h10.687a.562.562 0 1 0 .001-1.125H6.887a3.378 3.378 0 0 0-2.762-2.761V12.14a3.377 3.377 0 0 0 2.762-2.762h7.7c.045.271.122.536.231.788a.56.56 0 0 0 .739.294.563.563 0 0 0 .295-.74v-.004a2.258 2.258 0 0 1-.112-.338h1.613v.472a2.666 2.666 0 0 0-1.467 3.539 2.676 2.676 0 1 0 3.778 1.259 2.67 2.67 0 0 0 1.335-2.321ZM5.738 17.249H4.124v-1.613a2.254 2.254 0 0 1 1.614 1.613Zm-1.614-6.261V9.374h1.614a2.254 2.254 0 0 1-1.614 1.613Zm13.807 6.082c-.224.12-.475.181-.729.18a1.544 1.544 0 0 1-.662-2.942 2.658 2.658 0 0 0 2.029.679 1.54 1.54 0 0 1-.638 2.082Zm.4-3.2a1.547 1.547 0 1 1 1.43-.953 1.547 1.547 0 0 1-1.434.957l.004-.004Zm-3.516-.563a.562.562 0 1 1-.166-.394.562.562 0 0 1 .162.398l.004-.004Zm-7.875 0a.561.561 0 1 1-.165-.394.564.564 0 0 1 .162.398l.003-.004Z" fill="currentColor"></path></svg>
+          </div>
+        </div>
+        <div className="w-100">
+          <label className="checkbox-label checkbox-label-projects1 d-flex justify-content-between align-items-center">
+            <input
+              type="checkbox"
+              name="availableOnInstallments"
+              checked={formData.availableOnInstallments}
+              onChange={handleInputChange}
+            />
+            <span className="checkmark"></span>
+            <div>
+              <p className="custom-p">Installment available</p>
+              <span className="custom-span">Enable if listing is available on installments</span>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+        {formData.availableOnInstallments && (
+          <div className="advance-inputs mt-3">
+                <div className="form-group">
+      <div className="d-flex gap-3">
+        <div>
+          <div className="project-custom-svg">
+ <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none"><path d="m10.552 21.462-7-6.928a1.856 1.856 0 0 1 0-2.643l.63-.624 1.166 1.16-.793.784 7.332 7.262 6.919-6.845.559-7.822-4.336.31-1.545-1.53 5.493-.39a1.896 1.896 0 0 1 1.56.638c.328.374.493.862.459 1.357l-.547 7.464a1.83 1.83 0 0 1-.547 1.188l-6.674 6.611a1.886 1.886 0 0 1-1.337.546 1.886 1.886 0 0 1-1.339-.538Zm-1.065-7.803L5.019 9.231a.42.42 0 0 1-.093-.458.42.42 0 0 1 .093-.136l.881-.872a.43.43 0 0 1 .606 0l2.358 2.333V3.424A.434.434 0 0 1 9.29 3h1.244a.434.434 0 0 1 .426.424v6.57l2.065-2.044a.43.43 0 0 1 .606 0l.882.872a.425.425 0 0 1 0 .601l-4.282 4.234a.505.505 0 0 1-.368.153.532.532 0 0 1-.379-.155l.003.004Z" fill="currentColor"></path></svg>
+          </div>
+        </div>
+            <div className="w-100">
+                       <label>Advance Amount</label>
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      name="advanceamount"
+                      className="form-control projects-input-custom w-75"
+                      placeholder="Enter Price"
+                      min="0"
+                      step="1"
+                      required
+                    />
+                    <select
+                      name="currency"
+                      className="form-control projects-input-custom disabled-color"
+                      value="Pkr"
+  disabled={true} 
+                    >
+                      <option>PKR</option>
+                      <option>USD</option>
+                      <option>EUR</option>
+                    </select>
+                     <i className="fas fa-chevron-down position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
                   </div>
-                  <div className="w-100">
-                                    <label className="checkbox-label d-flex justify-content-between">
-                  <input
-                    type="checkbox"
-                    name="availableOnInstallments"
-                    checked={formData.availableOnInstallments}
-                    onChange={handleInputChange}
-                  />
-                  <div>
-                                      <p className="custom-p">Installment available</p>
-                  <span className="custom-span">Enable if listing is available on installments</span>
+            </div>
+        </div>
+        </div>
+                        <div className="form-group">
+      <div className="d-flex gap-3">
+        <div>
+          <div className="project-custom-svg">
+ <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1.2em" width="1.2em" xmlns="http://www.w3.org/2000/svg"><path d="M17 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9V3H15V1H17V3ZM4 9V19H20V9H4ZM6 11H8V13H6V11ZM11 11H13V13H11V11ZM16 11H18V13H16V11Z"></path></svg>
+          </div>
+        </div>
+            <div className="w-100">
+                       <label>No of Installments</label>
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      name="advanceamount"
+                      className="form-control projects-input-custom w-75"
+                      placeholder="Enter Price"
+                      min="0"
+                      step="1"
+                      required
+                    />
                   </div>
-                  <span className="checkmark"></span>
-                </label>
+            </div>
+        </div>
+        </div>
+                        <div className="form-group">
+      <div className="d-flex gap-3">
+        <div>
+          <div className="project-custom-svg">
+ <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none"><path d="M5.752 20.99a2.554 2.554 0 0 1-1.864-.644A2.683 2.683 0 0 1 3 18.548V8.358c.055-.695.375-1.34.89-1.796a2.552 2.552 0 0 1 1.862-.641h3.856v1.968H5.752c-.497 0-.826.282-.826.469v3.461h2.2c-.007.008-.027.017-.033.028l-.807.823a1.211 1.211 0 0 0-.337.84.956.956 0 0 0 .054.277H4.927v4.766c0 .191.329.469.826.469h12.5c.498 0 .828-.278.828-.47v-4.76h-.996a1.205 1.205 0 0 0-.322-.938l-.8-.822a1.13 1.13 0 0 0-.296-.208h2.415V8.363c0-.188-.33-.47-.827-.47H14.8V5.927h3.455a2.544 2.544 0 0 1 1.86.64c.513.457.831 1.102.885 1.797v10.19a2.678 2.678 0 0 1-.884 1.798 2.546 2.546 0 0 1-1.861.643L5.752 20.99Zm5.994-2.996-4.093-4.2a.403.403 0 0 1-.116-.284.402.402 0 0 1 .116-.287l.807-.827a.388.388 0 0 1 .552 0l2.165 2.213V3.393a.397.397 0 0 1 .241-.364.378.378 0 0 1 .15-.028h1.137a.378.378 0 0 1 .275.113.393.393 0 0 1 .115.28V14.52l1.897-1.945a.38.38 0 0 1 .552 0l.807.828a.4.4 0 0 1 .086.435.4.4 0 0 1-.086.13l-3.922 4.021a.457.457 0 0 1-.679 0l-.004.005Z" fill="currentColor"></path></svg>
+          </div>
+        </div>
+            <div className="w-100">
+                       <label>Monthly Installments</label>
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      name="monthlyinstalments"
+                      className="form-control projects-input-custom w-75"
+                      placeholder="Enter Price"
+                      min="0"
+                      step="1"
+                      required
+                    />
+                    <select
+                      name="currency"
+                      className="form-control projects-input-custom disabled-color"
+                      value="Pkr"
+  disabled={true} 
+                    >
+                      <option>PKR</option>
+                      <option>USD</option>
+                      <option>EUR</option>
+                    </select>
+                     <i className="fas fa-chevron-down position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
                   </div>
-                </div>
-              </div>
-
+            </div>
+        </div>
+        </div>
+          </div>
+        )}
               <div className="form-group">
                            <div className="d-flex gap-3">
                   <div>
@@ -1040,18 +1134,18 @@ const ProjectsTab = () => {
                     </div>
                   </div>
                   <div className="w-100">
-                                    <label className="checkbox-label d-flex justify-content-between">
+                                    <label className="checkbox-label checkbox-label-projects1 d-flex justify-content-between">
                   <input
                     type="checkbox"
                     name="readyForPossession"
                     checked={formData.readyForPossession}
                     onChange={handleInputChange}
                   />
+                                    <span className="checkmark"></span>
     <div>
                                       <p className="custom-p">Ready for Possession</p>
                   <span className="custom-span">Enable if listing is ready for possession</span>
                   </div>
-                  <span className="checkmark"></span>
                 </label>
                   </div>
                   </div>
@@ -1123,7 +1217,7 @@ const ProjectsTab = () => {
                       <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1.2em" width="1.2em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M12 3 1 11.4l1.21 1.59L4 11.62V21h16v-9.38l1.79 1.36L23 11.4 12 3zm6 16H6v-8.9l6-4.58 6 4.58V19zm-9-5c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1zm3-1c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm3 1c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1z"></path></svg>
                     </div>
                   </div>
-                    <div className="d-flex justify-content-between w-100">
+                    <div className="d-flex justify-content-between w-100 features-amenities">
                       <div>
                           <p className="custom-p">Feature and Amenities</p>
  <span className="custom-span">Add additional features e.g. parking spaces, waste disposal, internet etc.</span>
@@ -1174,7 +1268,7 @@ const ProjectsTab = () => {
     <div className="w-100">
                         <label className="custom-project-label">Upload Images of your Property</label>
        <div className="upload-area mt-2">
-                  <div className="d-flex align-items-center justify-content-between">
+                  <div className="d-flex align-items-center justify-content-between upload-area-custom-direction ">
                   <div>
                    <svg
   width="51"

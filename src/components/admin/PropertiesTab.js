@@ -2,24 +2,24 @@ import React from 'react';
 
 const PropertiesTab = () => {
   return (
-    <div className="properties-section">
+    <div>
       <h2>Properties Management</h2>
       <p>Properties management interface will be implemented here.</p>
       
       {/* Add your properties management content here */}
-      <div className="properties-content">
+      <div className="properties-content properties-section">
         <div className="properties-header">
-          <h3>All Properties</h3>
-          <button className="btn btn-primary">
+          <h4>All Properties</h4>
+          {/* <button className="btn btn-primary">
             <i className="fas fa-plus"></i>
             Add New Property
-          </button>
+          </button> */}
         </div>
         
         <div className="properties-filters">
-          <div className="filter-group">
+          <div className="filter-group mb-2">
             <label>Filter by Type:</label>
-            <select className="form-control">
+            <select className="form-control projects-input-custom mt-2">
               <option>All Types</option>
               <option>House</option>
               <option>Flat</option>
@@ -28,9 +28,9 @@ const PropertiesTab = () => {
             </select>
           </div>
           
-          <div className="filter-group">
+          <div className="filter-group mb-2">
             <label>Filter by Status:</label>
-            <select className="form-control">
+            <select className="form-control projects-input-custom mt-2">
               <option>All Status</option>
               <option>Active</option>
               <option>Inactive</option>
@@ -41,19 +41,16 @@ const PropertiesTab = () => {
           
           <div className="filter-group">
             <label>Search:</label>
-            <input type="text" className="form-control" placeholder="Search properties..." />
+            <input type="text" className="form-control projects-input-custom" placeholder="Search properties..." />
           </div>
         </div>
         
-        <div className="properties-table">
+        <div className="properties-table mt-3">
           <table className="table">
             <thead>
               <tr>
                 <th>Property</th>
                 <th>Type</th>
-                <th>Location</th>
-                <th>Price</th>
-                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -61,9 +58,6 @@ const PropertiesTab = () => {
               <tr>
                 <td>Beautiful House in DHA</td>
                 <td>House</td>
-                <td>Lahore, DHA Phase 5</td>
-                <td>PKR 25,000,000</td>
-                <td><span className="badge badge-success">Active</span></td>
                 <td>
                   <button className="btn btn-sm btn-outline">Edit</button>
                   <button className="btn btn-sm btn-danger">Delete</button>
@@ -72,9 +66,6 @@ const PropertiesTab = () => {
               <tr>
                 <td>Modern Flat in Gulberg</td>
                 <td>Flat</td>
-                <td>Lahore, Gulberg III</td>
-                <td>PKR 8,500,000</td>
-                <td><span className="badge badge-warning">Pending</span></td>
                 <td>
                   <button className="btn btn-sm btn-outline">Edit</button>
                   <button className="btn btn-sm btn-danger">Delete</button>
