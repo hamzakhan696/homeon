@@ -3,7 +3,7 @@ import axios from 'axios';
 import { showToast } from '../../toast';
 
 // API Base URL from environment variable
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.10.30:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 const USE_MULTIPART_UPLOAD = (process.env.REACT_APP_UPLOAD_MODE || 'json').toLowerCase() === 'multipart';
 console.log('Environment API URL:', process.env.REACT_APP_API_URL);
@@ -45,6 +45,9 @@ const ProjectsTab = () => {
     price: '',
     currency: 'PKR',
     availableOnInstallments: false,
+    advanceAmount: '',
+    numberOfInstallments: '',
+    monthlyInstallment: '',
     readyForPossession: false,
     email: '',
     mobile: '',
@@ -499,6 +502,9 @@ const ProjectsTab = () => {
       price: parseFloat(formData.price),
       currency: formData.currency,
       availableOnInstallments: Boolean(formData.availableOnInstallments),
+      advanceAmount: formData.availableOnInstallments && formData.advanceAmount ? parseFloat(formData.advanceAmount) : null,
+      numberOfInstallments: formData.availableOnInstallments && formData.numberOfInstallments ? parseInt(formData.numberOfInstallments) : null,
+      monthlyInstallment: formData.availableOnInstallments && formData.monthlyInstallment ? parseFloat(formData.monthlyInstallment) : null,
       readyForPossession: Boolean(formData.readyForPossession),
       bedrooms: String(selectedBedrooms),
       bathrooms: String(selectedBathrooms),
@@ -553,6 +559,9 @@ const ProjectsTab = () => {
           price: '',
           currency: 'PKR',
           availableOnInstallments: false,
+          advanceAmount: '',
+          numberOfInstallments: '',
+          monthlyInstallment: '',
           readyForPossession: false,
           email: '',
           mobile: '',
@@ -602,6 +611,9 @@ const ProjectsTab = () => {
       price: String(project.price ?? ''),
       currency: project.currency || 'PKR',
       availableOnInstallments: Boolean(project.availableOnInstallments),
+      advanceAmount: String(project.advanceAmount ?? ''),
+      numberOfInstallments: String(project.numberOfInstallments ?? ''),
+      monthlyInstallment: String(project.monthlyInstallment ?? ''),
       readyForPossession: Boolean(project.readyForPossession),
       email: project.email || '',
       mobile: project.mobile || '',
@@ -1045,11 +1057,13 @@ const ProjectsTab = () => {
                   <div className="input-group">
                     <input
                       type="number"
-                      name="advanceamount"
+                      name="advanceAmount"
                       className="form-control projects-input-custom w-75"
-                      placeholder="Enter Price"
+                      placeholder="Enter Advance Amount"
                       min="0"
                       step="1"
+                      value={formData.advanceAmount}
+                      onChange={handleInputChange}
                       required
                     />
                     <select
@@ -1079,11 +1093,13 @@ const ProjectsTab = () => {
                   <div className="input-group">
                     <input
                       type="number"
-                      name="advanceamount"
+                      name="numberOfInstallments"
                       className="form-control projects-input-custom w-75"
-                      placeholder="Enter Price"
-                      min="0"
+                      placeholder="Enter Number of Installments"
+                      min="1"
                       step="1"
+                      value={formData.numberOfInstallments}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
@@ -1102,11 +1118,13 @@ const ProjectsTab = () => {
                   <div className="input-group">
                     <input
                       type="number"
-                      name="monthlyinstalments"
+                      name="monthlyInstallment"
                       className="form-control projects-input-custom w-75"
-                      placeholder="Enter Price"
+                      placeholder="Enter Monthly Installment"
                       min="0"
                       step="1"
+                      value={formData.monthlyInstallment}
+                      onChange={handleInputChange}
                       required
                     />
                     <select
@@ -1753,7 +1771,25 @@ const ProjectsTab = () => {
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{formatCurrency(p.currency, p.price)}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bedrooms || '-'}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bathrooms || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{p.availableOnInstallments ? 'Yes' : 'No'}</td>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>
+                        {p.availableOnInstallments ? (
+                          <div>
+                            <div>Yes</div>
+                            {p.advanceAmount && (
+                              <small style={{ color: '#666' }}>
+                                Advance: {formatCurrency(p.currency, p.advanceAmount)}
+                              </small>
+                            )}
+                            {p.monthlyInstallment && (
+                              <div>
+                                <small style={{ color: '#666' }}>
+                                  Monthly: {formatCurrency(p.currency, p.monthlyInstallment)}
+                                </small>
+                              </div>
+                            )}
+                          </div>
+                        ) : 'No'}
+                      </td>
                       <td style={{ padding: '12px' }}>
                         <span
                           className="badge"

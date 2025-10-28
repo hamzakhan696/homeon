@@ -88,6 +88,14 @@ export default function ProjectDetail() {
 								<strong>Location</strong><span>{p.city}, {p.location}</span>
 								<strong>Area</strong><span>{p.areaSize} {p.areaUnit}</span>
 								<strong>Price</strong><span>{p.currency} {Number(p.price).toLocaleString()}</span>
+								{p.availableOnInstallments && (
+									<>
+										<><strong>Installment Plan</strong><span>Available</span></>
+										{p.advanceAmount && <><strong>Advance Amount</strong><span>{p.currency} {Number(p.advanceAmount).toLocaleString()}</span></>}
+										{p.numberOfInstallments && <><strong>Installments</strong><span>{p.numberOfInstallments} months</span></>}
+										{p.monthlyInstallment && <><strong>Monthly Payment</strong><span>{p.currency} {Number(p.monthlyInstallment).toLocaleString()}</span></>}
+									</>
+								)}
 								<strong>Bedrooms</strong><span>{p.bedrooms || '-'}</span>
 								<strong>Bathrooms</strong><span>{p.bathrooms || '-'}</span>
 								<strong>Amenities</strong><span>{Array.isArray(p.amenities) ? p.amenities.join(', ') : '-'}</span>
@@ -161,7 +169,7 @@ export default function ProjectDetail() {
                                         if (form.nomineeCnicFront?.files?.[0]) fd.append('nomineeCnicFront', form.nomineeCnicFront.files[0]);
 										if (form.nomineeCnicBack?.files?.[0]) fd.append('nomineeCnicBack', form.nomineeCnicBack.files[0]);
                                         if (form.applicantPhoto?.files?.[0]) fd.append('applicantPhoto', form.applicantPhoto.files[0]);
-										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002'}/admin/bookings/create-with-cnic`, { method: 'POST', body: fd });
+										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.10.30:3002'}/admin/bookings/create-with-cnic`, { method: 'POST', body: fd });
 										// const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002'}/admin/bookings`, {
 										// 	method: 'POST',
 										// 	headers: { 'Content-Type': 'application/json' },
