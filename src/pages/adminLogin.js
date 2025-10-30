@@ -12,7 +12,7 @@ import axios from 'axios';
 
 const AdminLogin = () => {
   // API Configuration
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.10.30:3002';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.139:3002';
   console.log('Environment API URL:', process.env.REACT_APP_API_URL);
   console.log('Using API URL:', API_BASE_URL);
   

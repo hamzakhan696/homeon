@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 // API Base URL (adjust as per your environment)
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.10.30:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.139:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 
 const BlogTab = () => {
@@ -292,37 +292,60 @@ const [showCreateBlog, setShowCreateBlog] = useState(false);
   }
 };
 
-// ✅ Corrected: handleUpdateBlog
+// ✅ Corrected: handleUpdateBlog (supports media like projects)
 const handleUpdateBlog = async () => {
   if (!editBlog?.id) return alert('No blog selected');
 
   try {
     setLoading(true);
 
-    // ✅ Only include fields that backend accepts
-    const updatedData = {
-      title: editBlog.title,
-      description: editBlog.description,
-        descriptions: editBlog.descriptions,
-      category: editBlog.category,
-      category: editBlog.content,
-      status: editBlog.status,
-      slug: editBlog.slug,
-      metaTitle: editBlog.metaTitle,
-      metaDescription: editBlog.metaDescription,
-      allowComments: editBlog.allowComments,
-      featureOnHomepage: editBlog.featureOnHomepage,
-      tags: editBlog.tags,
-      publishDate: editBlog.publishDate,
-      content: editBlog.content,
-      // ❌ featuredImage removed (backend doesn’t accept it)
-    };
+    const hasNewFeatured = blogFeaturedImage && blogFeaturedImage.file;
+    const hasNewImages = Array.isArray(blogImages) && blogImages.some(i => i && i.file);
 
-    // 🟩 API call
-    const response = await axios.put(
-      `${API_BASE_URL}/admin/blogs/${editBlog.id}`,
-      updatedData
-    );
+    let response;
+    if (hasNewFeatured || hasNewImages) {
+      // Multipart update-with-media, backend merges new uploads with existing
+      const fd = new FormData();
+      const appendStr = (k, v) => v != null && v !== '' ? fd.append(k, String(v)) : null;
+      appendStr('title', editBlog.title);
+      appendStr('description', editBlog.description);
+      if (Array.isArray(editBlog.descriptions)) {
+        editBlog.descriptions.filter(d => String(d).trim()).forEach((desc, index) => fd.append(`descriptions[${index}]`, String(desc).trim()));
+      }
+      appendStr('category', editBlog.category);
+      appendStr('content', editBlog.content);
+      appendStr('status', editBlog.status);
+      appendStr('slug', editBlog.slug);
+      appendStr('metaTitle', editBlog.metaTitle);
+      appendStr('metaDescription', editBlog.metaDescription);
+      appendStr('allowComments', editBlog.allowComments ? 'true' : 'false');
+      appendStr('featureOnHomepage', editBlog.featureOnHomepage ? 'true' : 'false');
+      appendStr('tags', editBlog.tags);
+      appendStr('publishDate', editBlog.publishDate);
+
+      if (hasNewFeatured) fd.append('files', blogFeaturedImage.file);
+      (blogImages || []).forEach(img => { if (img?.file) fd.append('files', img.file); });
+
+      response = await axios.put(`${API_BASE_URL}/admin/blogs/${editBlog.id}/update-with-media`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+    } else {
+      // JSON update
+      const updatedData = {
+        title: editBlog.title,
+        description: editBlog.description,
+        descriptions: editBlog.descriptions,
+        category: editBlog.category,
+        content: editBlog.content,
+        status: editBlog.status,
+        slug: editBlog.slug,
+        metaTitle: editBlog.metaTitle,
+        metaDescription: editBlog.metaDescription,
+        allowComments: editBlog.allowComments,
+        featureOnHomepage: editBlog.featureOnHomepage,
+        tags: editBlog.tags,
+        publishDate: editBlog.publishDate,
+      };
+      response = await axios.put(`${API_BASE_URL}/admin/blogs/${editBlog.id}`, updatedData);
+    }
 
     alert('✅ Blog updated successfully!');
     console.log("Update response:", response.data);
@@ -884,6 +907,25 @@ const handleUpdateBlog = async () => {
           border: "1px solid #ddd",
         }}
       />
+      <div>
+        <input
+          ref={blogFeaturedImageInputRef}
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          className="d-none"
+          onChange={handleBlogFeaturedImageUpload}
+        />
+        <button
+          type="button"
+          className="btn btn-outline-primary btn-sm"
+          onClick={() => blogFeaturedImageInputRef.current && blogFeaturedImageInputRef.current.click()}
+        >
+          <i className="fas fa-upload me-2"></i> Change Featured Image
+        </button>
+        {blogFeaturedImage?.url && (
+          <div className="mt-2 small text-muted">New selected: {blogFeaturedImage.name}</div>
+        )}
+      </div>
     </div>
   </div>
 )}
@@ -907,6 +949,35 @@ const handleUpdateBlog = async () => {
                 }}
               />
             ))}
+          </div>
+          <div className="mt-3">
+            <input
+              ref={blogImageInputRef}
+              type="file"
+              accept="image/jpeg,image/jpg,image/png"
+              multiple
+              className="d-none"
+              onChange={handleBlogImagesUpload}
+            />
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm"
+              onClick={() => blogImageInputRef.current && blogImageInputRef.current.click()}
+            >
+              <i className="fas fa-images me-2"></i> Replace Gallery Images
+            </button>
+            {Array.isArray(blogImages) && blogImages.length > 0 && (
+              <div className="d-flex flex-wrap gap-2 mt-2">
+                {blogImages.map(img => (
+                  <div key={img.id} className="position-relative">
+                    <img src={img.url} alt="new" style={{ width: 90, height: 60, objectFit: 'cover', borderRadius: 6, border: '1px solid #ddd' }} />
+                    <button type="button" className="btn btn-sm btn-danger position-absolute top-0 end-0" onClick={() => removeBlogImage(img.id)}>
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
