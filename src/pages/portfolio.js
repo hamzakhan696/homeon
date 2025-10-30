@@ -42,6 +42,7 @@ const Portfolio = () => {
           const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
             city: filters.city || undefined,
             location: filters.location || undefined,
+            purpose: filters.purpose || undefined,
             propertyType: filters.propertyType || undefined,
             bedrooms: filters.bedrooms || undefined,
             minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,

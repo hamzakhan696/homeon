@@ -17,6 +17,7 @@ const HomePage = () => {
   const [city, setCity] = useState('Lahore');
   const [location, setLocation] = useState('');
   const [propertyType, setPropertyType] = useState('');
+  const [purpose, setPurpose] = useState('');
   const [beds, setBeds] = useState('All');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -110,8 +111,20 @@ const HomePage = () => {
 												</div>
 											</div>
 											
-											{/* Second Row - Property Type and Beds */}
+                                            {/* Second Row - Purpose and Property Type */}
 											<div className="zameen-filter-row">
+                                                <div className="zameen-filter-field">
+                                                    <label className="zameen-field-label">Purpose</label>
+                                                    <select 
+                                                        className="zameen-select" 
+                                                        value={purpose} 
+                                                        onChange={(e)=>setPurpose(e.target.value)}
+                                                    >
+                                                        <option value="">All</option>
+                                                        <option value="sell">Sell</option>
+                                                        <option value="rent">Rent</option>
+                                                    </select>
+                                                </div>
 												<div className="zameen-filter-field">
 													<label className="zameen-field-label">Property Type</label>
 													<select 
@@ -122,7 +135,7 @@ const HomePage = () => {
 														<option value="">All Types</option>
 														<option value="home">Homes</option>
 														<option value="plots">Plots</option>
-														<option value="commercial">Commercial</option>
+                                                        <option value="commercial">Commercial</option>
 													</select>
 												</div>
 												<div className="zameen-filter-field">
@@ -205,6 +218,7 @@ const HomePage = () => {
 														const payload = {
 															city: city || undefined,
 															location: location || undefined,
+                                                                purpose: purpose || undefined,
 															propertyType: propertyType || undefined,
 															bedrooms: beds !== 'All' ? beds : undefined,
 															minPrice: minPrice ? Number(minPrice) : undefined,
@@ -225,9 +239,10 @@ const HomePage = () => {
 															const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
 															const data = await res.json();
 															if (Array.isArray(data) && data.length > 0) {
-																const query = new URLSearchParams({
+                                                                const query = new URLSearchParams({
 																	city: city || '',
 																	location: location || '',
+                                                                    purpose: purpose || '',
 																	propertyType: propertyType || '',
 																	bedrooms: beds || '',
 															minPrice: String(minPrice || ''),
@@ -252,9 +267,10 @@ const HomePage = () => {
 											<div className="zameen-filter-options">
 												<button 
 													className="zameen-option-btn" 
-													onClick={() => {
+                                                    onClick={() => {
 														setCity('Lahore');
 														setLocation('');
+                                                        setPurpose('');
 														setPropertyType('');
 														setBeds('All');
 														setMinPrice('');
