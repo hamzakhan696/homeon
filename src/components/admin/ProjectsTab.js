@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { showToast } from '../../toast';
+import { API_BASE_URL } from '../../api';
 
-// API Base URL from environment variable
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.139:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 const USE_MULTIPART_UPLOAD = (process.env.REACT_APP_UPLOAD_MODE || 'json').toLowerCase() === 'multipart';
-console.log('Environment API URL:', process.env.REACT_APP_API_URL);
-console.log('Using API URL:', API_BASE_URL);
 
 const ProjectsTab = () => {
   // State for projects form tabs

@@ -8,6 +8,7 @@ import 'toastr/build/toastr.min.css';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { isValidPhoneNumber } from 'libphonenumber-js';
+import { API_BASE_URL } from '../api';
 
 const ScheduleMeeting = () => {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ const ScheduleMeeting = () => {
         message: message || null,
       };
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.139:3002'}/admin/meetings`, {
+      const response = await fetch(`${API_BASE_URL}/admin/meetings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

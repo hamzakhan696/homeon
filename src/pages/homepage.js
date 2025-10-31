@@ -10,6 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { showToast } from '../toast';
+import { API_BASE_URL } from '../api';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -234,9 +235,8 @@ const HomePage = () => {
 															}
 														});
 														
-														const base = process.env.REACT_APP_API_URL || 'http://192.168.1.139:3002';
 														try {
-															const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+															const res = await fetch(`${API_BASE_URL}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
 															const data = await res.json();
 															if (Array.isArray(data) && data.length > 0) {
                                                                 const query = new URLSearchParams({

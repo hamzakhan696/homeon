@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, NavLink } from 'react-router-dom';
-import { apiGet, apiJson, apiDelete } from '../api';
+import { apiGet, apiJson, apiDelete, API_BASE_URL } from '../api';
 import { resolveMediaUrl } from '../media';
 import { showToast } from '../toast';
 import NavBar from '../layout/header';
@@ -169,7 +169,7 @@ export default function ProjectDetail() {
                                         if (form.nomineeCnicFront?.files?.[0]) fd.append('nomineeCnicFront', form.nomineeCnicFront.files[0]);
 										if (form.nomineeCnicBack?.files?.[0]) fd.append('nomineeCnicBack', form.nomineeCnicBack.files[0]);
                                         if (form.applicantPhoto?.files?.[0]) fd.append('applicantPhoto', form.applicantPhoto.files[0]);
-										const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.139:3002'}/admin/bookings/create-with-cnic`, { method: 'POST', body: fd });
+										const response = await fetch(`${API_BASE_URL}/admin/bookings/create-with-cnic`, { method: 'POST', body: fd });
 										// const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.194:3002'}/admin/bookings`, {
 										// 	method: 'POST',
 										// 	headers: { 'Content-Type': 'application/json' },

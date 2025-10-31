@@ -8,13 +8,11 @@ import { NavLink} from 'react-router-dom';
 import 'font-awesome/css/font-awesome.min.css'; // Only if installed via npm
 import { faClock,faEnvelopeOpen,faPhoneVolume ,faMapMarkerAlt  } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 
 
 const AdminLogin = () => {
-  // API Configuration
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.139:3002';
-  console.log('Environment API URL:', process.env.REACT_APP_API_URL);
-  console.log('Using API URL:', API_BASE_URL);
+  // API Configuration - using centralized API_BASE_URL from api.js
   
   const [formData, setFormData] = useState({
     email: '',

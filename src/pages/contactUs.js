@@ -9,6 +9,7 @@ import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api';
 const ContactUs = () => {
     const navigate = useNavigate();
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -62,7 +63,7 @@ const ContactUs = () => {
         message: message || null,
       };
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.1.139:3002'}/admin/contact`, {
+      const response = await fetch(`${API_BASE_URL}/admin/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

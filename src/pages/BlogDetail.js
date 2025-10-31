@@ -4,7 +4,7 @@ import axios from 'axios';
 import NavBar from '../layout/header';
 import Footer from '../layout/footer';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.139:3002';
+import { API_BASE_URL } from '../api';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 
 const BlogDetail = () => {
