@@ -1876,3 +1876,43 @@ font-size: 14px;
     padding: 0px 5px;
 }
 }
+.blogs-section table thead{
+  font-size: 12px;
+}
+.blogs-section table tbody{
+  font-size: 10px;
+}
+.projects-table-container table thead{
+  font-size: 12px;
+}
+.projects-table-container table tbody{
+  font-size: 12px;
+}
+.btn-projects1 i,.btn-projects2 i ,.btn-projects3 i  {
+    font-size: 12px !important;
+}
+.purpose-toggle {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.purpose-option {
+  cursor: pointer;
+  padding: 10px 20px;
+  border: 2px solid #c8c8c8;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: 0.3s;
+  user-select: none;
+}
+
+.purpose-option input {
+  display: none;
+}
+
+.purpose-option.active {
+  background: #0aad0a;
+  color: #fff;
+  border-color: #0aad0a;
+}

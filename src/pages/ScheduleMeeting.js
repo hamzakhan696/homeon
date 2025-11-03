@@ -62,7 +62,7 @@ const ScheduleMeeting = () => {
         message: message || null,
       };
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.10.30:3002'}/admin/meetings`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002'}/admin/meetings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -220,7 +220,7 @@ const HomePage = () => {
 															}
 														});
 														
-														const base = process.env.REACT_APP_API_URL || 'http://192.168.10.30:3002';
+														const base = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
 														try {
 															const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
 															const data = await res.json();

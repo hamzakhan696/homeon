@@ -3,7 +3,7 @@ import axios from 'axios';
 import { showToast } from '../../toast';
 
 // API Base URL from environment variable
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.10.30:3002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 const USE_MULTIPART_UPLOAD = (process.env.REACT_APP_UPLOAD_MODE || 'json').toLowerCase() === 'multipart';
 console.log('Environment API URL:', process.env.REACT_APP_API_URL);
@@ -1714,14 +1714,14 @@ const ProjectsTab = () => {
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Title</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Purpose</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Type</th>
-                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Subtype</th>
+                    {/* <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Subtype</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>City</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Location</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Area</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Price</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Bedrooms</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Bathrooms</th>
-                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Installments</th>
+                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Installments</th> */}
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Status</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Created</th>
                     <th style={{ padding: '12px' }}>Actions</th>
@@ -1764,14 +1764,14 @@ const ProjectsTab = () => {
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.title}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.purpose}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.propertyType}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{p.propertySubtype}</td>
+                      {/* <td style={{ padding: '12px', color: '#2c3e50' }}>{p.propertySubtype}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.city}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.location}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.areaSize} {p.areaUnit}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{formatCurrency(p.currency, p.price)}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bedrooms || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bathrooms || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bathrooms || '-'}</td> */}
+                      {/* <td style={{ padding: '12px', color: '#2c3e50' }}>
                         {p.availableOnInstallments ? (
                           <div>
                             <div>Yes</div>
@@ -1789,7 +1789,7 @@ const ProjectsTab = () => {
                             )}
                           </div>
                         ) : 'No'}
-                      </td>
+                      </td> */}
                       <td style={{ padding: '12px' }}>
                         <span
                           className="badge"
@@ -1810,7 +1810,7 @@ const ProjectsTab = () => {
                         {(!p.status || p.status === 'pending') && (
                           <button
                             type="button"
-                            className="btn btn-sm btn-success"
+                            className="btn btn-sm btn-success btn-projects3"
                             onClick={() => handleApproveProject(p.id)}
                             title="Approve project"
                             style={{ marginRight: 8 }}
@@ -1820,14 +1820,14 @@ const ProjectsTab = () => {
                         )}
                         <button
                           type="button"
-                          className="btn btn-sm btn-primary"
+                          className="btn btn-sm btn-primary btn-projects2"
                           onClick={() => handleEditProject(p)}
                           title="Edit project"
                           style={{ marginRight: 8 }}
                         >
                           <i className="fas fa-edit"></i>
                         </button>
-                        <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteProject(p.id)} title="Delete project">
+                        <button type="button" className="btn btn-sm btn-danger btn-projects1" onClick={() => handleDeleteProject(p.id)} title="Delete project">
                           <i className="fas fa-trash"></i>
                         </button>
                       </td>
