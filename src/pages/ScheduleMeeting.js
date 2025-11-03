@@ -63,11 +63,11 @@ const ScheduleMeeting = () => {
         message: message || null,
       };
 
-<<<<<<< HEAD
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002'}/admin/meetings`, {
-=======
+// <<<<<<< HEAD
+//       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002'}/admin/meetings`, {
+// =======
       const response = await fetch(`${API_BASE_URL}/admin/meetings`, {
->>>>>>> 054d92feccfd68bb1281841aa7ec51190946e34c
+// >>>>>>> 054d92feccfd68bb1281841aa7ec51190946e34c
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

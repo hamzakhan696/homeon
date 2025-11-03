@@ -38,12 +38,8 @@ const Portfolio = () => {
         const filters = Object.fromEntries(params.entries());
         const hasFilters = Array.from(params.keys()).length > 0 && Object.values(filters).some(v => v);
         if (hasFilters) {
-<<<<<<< HEAD
-          const base = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
-          const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
-=======
+
           const res = await fetch(`${API_BASE_URL}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
->>>>>>> 054d92feccfd68bb1281841aa7ec51190946e34c
             city: filters.city || undefined,
             location: filters.location || undefined,
             purpose: filters.purpose || undefined,

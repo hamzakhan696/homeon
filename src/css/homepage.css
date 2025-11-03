@@ -1295,3 +1295,24 @@ line-height: 10px;
   .zameen-filter-container { padding: 14px; }
   .zameen-field-label { font-size: 10.5px; }
 }
+.custom-btn-search{
+  background-color: transparent !important;
+  color: black !important;
+  border: 2px solid grey !important;
+  padding: 5px 25px !important;
+}
+.zameen-filter-field .active{
+  background-color: #63b330 !important;
+    border: 2px solid #63b330 !important;
+    color: white !important;
+}
+.custom-btn-search-sub{
+  font-size: 12px !important;
+    padding: 5px 15px !important;
+    background-color: transparent !important;
+}
+.sub-property-buttons .active{
+    background-color: #63b330 !important;
+    border: 2px solid #63b330 !important;
+    color: white !important;
+}

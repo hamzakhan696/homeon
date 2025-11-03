@@ -1916,3 +1916,42 @@ font-size: 14px;
   color: #fff;
   border-color: #0aad0a;
 }
+.projects-input-custom1{
+  height: 35px !important;
+}
+.custom-padding-proect-section .PhoneInputInput{
+  font-size: 10px !important;
+}
+.edit-blog-section .form-control
+ {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s 
+ease;
+    background: #fff;
+}
+.booking-profile{
+ height: 150px !important;
+    width: 200px !important;
+}
+.cnic-photo-custom{
+  height: 150px !important;
+    width: 250px !important;
+}
+.btn-projects-custom{
+gap: 4px;
+}  
+@media (max-width:768px) {
+.btn-projects-custom{
+  padding: 4px !important;
+}
+.btn-projects2 i, .btn-projects3 i, .btn-projects1 i {
+    font-size: 9px !important;
+}  
+.btn-projects-custom .btn-custom-projects1,.btn-projects-custom .btn-custom-projects2,.btn-projects-custom .btn-custom-projects3 {
+      padding: 4px 7px !important;
+}
+}
