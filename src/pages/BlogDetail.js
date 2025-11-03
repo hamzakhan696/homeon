@@ -4,7 +4,11 @@ import axios from 'axios';
 import NavBar from '../layout/header';
 import Footer from '../layout/footer';
 
+<<<<<<< HEAD
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
+=======
+import { API_BASE_URL } from '../api';
+>>>>>>> 054d92feccfd68bb1281841aa7ec51190946e34c
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 
 const BlogDetail = () => {

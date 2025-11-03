@@ -3,7 +3,7 @@ import '../css/portfolio.css'
 import NavBar from '../layout/header';
 import Footer from '../layout/footer';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { apiGet } from '../api';
+import { apiGet, API_BASE_URL } from '../api';
 import { getProjectThumb } from '../media';
 import { showToast } from '../toast';
 import { useLocation } from 'react-router-dom';
@@ -38,10 +38,15 @@ const Portfolio = () => {
         const filters = Object.fromEntries(params.entries());
         const hasFilters = Array.from(params.keys()).length > 0 && Object.values(filters).some(v => v);
         if (hasFilters) {
+<<<<<<< HEAD
           const base = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
           const res = await fetch(`${base}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+=======
+          const res = await fetch(`${API_BASE_URL}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+>>>>>>> 054d92feccfd68bb1281841aa7ec51190946e34c
             city: filters.city || undefined,
             location: filters.location || undefined,
+            purpose: filters.purpose || undefined,
             propertyType: filters.propertyType || undefined,
             bedrooms: filters.bedrooms || undefined,
             minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,

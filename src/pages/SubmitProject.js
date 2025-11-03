@@ -3,7 +3,7 @@ import NavBar from '../layout/header';
 import Footer from '../layout/footer';
 import { showToast } from '../toast';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3002';
+import { API_BASE_URL as API_BASE } from '../api';
 
 export default function SubmitProject(){
   const imageInputRef = useRef(null);
