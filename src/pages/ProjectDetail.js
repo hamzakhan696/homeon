@@ -9,9 +9,65 @@ import '../css/projectDetail.css';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { isValidPhoneNumber } from 'libphonenumber-js';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 export default function ProjectDetail() {
 	const { id } = useParams();
 	const navigate = useNavigate();
+const sliderSettings = {
+  centerMode: true,
+  centerPadding: "200px", // ✅ Yeh adjust karega left/right half visibility
+  slidesToShow: 1,
+  infinite: true,
+  speed: 700,
+  autoplay: true,
+  autoplaySpeed: 2500,
+  dots: false,
+  responsive: [
+    {
+      breakpoint: 1200,
+      settings: {
+        centerMode: true,
+        centerPadding: "150px",
+        slidesToShow: 1,
+      },
+    },
+    {
+      breakpoint: 992,
+      settings: {
+        centerMode: true,
+        centerPadding: "100px",
+        slidesToShow: 1,
+      },
+    },
+    {
+      breakpoint: 768,
+      settings: {
+        centerMode: true,
+        centerPadding: "50px",
+        slidesToShow: 1,
+      },
+    },
+    {
+      breakpoint: 576,
+      settings: {
+        centerMode: false, // ✅ Mobile pr sirf 1 full slide
+        centerPadding: "0px",
+        slidesToShow: 1,
+      },
+    },
+  ],
+};
+const [selectedImage, setSelectedImage] = useState(null);
+
+const openModal = (img) => {
+  setSelectedImage(img);
+};
+
+const closeModal = () => {
+  setSelectedImage(null);
+};
 	const [p, setP] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [err, setErr] = useState('');
@@ -102,59 +158,197 @@ const [nomineePrimary, setNomineePrimary] = useState('');
 			</div>
 			{!showBookingForm && p && (
   <>
-			<div className='container mt-5 mb-5'>
+			<div className='container-fluid project-detail px-0 mt-5 mb-5'>
 				{loading && <p style={{ textAlign:'center' }}><i className="fas fa-spinner fa-spin"></i> Loading...</p>}
 				{!loading && err && <p className='text-danger' style={{ textAlign:'center' }}>{err}</p>}
 				{!loading && !err && p && (
 					<div className="row">
-						<div className="col-md-7">
-							{gallery.length > 0 ? (
-								<>
-									<img src={resolveMediaUrl(gallery[0])} alt={p.title} style={{ width:'100%', height:380, objectFit:'cover', borderRadius:8 }} />
+						<div className='col-12'>
+							<div>
+								<h3 className='title-project-details mb-3 mx-5'>Product Details</h3>
+<Slider {...sliderSettings} className="project-main-slider">
+  {p.projectImages && p.projectImages.length > 0 ? (
+    p.projectImages.map((img, index) => (
+      <div key={index} className="slider-image-container">
+        <img
+          src={img}
+          alt={`Project ${index}`}
+          className="slider-image"
+          onClick={() => openModal(img)}
+          style={{ cursor: "pointer" }}
+        />
+      </div>
+    ))
+  ) : (
+    <div className="slider-image-container">
+      <img
+        src="assets/image-coming-soon-placeholder.png"
+        alt="No Image"
+        className="slider-image"
+        onClick={() => openModal("assets/image-coming-soon-placeholder.png")}
+        style={{ cursor: "pointer" }}
+      />
+    </div>
+  )}
+</Slider>
 
-									<div className="row" style={{ marginTop: 10 }}>
-										{gallery.slice(1, 7).map((g, i) => (
-											<div key={i} className="col-4" style={{ marginBottom: 10 }}>
-												<img src={resolveMediaUrl(g)} alt={`img-${i}`} style={{ width:'100%', height:120, objectFit:'cover', borderRadius:6 }} />
-											</div>
-										))}
-									</div>
-								</>
-							) : (
-								<div className="placeholder" style={{ height:380, background:'#f2f2f2', borderRadius:8 }} />
-							)}
-						</div>
-						<div className="col-md-5">
-							<h2 style={{ marginTop: 0 }}>{p.title}</h2>
-							<p>{p.description}</p>
-							<div style={{ display:'grid', gridTemplateColumns:'120px 1fr', rowGap:8 }}>
-								<strong>Purpose</strong><span>{p.purpose}</span>
-								<strong>Type</strong><span>{p.propertyType} / {p.propertySubtype}</span>
-								<strong>Location</strong><span>{p.city}, {p.location}</span>
-								<strong>Area</strong><span>{p.areaSize} {p.areaUnit}</span>
-								<strong>Price</strong><span>{p.currency} {Number(p.price).toLocaleString()}</span>
-								{p.availableOnInstallments && (
-									<>
-										<><strong>Installment Plan</strong><span>Available</span></>
-										{p.advanceAmount && <><strong>Advance Amount</strong><span>{p.currency} {Number(p.advanceAmount).toLocaleString()}</span></>}
-										{p.numberOfInstallments && <><strong>Installments</strong><span>{p.numberOfInstallments} months</span></>}
-										{p.monthlyInstallment && <><strong>Monthly Payment</strong><span>{p.currency} {Number(p.monthlyInstallment).toLocaleString()}</span></>}
-									</>
-								)}
-								<strong>Bedrooms</strong><span>{p.bedrooms || '-'}</span>
-								<strong>Bathrooms</strong><span>{p.bathrooms || '-'}</span>
-								<strong>Amenities</strong><span>{Array.isArray(p.amenities) ? p.amenities.join(', ') : '-'}</span>
+{selectedImage && (
+  <div className="custom-modal">
+    <div className="modal-content">
+      <img src={selectedImage} className="modal-image" alt="Full View" />
+      <button className="close-btn-cstm" onClick={closeModal}>
+        &times;
+      </button>
+    </div>
+  </div>
+)}
+</div>
+
+<div className='container mt-3'>
+	<div className='row'>
+<div className='col-12 property-details-wrapper'>
+
+  {/* Top Badges */}
+  <div className='d-flex align-items-center gap-3 top-badges'>
+    <a className='feature-btn-projct-details premium-badge'>FEATURED</a>
+    <a className="purpose-btn-projct-details premium-purpose">FOR {p.purpose?.toUpperCase()}</a>
+    <span className='premium-date'>
+      <i className="far fa-calendar-alt me-2"></i>
+      {new Date(p.createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })}
+    </span>
+  </div>
+
+  {/* Title & Location */}
+  <h2 className='premium-title mt-3'>{p.title}</h2>
+  <p className='premium-location'>
+    <i className="fas fa-map-marker-alt me-2"></i>{p.location}
+  </p>
+
+  {/* Description */}
+  <div className='premium-section'>
+    <h3 className="premium-heading">Description</h3>
+    <p>{p.description}</p>
+  </div>
+
+  {/* Property Details */}
+  <div className='premium-section'>
+    <h3 className="premium-heading">Property Details</h3>
+    <div className='details-card glass-card'>
+      <div className='row'>
+        
+        <div className='col-6'>
+          <p><i class="fas fa-expand-arrows-alt me-2"></i>Area: <span>{parseInt(p.areaSize)} {p.areaUnit}</span></p>
+          <p><i class="fas fa-bed me-2"></i>Beds: <span>{p.bedrooms}</span></p>
+          <p><i class="fas fa-bath me-2"></i>Baths: <span>{p.bathrooms}</span></p>
+        </div>
+
+        <div className='col-6'>
+          <p><i class="fas fa-info-circle me-2"></i>Property Status: <span>{p.purpose}</span></p>
+          <p><i class="fas fa-hand-holding-usd me-2"></i>Price: <span>{p.currency} {Number(p.price).toLocaleString()}</span></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {/* Installments */}
+  {(p.availableOnInstallments || p.monthlyInstallment || p.numberOfInstallments || p.readyForPossession) && (
+    <div className="premium-section">
+      <h3 className="premium-heading">Installment Plan</h3>
+
+      <div className="glass-card installment-card">
+
+        <div className="installment-item">
+          <span>Available on Installments:</span>
+          <span className={p.availableOnInstallments ? "badge-yes" : "badge-no"}>
+            {p.availableOnInstallments ? "Yes" : "No"}
+          </span>
+        </div>
+
+        {p.monthlyInstallment && (
+          <div className="installment-item">
+            <span>Monthly Installment:</span>
+            <span className="installment-value">
+              {p.currency} {Number(p.monthlyInstallment).toLocaleString()}
+            </span>
+          </div>
+        )}
+
+        {p.numberOfInstallments && (
+          <div className="installment-item">
+            <span>No. of Installments:</span>
+            <span className="installment-value">{p.numberOfInstallments}</span>
+          </div>
+        )}
+
+        <div className="installment-item">
+          <span>Ready for Possession:</span>
+          <span className={p.readyForPossession ? "badge-yes" : "badge-no"}>
+            {p.readyForPossession ? "Yes" : "No"}
+          </span>
+        </div>
+
+      </div>
+    </div>
+  )}
+
+  {/* Amenities */}
+  {p.amenities?.length > 0 && (
+    <div className="premium-section">
+      <h3 className="premium-heading">Amenities</h3>
+      <ul className="amenities-list glass-card p-3">
+        {p.amenities.map((item, index) => (
+          <li key={index}><i class="fas fa-check me-2"></i>{item}</li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  {/* Videos */}
+  {p.projectVideos?.length > 0 && (
+    <div className="premium-section">
+      <h3 className="premium-heading">Project Videos</h3>
+      <div className="video-gallery">
+        {p.projectVideos.map((video, index) => (
+          <video key={index} width="300" height="200" controls className="video-card"></video>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {/* YouTube */}
+  {p.youtubeLinks?.length > 0 && (
+    <div className="premium-section">
+      <h3 className="premium-heading">YouTube Videos</h3>
+      <div className="video-gallery">
+        {p.youtubeLinks.map((url, index) => {
+          const embedUrl = url.replace("watch?v=", "embed/");
+          return (
+            <iframe
+              key={index}
+              width="300"
+              height="200"
+              src={embedUrl}
+              className="video-card"
+              allowFullScreen
+            ></iframe>
+          );
+        })}
+      </div>
+    </div>
+  )}
+
+</div>
+
+		</div>
+	</div>
+	</div>
 							</div>
-<button 
-  className="btn btn-success" 
-  onClick={() => setShowBookingForm(true)}
->
-  Book Now
-</button>
-
-
-						</div>
-					</div>
+					
 				)}
 			</div>
 	</>		)}
@@ -696,5 +890,3 @@ const [nomineePrimary, setNomineePrimary] = useState('');
 		</div>
 	);
 }
-
-

@@ -241,6 +241,7 @@ const ProjectsTab = () => {
       const res = await axios.get(`${API_BASE_URL}/admin/projects`, {
         headers: { Accept: 'application/json' },
       });
+      console.log("res",res)
       setProjects(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to load projects:', err);

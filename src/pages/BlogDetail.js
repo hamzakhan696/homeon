@@ -3,7 +3,7 @@ import { useParams, NavLink } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from '../layout/header';
 import Footer from '../layout/footer';
-
+import '../css/blog.css'
 // const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
 import { API_BASE_URL } from '../api';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
@@ -81,71 +81,109 @@ const BlogDetail = () => {
         {loading && <p className="text-center"><i className="fas fa-spinner fa-spin"></i> Loading...</p>}
         {error && <p className="text-center text-danger">{error}</p>}
         {!loading && !error && blog && (
-          <div className="row">
-            <div className="col-lg-8 col-12">
-              <h2 style={{ marginBottom: 12 }}>{blog.title}</h2>
-              {blog.publishDate && (
-                <p style={{ color: '#7f8c8d' }}>Published: {new Date(blog.publishDate).toLocaleDateString()}</p>
-              )}
-              {imageUrls[0] && (
-                <img src={imageUrls[0]} alt={blog.title} className="img-fluid" style={{ borderRadius: 8, marginBottom: 16 }} />
-              )}
-              
-              {/* Show all descriptions */}
-              {blog.descriptions && blog.descriptions.length > 0 ? (
-                <div style={{ marginBottom: 20 }}>
-                  {blog.descriptions.map((desc, index) => (
-                    <div key={index} style={{ 
-                      marginBottom: index < blog.descriptions.length - 1 ? 15 : 0,
-                      padding: 15,
-                      backgroundColor: '#f8f9fa',
-                      borderRadius: 8,
-                      borderLeft: '4px solid #63b330'
-                    }}>
-                      <p style={{ margin: 0, color: '#2c3e50', lineHeight: '1.6' }}>
-                        {desc}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : blog.description ? (
-                <div style={{ 
-                  marginBottom: 20,
-                  padding: 15,
-                  backgroundColor: '#f8f9fa',
-                  borderRadius: 8,
-                  borderLeft: '4px solid #63b330'
-                }}>
-                  <p style={{ margin: 0, color: '#2c3e50', lineHeight: '1.6' }}>
-                    {blog.description}
-                  </p>
-                </div>
-              ) : null}
-              
-              <div style={{ whiteSpace: 'pre-line', color: '#2c3e50' }}>{blog.content}</div>
-              {imageUrls.length > 1 && (
-                <>
-                  <h4 style={{ marginTop: 24 }}>Additional Images</h4>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
-                    {imageUrls.slice(1).map((url, idx) => (
-                      <img key={idx} src={url} alt={`img-${idx}`} style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="col-lg-4 col-12">
-              <div className="card" style={{ border: '1px solid #eee', borderRadius: 8 }}>
-                <div className="card-body">
-                  <h5 className="card-title">Details</h5>
-                  {blog.category && <p className="card-text"><b>Category:</b> {blog.category}</p>}
-                  {blog.tags && <p className="card-text"><b>Tags:</b> {blog.tags}</p>}
-                  {blog.metaTitle && <p className="card-text"><b>Meta Title:</b> {blog.metaTitle}</p>}
-                  {blog.metaDescription && <p className="card-text"><b>Meta Description:</b> {blog.metaDescription}</p>}
+
+<div className="container py-5 blog-detail-page">
+
+  <div className="row g-4">
+
+    {/* LEFT CONTENT */}
+    <div className="col-lg-8">
+
+      {/* Category + Date */}
+      <div className="d-flex align-items-center gap-3 mb-3">
+        {blog.category && (
+          <span className="badge bg-success text-uppercase px-3 py-2">
+            {blog.category}
+          </span>
+        )}
+        {blog.publishDate && (
+          <span className="text-muted small">
+            <i className="far fa-calendar-alt me-1"></i>
+            {new Date(blog.publishDate).toLocaleDateString("en-US", {
+              year: "numeric", month: "short", day: "numeric"
+            })}
+          </span>
+        )}
+      </div>
+
+      {/* Title */}
+      <h1 className="fw-bold mb-4 blog-title">{blog.title}</h1>
+
+      {/* Main Image */}
+      {imageUrls[0] && (
+        <img src={imageUrls[0]} className="img-fluid rounded mb-4 shadow-sm" alt={blog.title} />
+      )}
+
+      {/* Description Section */}
+      {blog.description && (
+        <p className="lead text-dark lh-lg mb-4">{blog.description}</p>
+      )}
+
+      {/* Multiple Descriptions */}
+      {blog.descriptions?.length > 0 && blog.descriptions.map((desc, i) => (
+        <div key={i} className="p-3 mb-3 rounded desc-box">
+          <p className="mb-0">{desc}</p>
+        </div>
+      ))}
+
+      {/* Blog Content */}
+      {blog.content && (
+        <div className="blog-content mb-4">{blog.content}</div>
+      )}
+
+      {/* Additional Images */}
+      {imageUrls.length > 1 && (
+        <>
+          <h3 className="fw-semibold mb-3">Property Gallery</h3>
+          <div className="row g-3">
+            {imageUrls.slice(1).map((url, idx) => (
+              <div className="col-md-6" key={idx}>
+                <div className="ratio ratio-16x9">
+                  <img src={url} className="rounded gallery-img" alt={`img-${idx}`} />
                 </div>
               </div>
-            </div>
+            ))}
           </div>
+        </>
+      )}
+
+    </div>
+
+    {/* RIGHT SIDEBAR */}
+    <div className="col-lg-4">
+      <div className="card border-0 shadow-sm p-4 info-card">
+
+        <h5 className="fw-bold mb-3">Blog Information</h5>
+
+        <ul className="list-unstyled mb-0">
+          {blog.tags && (
+            <li className="mb-2"><strong>Tags:</strong> {blog.tags}</li>
+          )}
+          {blog.slug && (
+            <li className="mb-2"><strong>Slug:</strong> {blog.slug}</li>
+          )}
+          {blog.metaTitle && (
+            <li className="mb-2"><strong>SEO Title:</strong> {blog.metaTitle}</li>
+          )}
+          {blog.metaDescription && (
+            <li className="mb-2"><strong>SEO Description:</strong> {blog.metaDescription}</li>
+          )}
+          {blog.createdAt && (
+            <li className="mb-2"><strong>Created:</strong> {new Date(blog.createdAt).toLocaleString()}</li>
+          )}
+          {blog.updatedAt && (
+            <li><strong>Updated:</strong> {new Date(blog.updatedAt).toLocaleString()}</li>
+          )}
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
         )}
       </div>
 

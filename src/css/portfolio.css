@@ -150,3 +150,134 @@
   position: absolute;
   top: 0px; 
 }
+.project-card {
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* subtle shadow */
+  transition: transform 0.3s, box-shadow 0.3s; /* smooth hover effect */
+}
+
+.project-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.project-image {
+  overflow: hidden; /* Ensures image doesn't overflow the card */
+  position: relative;
+}
+
+.project-image img {
+  height: 220px;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease; /* Smooth zoom */
+  cursor: pointer;
+}
+
+.project-image:hover img {
+  transform: scale(1.25); /* Slight zoom on hover */
+}
+.project-card .badge{
+  /* color: #63b330; */
+  font-size: 14px;
+  font-weight: 400;
+  padding: 5px;
+}
+.project-card .project-title{
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.project-card .location-mark{
+  font-size: 16px;
+   color: #63b330;
+}
+.project-card .text-inner{
+  font-size: 14px;
+}
+.project-card .project-price{
+font-size: 18px;
+ font-weight: 700;
+ color: #63b330;
+}
+.custom-border-project-cards{
+  border-top: 2px solid #e3e3e3;
+  
+}
+.custom-border-project-cards .installment-badge{
+  font-size: 12px;
+  background: '#f0f0f0' !important;
+}
+.text-inner i{
+      font-size: 14px !important;
+}
+
+.custom-select-wrapper {
+  position: relative !important;
+  display: inline-block !important;
+  width: 100% !important;
+}
+
+.custom-select {
+  width: 100% !important;
+  padding: 10px 40px 10px 15px !important; /* space for arrow */
+  border-radius: 8px !important;
+  border: 1px solid #ccc !important;
+  background-color: #fff !important;
+  appearance: none !important; /* remove default arrow */
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #333 !important;
+  transition: all 0.3s ease !important;
+}
+
+.custom-select:focus {
+  outline: none !important;
+  border-color: #28a745 !important ; /* green focus */
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.5) !important;
+}
+
+.custom-arrow {
+  position: absolute !important;
+  right: 15px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+  font-size: 16px !important;
+  color: #333 !important;
+}
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 30px;
+  color: #fff;
+  background: linear-gradient(45deg, #28a745, #1f8a39);
+  text-transform: uppercase;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+  letter-spacing: 0.5px;
+  
+}
+.badge-rent {
+  background: linear-gradient(45deg, #28a745, #1d822f);
+}
+
+.badge-sell {
+  background: linear-gradient(45deg, #e63946, #c92b36);
+}
+.installment-badge{
+  background-color: #e3e3e3;
+}
+@media (max-width:1024px) {
+  .custom-border-project-cards .installment-badge {
+    font-size: 10px;
+}
+.project-card .project-price {
+    font-size: 14px;
+}
+}
+.project-title:hover{
+  color: #63b330;
+}

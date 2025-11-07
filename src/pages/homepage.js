@@ -13,7 +13,23 @@ import { showToast } from '../toast';
 import { API_BASE_URL } from '../api';
 
 const HomePage = () => {
+    const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
+    
+  const units = ['Marla', 'Square Feet', 'Square Yards', 'Square Meters', 'Kanal'];
+   const [currency, setCurrency] = useState('Pakistan (PKR)');
+  const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(false);
+
+  const currencies = [
+    'Pakistan (PKR)',
+    'Canadian dollar (CAD)',
+    'Saudi Arabia (SAR)',
+    'United Arab Emirates (AED)',
+    'United Kingdom (GBP)'
+  ];
+
+      const [areaUnit, setAreaUnit] = useState('Marla');
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
   const [city, setCity] = useState('Lahore');
   const [location, setLocation] = useState('');
@@ -29,7 +45,16 @@ const propertyOptions = {
   plots: ['Residential Plot', 'Agricultural Land', 'Plot File', 'Commercial Plot', 'Industrial Land', 'Plot Form'],
   commercial: ['Office', 'Warehouse', 'Building', 'Shop', 'Factory', 'Other']
 };
+
 const [propertySubtype, setPropertySubtype] = useState('');
+ const handleReset = () => {
+    setPropertyType('');
+    setPropertySubtype('');
+  };
+
+  const handleClose = () => {
+    console.log('Close clicked'); // replace with your logic
+  };
   const tabsData = {
     "1": {
       title: "Initial Consultation",
@@ -368,7 +393,7 @@ const [propertySubtype, setPropertySubtype] = useState('');
 										
 										<div className="zameen-filter-main">
                       
-                      <div className='zameen-filter-row'>
+                      <div className='zameen-filter-row d-flex justify-content-center'>
                                                                         <div className="zameen-filter-field">
     <div className="d-flex gap-2 flex-wrap">
       {['All', 'Sell', 'Rent'].map((p) => (
@@ -424,105 +449,276 @@ const [propertySubtype, setPropertySubtype] = useState('');
                                                         <option value="commercial">Commercial</option>
 													</select>
 												</div> */}
-                        <div className="zameen-filter-field">
-    <label className="zameen-field-label">Property Type</label>
-    <div className="property-buttons">
-      {['home', 'plots', 'commercial'].map((type) => (
-        <button
-          key={type}
-          className={`custom-btn-search me-2 ${propertyType === type ? 'active' : ''}`}
-          onClick={() => {
-            setPropertyType(type);
-            setPropertySubtype(''); // reset subtype when main type changes
-          }}
-        >
-          {type.charAt(0).toUpperCase() + type.slice(1)}
-        </button>
+<div className="zameen-filter-field">
+  <label className="zameen-field-label">Property Type</label>
+  {/* <select
+    className="zameen-select"
+    value={propertySubtype || propertyType} // show subtype if selected, else main type
+    onChange={(e) => {
+      const value = e.target.value;
+      if (['home', 'plots', 'commercial'].includes(value)) {
+        setPropertyType(value);
+        setPropertySubtype(''); // reset subtype
+      } else {
+        setPropertySubtype(value); // select a subtype
+      }
+    }}
+  >
+    {!propertySubtype && (
+      <>
+      <div className='d-flex'>
+        <option value="">Select Type</option>
+        <option value="home">Homes</option>
+        <option value="plots">Plots</option>
+        <option value="commercial">Commercial</option>
+        </div>
+      </>
+    )}    {propertyType && !propertySubtype &&
+      propertyOptions[propertyType].map((sub) => (
+        <option key={sub} value={sub}>
+          {sub}
+        </option>
       ))}
+  </select> */}
+{/* 
+  {propertyType === 'home' && propertySubtype === '' && (
+    <div className="zameen-filter-field" style={{ marginTop: '10px' }}>
+      <label className="zameen-field-label">Bedrooms</label>
+      <select
+        className="zameen-select"
+        value={beds}
+        onChange={(e) => setBeds(e.target.value)}
+      >
+        <option value="All">All</option>
+        <option value="Studio">Studio</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="10+">10+</option>
+      </select>
     </div>
+  )} */}
+<div className="property-dropdown">
+  {/* Fake Select as Trigger */}
+  <div
+    className="dropdown-trigger"
+    onClick={() => setIsOpen(!isOpen)}
+  >
+    <select className="zameen-select" readOnly>
+      <option className="d-none">
+        {propertyType
+          ? `${propertyType.charAt(0).toUpperCase() + propertyType.slice(1)}${propertySubtype ? ' → ' + propertySubtype : ''}`
+          : 'Select Property'}
+      </option>
+    </select>
+  </div>
 
-    {propertyType && (
-      <div className="sub-property-buttons" style={{ marginTop: '10px' }}>
-        {propertyOptions[propertyType].map((sub) => (
-          <button
-            key={sub}
-            className={`custom-btn-search-sub me-2 mb-2 ${propertySubtype === sub ? 'active' : ''}`}
-            onClick={() => setPropertySubtype(sub)}
+  {/* Custom Dropdown */}
+  {isOpen && (
+    <div className="category-picker">
+      <div className="main-categories">
+        {['home', 'plots', 'commercial'].map((cat) => (
+          <li
+            key={cat}
+            className={`main-category ${propertyType === cat ? 'active' : ''}`}
+            onClick={() => {
+              setPropertyType(cat);
+              setPropertySubtype('');
+            }}
           >
-            {sub}
-          </button>
+            {cat.charAt(0).toUpperCase() + cat.slice(1)}
+          </li>
         ))}
       </div>
-    )}
+
+      {propertyType && (
+        <div className="sub-categories">
+          {propertyOptions[propertyType].map((sub, idx) => (
+            <li
+              key={idx}
+              className={`sub-category ${propertySubtype === sub ? 'active' : ''}`}
+              onClick={() => setPropertySubtype(sub)}
+            >
+              {sub}
+            </li>
+          ))}
+        </div>
+      )}
+
+      <div className="picker-actions">
+        <button className="reset-btn" onClick={handleReset}>Reset</button>
+        <button className="close-btn" onClick={() => setIsOpen(false)}>Close</button>
+      </div>
+    </div>
+  )}
+
+  {/* Bedrooms only for Home */}
+  {propertyType === 'home' && (
+    <div className="zameen-filter-field" style={{ marginTop: '10px' }}>
+      <label className="zameen-field-label">Bedrooms</label>
+      <select
+        className="zameen-select"
+        value={beds}
+        onChange={(e) => setBeds(e.target.value)}
+      >
+        <option value="All">All</option>
+        <option value="Studio">Studio</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="10+">10+</option>
+      </select>
+    </div>
+  )}
+</div>
+
+</div>
+
+											</div>
+											<div className="zameen-filter-row">
+ <div className="zameen-filter-field">
+      <label 
+        className="zameen-field-label unit-display"
+        onClick={() => setIsCurrencyModalOpen(true)}
+      >
+        Select Currency: <span className='unit-custom-size'>{currency || 'Select Currency'}</span>
+      </label>
+
+      <div className="zameen-range-inputs">
+        <input 
+          type="number" 
+          className="zameen-range-input" 
+          placeholder="Min Price" 
+          value={minPrice} 
+          onChange={(e)=>setMinPrice(e.target.value)} 
+        />
+        <span className="zameen-range-separator">to</span>
+        <input 
+          type="number" 
+          className="zameen-range-input" 
+          placeholder="Max Price" 
+          value={maxPrice} 
+          onChange={(e)=>setMaxPrice(e.target.value)} 
+        />
+      </div>
+
+      {/* Currency Modal */}
+      {isCurrencyModalOpen && (
+        <div className="modal show d-block" tabIndex="-1" role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Select Currency</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  onClick={() => setIsCurrencyModalOpen(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <ul className="list-group">
+                  {currencies.map((curr) => (
+                    <li
+                      key={curr}
+                      className={`list-group-item ${currency === curr ? 'active' : ''}`}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        setCurrency(curr);
+                        setIsCurrencyModalOpen(false);
+                      }}
+                    >
+                      {curr}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => setIsCurrencyModalOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+
+<div className="zameen-filter-field">
+  <label className="zameen-field-label unit-display" onClick={() => setIsUnitModalOpen(true)}>Select Area Range : <span className='unit-custom-size'>{areaUnit || 'Select Unit'}</span></label>
+  <div className="zameen-range-inputs">
+    <input 
+      type="number" 
+      className="zameen-range-input" 
+      placeholder="Min Area" 
+      value={minArea} 
+      onChange={(e)=>setMinArea(e.target.value)} 
+      // onClick={() => setIsUnitModalOpen(true)}
+    />
+    <span className="zameen-range-separator">to</span>
+    <input 
+      type="number" 
+      className="zameen-range-input" 
+      placeholder="Max Area" 
+      value={maxArea} 
+      onChange={(e)=>setMaxArea(e.target.value)} 
+      // onClick={() => setIsUnitModalOpen(true)}
+    />
   </div>
-											{propertyType === 'home' && (
-                      	<div className="zameen-filter-field">
-													<label className="zameen-field-label">Bedrooms</label>
-													<select 
-														className="zameen-select" 
-														value={beds} 
-														onChange={(e)=>setBeds(e.target.value)}
-													>
-														<option value="All">All</option>
-														<option value="Studio">Studio</option>
-														<option value="1">1</option>
-														<option value="2">2</option>
-														<option value="3">3</option>
-														<option value="4">4</option>
-														<option value="5">5</option>
-														<option value="6">6</option>
-														<option value="7">7</option>
-														<option value="8">8</option>
-														<option value="9">9</option>
-														<option value="10">10</option>
-														<option value="10+">10+</option>
-													</select>
-												</div>
-                      )}
-											</div>
-											<div className="zameen-filter-row">
-												<div className="zameen-filter-field">
-													<label className="zameen-field-label">Price Range (PKR)</label>
-													<div className="zameen-range-inputs">
-														<input 
-															type="number" 
-															className="zameen-range-input" 
-															placeholder="Min Price" 
-															value={minPrice} 
-															onChange={(e)=>setMinPrice(e.target.value)} 
-														/>
-														<span className="zameen-range-separator">to</span>
-														<input 
-															type="number" 
-															className="zameen-range-input" 
-															placeholder="Max Price" 
-															value={maxPrice} 
-															onChange={(e)=>setMaxPrice(e.target.value)} 
-														/>
-													</div>
-												</div>
-											</div>
-											<div className="zameen-filter-row">
-												<div className="zameen-filter-field">
-													<label className="zameen-field-label">Area Range (Marla)</label>
-													<div className="zameen-range-inputs">
-														<input 
-															type="number" 
-															className="zameen-range-input" 
-															placeholder="Min Area" 
-															value={minArea} 
-															onChange={(e)=>setMinArea(e.target.value)} 
-														/>
-														<span className="zameen-range-separator">to</span>
-														<input 
-															type="number" 
-															className="zameen-range-input" 
-															placeholder="Max Area" 
-															value={maxArea} 
-															onChange={(e)=>setMaxArea(e.target.value)} 
-														/>
-													</div>
-												</div>
+
+   {isUnitModalOpen && (
+        <div className="modal show d-block" tabIndex="-1" role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Select Unit</h5>
+                <button type="button" className="btn-close" onClick={() => setIsUnitModalOpen(false)}></button>
+              </div>
+              <div className="modal-body">
+                <ul className="list-group">
+                  {units.map((unit) => (
+                    <li
+                      key={unit}
+                      className={`list-group-item ${areaUnit === unit ? 'active' : ''}`}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        setAreaUnit(unit);
+                        setIsUnitModalOpen(false);
+                      }}
+                    >
+                      {unit}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setIsUnitModalOpen(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+</div>
+
 											</div>
 											<div className="zameen-filter-actions">
 												<button 
@@ -597,15 +793,15 @@ const [propertySubtype, setPropertySubtype] = useState('');
 												</button>
 												<button 
 													className="zameen-option-btn"
-													onClick={() => showToast('Currency: PKR (Pakistani Rupees)', 'info')}
+													onClick={() => showToast(`'Currency: ${currency || 'Select Currency'}`)}
 												>
-													Currency: PKR
+													Currency: {currency || 'Select Currency'}
 												</button>
 												<button 
 													className="zameen-option-btn"
-													onClick={() => showToast('Area Unit: Marla', 'info')}
+													onClick={() => showToast(`Area Unit: ${areaUnit || 'Select Unit'}`)}
 												>
-													Area: Marla
+													Area: {areaUnit || 'Select Unit'}
 												</button>
 											</div>
 										</div>
