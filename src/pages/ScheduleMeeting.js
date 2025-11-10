@@ -9,7 +9,8 @@ import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import { API_BASE_URL } from '../api';
-
+import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker';
 const ScheduleMeeting = () => {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -184,9 +185,7 @@ const ScheduleMeeting = () => {
               <div className="row px-4 mb-4 mt-4">
                 <div className="col-lg-6 col-md-6">
                   <div className="form-group">
-                    {!fullName && (
-                      <div className="text-danger">Full Name is required</div>
-                    )}
+
                     <div className="input-group">
                       <input
                         name="fullName"
@@ -198,14 +197,14 @@ const ScheduleMeeting = () => {
                         required
                       />
                     </div>
+                                       {!fullName && (
+                      <div className="text-danger">Full Name is required</div>
+                    )}
                   </div>
                 </div>
 
                 <div className="col-lg-6 col-md-6">
                   <div className="form-group">
-                    {!isEmailValid && email && (
-                      <div className="text-danger">Please enter a valid email address.</div>
-                    )}
                     <div className="input-group">
                       <input
                         name="email"
@@ -217,14 +216,14 @@ const ScheduleMeeting = () => {
                         required
                       />
                     </div>
+                                        {!isEmailValid && email && (
+                      <div className="text-danger">Please enter a valid email address.</div>
+                    )}
                   </div>
                 </div>
 
                 <div className="col-lg-6 col-md-6">
                   <div className="form-group">
-                    {!isPhoneValid && phoneNumber && (
-                      <div className="text-danger">Please enter a valid phone number.</div>
-                    )}
                     <div className="input-group">
                       <PhoneInput
                         name="phone"
@@ -236,31 +235,37 @@ const ScheduleMeeting = () => {
                         required
                       />
                     </div>
+                                        {!isPhoneValid && phoneNumber && (
+                      <div className="text-danger">Please enter a valid phone number.</div>
+                    )}
                   </div>
                 </div>
 
                 <div className="col-lg-6 col-md-6">
                   <div className="form-group">
-                    {!preferredTime && (
+<div className="input-group">
+      <DatePicker
+      name="preferredTime"
+        selected={preferredTime}
+        onChange={(date) => setPreferredTime(date)}
+        showTimeSelect
+        timeFormat="HH:mm"
+        timeIntervals={30}
+        dateFormat="MMMM d, yyyy h:mm aa"
+        placeholderText="Select Date & Time"
+        className={`form-control ${!preferredTime ? 'is-invalid' : ''} w-100`}
+        required
+      />
+    </div>
+                                        {!preferredTime && (
                       <div className="text-danger">Preferred time is required</div>
                     )}
-                    <div className="input-group">
-                      <input
-                        name="preferredTime"
-                        type="text"
-                        className={`form-control ${!preferredTime ? 'is-invalid' : ''}`}
-                        placeholder="Preferred Time (e.g., Monday 2 PM)"
-                        value={preferredTime}
-                        onChange={(e) => setPreferredTime(e.target.value)}
-                        required
-                      />
-                    </div>
                   </div>
                 </div>
 
                 <div className="col-lg-12 col-md-12">
                   <div className="form-group">
-                    <div className="input-group">
+                    {/* <div className="input-group"> */}
                       <label className="form-label mb-2">Meeting Purpose:</label>
                       <select
                         name="meetingPurpose"
@@ -273,7 +278,7 @@ const ScheduleMeeting = () => {
                         <option value="purchase">For Purchase</option>
                         <option value="advice">For Advice</option>
                       </select>
-                    </div>
+                    {/* </div> */}
                   </div>
                 </div>
 

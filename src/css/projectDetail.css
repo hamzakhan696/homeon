@@ -1,0 +1,276 @@
+.booking-form-title{
+border-bottom: 2px solid #63b330;
+padding-bottom: 8px;
+color: #63b330;
+}
+/* Custom radio design */
+.custom-radio .form-check-input {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgb(189, 188, 188) !important;
+  transition: all 0.3s ease !important;
+}
+
+.custom-radio .form-check-input:checked {
+  background-color: #27ae60 !important;
+  border-color: #27ae60 !important;
+}
+
+.custom-radio .form-check-label {
+  margin-left: 8px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+}
+
+.custom-radio .form-check-input:focus {
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.25);
+}
+.img-thumbnail{
+    width: 110px;
+    height: 95px;
+}
+.PhoneInputInput{
+    font-size: 12px !important;
+}
+.project-images-slider {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.project-images-slider .swiper-pagination-bullet {
+  background: #63b330;
+}
+.project-images-slider img {
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+.project-images-slider img:hover {
+  transform: scale(1.05);
+}
+.project-main-slider {
+  width: 100%;
+  position: relative;
+}
+
+.slider-image-container {
+  padding: 0px;
+}
+
+.slider-image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  transition: 0.3s ease-in-out;
+  cursor: pointer;
+}
+@media (max-width:1024px) {
+    .slider-image {
+  height: 320px;
+}
+}
+@media (max-width:768px) {
+    .slider-image {
+  height: 220px;
+}
+}
+.slick-center .slider-image {
+  border-right: 2px solid #63b330;
+  border-left: 2px solid #63b330;
+}
+.project-detail .slick-slider{
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+}
+.slick-slider .slider-image:hover{
+    transform: scale(1.05) !important;
+    
+}
+.custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  position: relative;
+  background: #000;
+  padding: 10px;
+  border-radius: 6px;
+  animation: popup 0.2s ease-in-out;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 85vh;
+  border-radius: 6px;
+  display: block;
+}
+
+.close-btn-cstm {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 35px;
+  height: 35px;
+  border: none;
+  border-radius: 50%;
+  font-size: 25px;
+  background: white;
+  cursor: pointer;
+  line-height: 22px;
+  color: red;
+  text-align: center;
+  font-weight: bold;
+}
+
+@keyframes popup {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.title-project-details {
+    border-left: 3px solid #63b330;
+    padding-left: 10px;
+}
+.feature-btn-projct-details{
+    color: white;
+    background-color: black;
+    padding: 5px 15px;
+    text-decoration: none;
+    font-size: 14px;
+}
+.purpose-btn-projct-details{
+    color: white;
+    background-color: #63b330;
+    padding: 5px 15px;
+    text-decoration: none;
+    font-size: 14px;
+}
+.flaticon-pin{
+    color: #63b330;
+}
+.section-bg-1 {
+    background-color: #f2f6f7;
+}
+.vertical-line {
+  width: 2px;
+  height: 100%;
+  background: #000;
+  min-height: 100px; /* adjust for your design */
+}
+
+/* Premium Glass UI */
+.glass-card {
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Headings */
+.premium-heading {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #C79B3B, #FFD57E);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 12px;
+}
+
+/* Title */
+.premium-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: #1C1C1C;
+}
+
+/* Location */
+.premium-location {
+  font-size: 18px;
+  color: #7a7a7a;
+}
+
+/* Sections */
+.premium-section {
+  margin-top: 35px;
+}
+
+/* Installment */
+.installment-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-weight: 500;
+}
+
+/* Yes / No badge */
+.badge-yes {
+  background: #0B7C27;
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 50px;
+}
+
+.badge-no {
+  background: #8A1F11;
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 50px;
+}
+
+/* Amenities */
+.amenities-list li {
+  list-style: none;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Videos */
+.video-gallery {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.video-card {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+/* Top Badges */
+.premium-badge,
+.premium-purpose {
+  background: linear-gradient(90deg, #C79B3B, #FFD57E);
+  color: #1d1d1d !important;
+  padding: 6px 18px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .5px;
+}
+
+.premium-date {
+  font-size: 14px;
+  color: #444;
+}

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
+
+// const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
 import { API_BASE_URL } from '../../api';
+
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 
 const BlogTab = () => {
@@ -774,8 +777,10 @@ const handleUpdateBlog = async () => {
     </div>
 
     <div className="card p-4 shadow-sm">
-      <div className="mb-3">
-        <label className="form-label">Title</label>
+      <div className='row'>
+        <div className='col-6'>
+                <div className="form-group">
+        <label className="form-label">Blog Title</label>
         <input
           type="text"
           className="form-control"
@@ -783,35 +788,53 @@ const handleUpdateBlog = async () => {
           onChange={(e) => setEditBlog({ ...editBlog, title: e.target.value })}
         />
       </div>
+        </div>
+             <div className='col-6'>
+                    <div className="form-group">
+        <label className="form-label">Blog Category</label>
+        <select name="category" value={editBlog?.category || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, category: e.target.value })} class="form-control">
+            <option value="">Select Category</option>
+            <option value="Real Estate">Real Estate</option>
+            <option value="Property Investment">Property Investment</option>
+            <option value="Home Improvement">Home Improvement</option>
+            <option value="Market Trends">Market Trends</option>
+            <option value="Legal Advice">Legal Advice</option>
+            <option value="Tips &amp; Guides">Tips &amp; Guides</option>
+            </select>
+      </div>
+             </div>
+        </div>
 
-      <div className="mb-3">
-        <label className="form-label">Description</label>
-        <textarea
-          className="form-control"
-          rows="3"
-          value={editBlog?.description || ''}
-          onChange={(e) => setEditBlog({ ...editBlog, description: e.target.value })}
-        ></textarea>
-      </div>
+        <div className="form-group">
+  <label>Blog Description</label>
+<textarea 
+  name="description"
+  className="form-control" 
+  rows="4"
+  placeholder="Enter a brief description of the blog post"
+  value={editBlog?.description || ""}
+  onChange={(e) =>
+    setEditBlog({ ...editBlog, description: e.target.value })
+  }
+/>
 
-      <div className="mb-3">
-        <label className="form-label">Category</label>
-        <input
-          type="text"
-          className="form-control"
-          value={editBlog?.category || ''}
-          onChange={(e) => setEditBlog({ ...editBlog, category: e.target.value })}
-        />
-      </div>
-            <div className="mb-3">
-        <label className="form-label">Content</label>
-        <input
-          type="text"
-          className="form-control"
-          value={editBlog?.content || ''}
-          onChange={(e) => setEditBlog({ ...editBlog, content: e.target.value })}
-        />
-      </div>
+<div className="mt-3">
+
+  <div className="d-flex align-items-center gap-2 mb-2">
+    <label className="m-0 fw-bold">Additional Descriptions</label>
+    <button 
+      type="button"
+      className="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center"
+      onClick={() => {
+        const updated = [...editBlog.descriptions, ""];
+        setEditBlog({ ...editBlog, descriptions: updated });
+      }}
+      title="Add another description"
+    >
+      <i className="fas fa-plus"></i>
+    </button>
+  </div>
 {editBlog?.descriptions?.map((desc, index) => (
   <div className="mb-3" key={index}>
     <label className="form-label">Description {index + 1}</label>
@@ -827,60 +850,26 @@ const handleUpdateBlog = async () => {
     ></textarea>
   </div>
 ))}
-<button
-  type="button"
-  className="btn btn-outline-primary mb-3"
-  onClick={() =>
-    setEditBlog({
-      ...editBlog,
-      descriptions: [...(editBlog.descriptions || []), ""],
-    })
-  }
->
-  <i className="fas fa-plus me-2"></i> Add Description
-</button>
+  {editBlog.descriptions?.length > 0 && (
+    <small className="text-muted">
+      First additional description will appear on the listing page. All will appear on the detail page.
+    </small>
+  )}
 
-      <div className="mb-3">
-        <label className="form-label">Status</label>
-        <select
-          className="form-select"
-          value={editBlog?.status || ''}
-          onChange={(e) => setEditBlog({ ...editBlog, status: e.target.value })}
-        >
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-        </select>
-      </div>
+</div>
 
-      <div className="mb-3">
-        <label className="form-label">Slug</label>
+</div>
+
+              <div className='form-group'>
+        <label className="form-label">Blog Content</label>
         <input
           type="text"
           className="form-control"
-          value={editBlog?.slug || ''}
-          onChange={(e) => setEditBlog({ ...editBlog, slug: e.target.value })}
+          value={editBlog?.content || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, content: e.target.value })}
         />
-      </div>
-
-      <div className="mb-3">
-        <label className="form-label">Meta Title</label>
-        <input
-          type="text"
-          className="form-control"
-          value={editBlog?.metaTitle || ''}
-          onChange={(e) => setEditBlog({ ...editBlog, metaTitle: e.target.value })}
-        />
-      </div>
-          <div className="mb-3">
-        <label className="form-label">Meta Description</label>
-        <input
-          type="text"
-          className="form-control"
-          value={editBlog?.metaDescription || ''}
-          onChange={(e) => setEditBlog({ ...editBlog, metaDescription: e.target.value })}
-        />
-      </div>
-                <div className="mb-3">
+        </div>
+                  <div className='form-group'>
         <label className="form-label">Tags</label>
         <input
           type="text"
@@ -888,10 +877,111 @@ const handleUpdateBlog = async () => {
           value={editBlog?.tags || ''}
           onChange={(e) => setEditBlog({ ...editBlog, tags: e.target.value })}
         />
-      </div>
+        </div>
+<div className="form-group">
+{/* ✅ FEATURED IMAGE SECTION */}
+<div className="upload-section">
+  <div className="upload-area">
+    <i className="fas fa-cloud-upload-alt"></i>
+    <p>Upload Featured Image for Blog</p>
+    <div className="upload-buttons">
+      <button
+        className="btn-custom"
+        onClick={() => blogFeaturedImageInputRef.current?.click()}
+      >
+        <i className="fas fa-upload me-2"></i>
+        {editBlog?.featuredImage ? "Change Featured Image" : "Upload Featured Image"}
+      </button>
+    </div>
+    <small>Max size 5MB, .jpg .png only</small>
 
-{/* 🏞️ Featured Image */}
-{editBlog?.featuredImage && (
+    <input
+      ref={blogFeaturedImageInputRef}
+      type="file"
+      accept="image/jpeg,image/jpg,image/png"
+      onChange={handleBlogFeaturedImageUpload}
+      className="d-none"
+    />
+  </div>
+
+  {/* ✅ Show existing OR newly selected */}
+  {(blogFeaturedImage || editBlog?.featuredImage) && (
+    <div className="uploaded-files">
+      <h4>Featured Image</h4>
+
+      <div className="file-item featured">
+        <span className="featured-badge mb-2">Featured</span>
+
+        <img
+          src={blogFeaturedImage?.url || editBlog.featuredImage}
+          alt="Featured"
+          className="img-fluid"
+        />
+
+        <div className="file-actions">
+          <button
+            className="btn btn-sm btn-danger"
+            onClick={() => {
+              setBlogFeaturedImage(null);
+              setEditBlog(prev => ({ ...prev, featuredImage: null }));
+            }}
+          >
+            <i className="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+<div className="upload-section mt-4">
+  <div className="upload-area">
+    <i className="fas fa-cloud-upload-alt"></i>
+    <p>Upload Additional Images for Blog</p>
+
+    <div className="upload-buttons">
+      <button
+        className="btn-custom"
+        onClick={() => blogImageInputRef.current?.click()}
+      >
+        <i className="fas fa-upload me-2"></i>
+        Upload Images
+      </button>
+    </div>
+
+    <input
+      ref={blogImageInputRef}
+      type="file"
+      accept="image/*"
+      multiple
+      onChange={handleBlogImagesUpload}
+      className="d-none"
+    />
+
+  </div>
+  {Array.isArray(editBlog.images) && editBlog.images.length > 0 && (
+    <div className="uploaded-files">
+      <h4>Existing Images</h4>
+      <div className="file-grid">
+        {Array.isArray(blogImages) && blogImages.length > 0 && (
+              <div className="d-flex flex-wrap gap-2 mt-2">
+                {blogImages.map(img => (
+                  <div key={img.id} className="position-relative">
+                    <img src={img.url} alt="new" style={{ width: 90, height: 60, objectFit: 'cover', borderRadius: 6, border: '1px solid #ddd' }} />
+                    <button type="button" className="btn btn-sm btn-danger position-absolute top-0 end-0" onClick={() => removeBlogImage(img.id)}>
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+      </div>
+    </div>
+  )}
+</div>
+</div>
+
+        {/* 🏞️ Featured Image */}
+{/* {editBlog?.featuredImage && (
   <div className="featured-image mb-4">
     <label className="form-label fw-bold">Featured Image</label>
     <div className="d-flex align-items-center gap-3">
@@ -929,7 +1019,6 @@ const handleUpdateBlog = async () => {
   </div>
 )}
 
-      {/* 🖼️ Show Images */}
       {editBlog?.images && editBlog.images.length > 0 && (
         <div className="blog-images mb-4">
           <label className="form-label fw-bold">Images</label>
@@ -979,28 +1068,113 @@ const handleUpdateBlog = async () => {
             )}
           </div>
         </div>
-      )}
-      <div className="form-check mb-2">
-        <input
-          type="checkbox"
-          className="form-check-input"
+      )} */}
+              <div className="form-section">
+          <div className="section-header">
+            <i className="fas fa-search"></i>
+            <h3>SEO Settings</h3>
+          </div>
+          
+          <div className="form-group">
+            <label>Meta Title</label>
+            <input 
+              type="text" 
+              name="metaTitle"
+              className="form-control" 
+              placeholder="Enter meta title for SEO" 
+          value={editBlog?.metaTitle || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, metaTitle: e.target.value })}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Meta Description</label>
+            <textarea 
+              name="metaDescription"
+              className="form-control" 
+              rows="3"
+              placeholder="Enter meta description for SEO"
+          value={editBlog?.metaDescription || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, metaDescription: e.target.value })}
+            ></textarea>
+          </div>
+
+          <div className="form-group">
+            <label>URL Slug</label>
+            <input 
+              type="text" 
+              name="slug"
+              className="form-control" 
+              placeholder="Enter URL slug" 
+                 value={editBlog?.slug || ''}
+          onChange={(e) => setEditBlog({ ...editBlog, slug: e.target.value })}
+            />
+          </div>
+        </div>
+                <div className="form-section">
+          <div className="section-header">
+          <i class="fas fa-rocket"></i>
+            <h3>Publishing Options</h3>
+          </div>
+          
+          <div className="form-group">
+            <label>Publish Status</label>
+<div className="radio-group radio-grp-cstm">
+  <label className={`radio-option ${editBlog.status === 'draft' ? 'active' : ''}`}>
+    <input 
+      type="radio"
+      name="status"
+      value="draft"
+      checked={editBlog.status === 'draft'}
+      onChange={() => setEditBlog({ ...editBlog, status: 'draft' })}
+    />
+    <i className="fas fa-save me-2"></i>
+    Draft
+  </label>
+
+  <label className={`radio-option ${editBlog.status === 'published' ? 'active' : ''}`}>
+    <input 
+      type="radio"
+      name="status"
+      value="published"
+      checked={editBlog.status === 'published'}
+      onChange={() => setEditBlog({ ...editBlog, status: 'published' })}
+    />
+    <i className="fas fa-globe me-2"></i>
+    Published
+  </label>
+</div>
+
+          </div>
+
+          <div className="form-group checkbox-label-cstm">
+            <label className="checkbox-label">
+              <input 
+                type="checkbox" 
+                name="allowComments"
           checked={editBlog?.allowComments || false}
           onChange={(e) => setEditBlog({ ...editBlog, allowComments: e.target.checked })}
-        />
-        <label className="form-check-label">Allow Comments</label>
-      </div>
+              />
+              <span className="checkmark"></span>
+              Allow comments on this blog post
+            </label>
+          </div>
 
-      <div className="form-check mb-3">
-        <input
-          type="checkbox"
-          className="form-check-input"
+          <div className="form-group checkbox-label-cstm">
+            <label className="checkbox-label">
+              <input 
+                type="checkbox" 
+                name="featureOnHomepage"
           checked={editBlog?.featureOnHomepage || false}
           onChange={(e) => setEditBlog({ ...editBlog, featureOnHomepage: e.target.checked })}
-        />
-        <label className="form-check-label">Feature on Homepage</label>
-      </div>
+              />
+              <span className="checkmark"></span>
+              Feature this blog post on homepage
+            </label>
+          </div>
+        </div>
       <div className="text-end">
-        <button className="btn btn-success" onClick={handleUpdateBlog}>
+        <button className="btn-custom" onClick={handleUpdateBlog}>
           <i className="fas fa-save me-2"></i> Save Changes
         </button>
       </div>
@@ -1008,7 +1182,9 @@ const handleUpdateBlog = async () => {
   </div>
 )
       : (
-            <div className="all-blogs-section mt-3">
+         
+         <div className="all-blogs-section mt-3">
+          {!selectedBlog && (
         <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <h2 style={{ margin: 0 }}>All Blogs</h2>
@@ -1017,12 +1193,14 @@ const handleUpdateBlog = async () => {
           <button type="button" className="btn btn-outline" onClick={fetchBlogs} disabled={loading}>
             {loading ? <><i className="fas fa-spinner fa-spin"></i> Refreshing...</> : <><i className="fas fa-sync"></i> Refresh</>}
           </button>
-        </div>
+        </div>)}
         {error && <p className="text-danger">{error}</p>}
         {loading && <p><i className="fas fa-spinner fa-spin"></i>Loading blogs...</p>}
         {!loading && !error && blogs.length === 0 && <p>No blogs found.</p>}
+        
         {!loading && !error && blogs.length > 0 && (
-<div className="blogs-section">
+  <div className="blogs-section">
+    {!selectedBlog && (
 <div className="table-responsive shadow-sm rounded bg-white">
   <table className="table table-hover align-middle mb-0">
     <thead className="bg-success text-white text-center">
@@ -1072,14 +1250,12 @@ const handleUpdateBlog = async () => {
             </td>
             <td className='action-buttons-custom'>
               <div className='action-button-flex'>
-              <button
-                  className="btn btn-sm btn-primary me-2"
-                  data-bs-toggle="modal"
-                  data-bs-target="#viewBlogModal"
-                  onClick={() => setSelectedBlog(blog)}
-                >
-                  <i className="fas fa-eye"></i>
-                </button>
+             <button
+  className="btn btn-sm btn-primary me-2"
+  onClick={() => setSelectedBlog(blog)}
+>
+  <i className="fas fa-eye"></i>
+</button>
               <button
                 className="btn btn-sm btn-success me-2"
                 onClick={() => handleEditBlog(blog.id)}
@@ -1100,128 +1276,104 @@ const handleUpdateBlog = async () => {
     </tbody>
   </table>
 </div>
- <div
-        className="modal fade"
-        id="viewBlogModal"
-        tabIndex="-1"
-        aria-labelledby="viewBlogModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header bg-success text-white">
-              <h5 className="modal-title" id="viewBlogModalLabel">
-                {selectedBlog?.title || "Blog Details"}
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
+    )}
+{/* )} */}
+{selectedBlog && (
+      <div><div className="d-flex justify-content-between align-items-center mb-3">
+      <h3>View Blog {editBlog?.title}</h3>
+      <button className="btn-custom" onClick={() => setSelectedBlog(false)}>
+        <i className="fas fa-arrow-left me-2"></i> Back
+      </button>
+    </div>
+  <div className="mt-4 p-4 border rounded bg-white shadow">
+    
+    <h3 className="text-success mb-3">{selectedBlog.title}</h3>
 
-            <div className="modal-body">
-              {selectedBlog ? (
-                <>
-                  <div className="mb-3 text-center">
-                    {selectedBlog.featuredImage && (
-                      <img
-                        src={selectedBlog.featuredImage}
-                        alt="Featured"
-                        className="img-fluid rounded"
-                        style={{ maxHeight: "300px", objectFit: "cover" }}
-                      />
-                    )}
-                  </div>
-
-                  <p>
-                    <strong>Category:</strong> {selectedBlog.category}
-                  </p>
-                  <p>
-                    <strong>Status:</strong>{" "}
-                    <span
-                      className={`badge ${
-                        selectedBlog.status === "published"
-                          ? "bg-success"
-                          : "bg-secondary"
-                      }`}
-                    >
-                      {selectedBlog.status}
-                    </span>
-                  </p>
-                  <p>
-                    <strong>Description:</strong> {selectedBlog.description}
-                  </p>
-                  {selectedBlog.descriptions.map((desc, index) => (
-  <div key={index} className="mb-2">
-    <strong>Description {index + 1}:</strong>
-    <p>{desc}</p>
-  </div>
-))}
-                  <p>
-                    <strong>Content:</strong> {selectedBlog.content}
-                  </p>
-                  <p>
-                    <strong>Meta Title:</strong> {selectedBlog.metaTitle}
-                  </p>
-                 <p>
-  <strong>Comments:</strong>{' '}
-  {selectedBlog.allowComments ? 'Allowed' : 'Not Allowed'}
-</p>
-                 <p>
-  <strong>Feature On Homepage:</strong>{' '}
-  {selectedBlog.featureOnHomepage ? 'Allowed' : 'Not Allowed'}
-</p>
-
-                  <p>
-                    <strong>Meta Description:</strong>{" "}
-                    {selectedBlog.metaDescription}
-                  </p>
-                  <p>
-                    <strong>Tags:</strong> {selectedBlog.tags}
-                  </p>
-                   <p>
-                    <strong>Slug Url:</strong> {selectedBlog.slug}
-                  </p>
-
-                  {/* ✅ Show Gallery Images */}
-                  {selectedBlog.images && selectedBlog.images.length > 0 && (
-                    <>
-                      <h6 className="mt-4 fw-bold">Gallery Images:</h6>
-                      <div className="d-flex flex-wrap gap-2">
-                        {selectedBlog.images.map((img, idx) => (
-                          <img
-                            key={idx}
-                            src={img}
-                            alt="Blog"
-                            className="rounded"
-                            width="100"
-                            height="70"
-                            style={{ objectFit: "cover" }}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </>
-              ) : (
-                <p>No blog selected.</p>
-              )}
-            </div>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+    {/* Featured Image */}
+    {selectedBlog.featuredImage && (
+      <div className="mb-3 text-center">
+        <img
+          src={selectedBlog.featuredImage}
+          className="img-fluid rounded shadow"
+          style={{ maxHeight: "350px", objectFit: "cover" }}
+          alt="Featured"
+        />
       </div>
+    )}
+
+    {/* Blog Details */}
+    <div className="row">
+      <div className="col-md-6">
+        <p><strong>ID:</strong> {selectedBlog.id}</p>
+        <p><strong>Category:</strong> {selectedBlog.category}</p>
+        <p><strong>Main Description:</strong> {selectedBlog.description}</p>
+        <p><strong>Content:</strong> {selectedBlog.content}</p>
+      </div>
+
+      <div className="col-md-6">
+        <p><strong>Status:</strong> {selectedBlog.status}</p>
+        <p><strong>Allow Comments:</strong> {selectedBlog.allowComments ? "Yes ✅" : "No ❌"}</p>
+        <p><strong>Feature Homepage:</strong> {selectedBlog.featureOnHomepage ? "Yes ✅" : "No ❌"}</p>
+        <p><strong>Slug URL:</strong> /blog/{selectedBlog.slug}</p>
+      </div>
+    </div>
+
+    {/* Metadata */}
+    <hr />
+    <h5>🔎 SEO Metadata</h5>
+    <p><strong>Meta Title:</strong> {selectedBlog.metaTitle}</p>
+    <p><strong>Meta Description:</strong> {selectedBlog.metaDescription}</p>
+    <p><strong>Tags:</strong> {selectedBlog.tags}</p>
+
+    {/* Extra Descriptions */}
+    {selectedBlog.descriptions?.length > 0 && (
+      <>
+        <hr />
+        <h5>📌 Extra Descriptions</h5>
+        {selectedBlog.descriptions.map((d, i) => (
+          <p key={i}>• {d}</p>
+        ))}
+      </>
+    )}
+
+    {/* Dates */}
+    <hr />
+    <p><strong>Created:</strong> {new Date(selectedBlog.createdAt).toLocaleString()}</p>
+    <p><strong>Published:</strong> {new Date(selectedBlog.publishDate).toLocaleString()}</p>
+    <p><strong>Updated:</strong> {new Date(selectedBlog.updatedAt).toLocaleString()}</p>
+
+    {/* Gallery Images */}
+    {selectedBlog.images?.length > 0 && (
+      <>
+        <hr />
+        <h5>🖼 Gallery</h5>
+        <div className="d-flex flex-wrap gap-2">
+          {selectedBlog.images.map((img, index) => (
+            <img
+              key={index}
+              src={img}
+              className="rounded shadow"
+              width="120"
+              height="80"
+              alt="gallery"
+              style={{ objectFit: "cover" }}
+            />
+          ))}
+        </div>
+      </>
+    )}
+
+    <button
+      className="btn btn-danger mt-4"
+      onClick={() => setSelectedBlog(null)}
+    >
+      Close
+    </button>
+  </div>
+  </div>
+)}
+
+
 </div>
 
         )}

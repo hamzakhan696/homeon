@@ -15,6 +15,10 @@ const Portfolio = () => {
       behavior: "smooth",
     });
   };
+const [purposeFilterAll, setPurposeFilterAll] = useState('');
+const [purposeFilterResidential, setPurposeFilterResidential] = useState('');
+const [purposeFilterCommercial, setPurposeFilterCommercial] = useState('');
+const [purposeFilterPlot, setPurposeFilterPlot] = useState('');
 
   const scrollRight = () => {
     const myTab = document.getElementById("myTab");
@@ -38,6 +42,7 @@ const Portfolio = () => {
         const filters = Object.fromEntries(params.entries());
         const hasFilters = Array.from(params.keys()).length > 0 && Object.values(filters).some(v => v);
         if (hasFilters) {
+
           const res = await fetch(`${API_BASE_URL}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
             city: filters.city || undefined,
             location: filters.location || undefined,
@@ -49,7 +54,9 @@ const Portfolio = () => {
             minArea: filters.minArea ? Number(filters.minArea) : undefined,
             maxArea: filters.maxArea ? Number(filters.maxArea) : undefined,
           })});
+        console.log("Full response:", res);
           const data = await res.json();
+          console.log("projects:",data);
           if (mounted) setItems(Array.isArray(data) ? data : []);
         } else {
           const d = await apiGet('/projects');
@@ -123,447 +130,406 @@ const Portfolio = () => {
      <div className='container mt-5'>
      <h2 class="title m-b10 text-center">OUR BEST PROJECTS</h2>
      </div>
-           <div className="container-fluid p-0 mt-4 portfolio">
-        <div className="row d-flex justify-content-center">
-          <div className="col-md-12 p-0">
-            <div className="bg-white">
-              <div className="container portfolio-main">
-                <div className='row d-flex justify-content-center'>
-                  <div className='col-lg-8 col-12'>
-                  <div className="scroll-buttons d-lg-none d-flex align-items-center">
-                  <img
-                    onClick={scrollRight}
-                    className="ms-1 me-1 pe-2  mt-5 pt-2 frame-2-portfolio"
-                    src="assets/Frameright.svg"
-                    alt=""
-                  />
-                  <img
-                    className="ms-2 me-1 mt-4 frame-3-position"
-                    onClick={scrollLeft}
-                    src="assets/Frameleft.svg"
-                    alt=""
-                  />
-                </div>
-                <ul
-                  className="nav nav-tabs custom-nav-tabs nav-fill custom-nav-fill ms-lg-0 ms-4 me-lg-0 me-4"
-                  id="myTab"
-                  role="tablist"
-                >
-                  <li className="nav-item custom-nav-item" role="presentation">
-                    <button
-                      className="nav-link custom-nav-link active"
-                      id="faq_tab_1-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#faq_tab_1"
-                      type="button"
-                      role="tab"
-                      aria-controls="faq_tab_1"
-                      aria-selected="true"
-                    >
-                      <div className="d-flex flex-column lh-lgg portfolio-tabs">
-                        <span>All</span>
-                      </div>
-                    </button>
-                  </li>
-                  <li className="nav-item custom-nav-item" role="presentation">
-                    <button
-                      className="nav-link custom-nav-link"
-                      id="faq_tab_2-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#faq_tab_2"
-                      type="button"
-                      role="tab"
-                      aria-controls="faq_tab_2"
-                      aria-selected="false"
-                    >
-                      <div className="d-flex flex-column lh-lgg portfolio-tabs">
-                        <span>ABSTRACT</span>
-                      </div>
-                    </button>
-                  </li>
-                  <li className="nav-item custom-nav-item" role="presentation">
-                    <button
-                      className="nav-link custom-nav-link"
-                      id="faq_tab_3-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#faq_tab_3"
-                      type="button"
-                      role="tab"
-                      aria-controls="faq_tab_3"
-                      aria-selected="false"
-                    >
-                      <div className="d-flex flex-column lh-lgg portfolio-tabs">
-                        <span>FOOD</span>
-                      </div>
-                    </button>
-                  </li>
-                  <li className="nav-item custom-nav-item" role="presentation">
-                    <button
-                      className="nav-link custom-nav-link"
-                      id="faq_tab_4-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#faq_tab_4"
-                      type="button"
-                      role="tab"
-                      aria-controls="faq_tab_4"
-                      aria-selected="false"
-                    >
-                      <div className="d-flex flex-column lh-lgg portfolio-tabs">
-                        <span>MOCKUP</span>
-                      </div>
-                    </button>
-                  </li>
-                  <li className="nav-item custom-nav-item" role="presentation">
-                    <button
-                      className="nav-link custom-nav-link"
-                      id="faq_tab_5-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#faq_tab_5"
-                      type="button"
-                      role="tab"
-                      aria-controls="faq_tab_5"
-                      aria-selected="false"
-                    >
-                      <div className="d-flex flex-column lh-lgg portfolio-tabs">
-                        <span>TECHNOLOGY</span>
-                      </div>
-                    </button>
-                  </li>
-                </ul>
-                  </div>
-                </div>
+<div className="container-fluid p-0 mt-4 portfolio">
+  <div className="row d-flex justify-content-center">
+    <div className="col-md-12 p-0">
+      <div className="bg-white">
+        <div className="container portfolio-main">
+          <div className='row d-flex justify-content-center'>
+            <div className='col-lg-8 col-12'>
+              <div className="scroll-buttons d-lg-none d-flex align-items-center">
+                <img
+                  onClick={scrollRight}
+                  className="ms-1 me-1 pe-2 mt-5 pt-2 frame-2-portfolio"
+                  src="assets/Frameright.svg"
+                  alt=""
+                />
+                <img
+                  className="ms-2 me-1 mt-4 frame-3-position"
+                  onClick={scrollLeft}
+                  src="assets/Frameleft.svg"
+                  alt=""
+                />
               </div>
-              <div
-                className="tab-content container-fluid p-0"
-                id="myTabContent"
+              <ul
+                className="nav nav-tabs custom-nav-tabs nav-fill custom-nav-fill ms-lg-0 ms-4 me-lg-0 me-4"
+                id="myTab"
+                role="tablist"
               >
-                <div
-                  className="tab-pane fade active show px-3 px-lg-0"
-                  id="faq_tab_1"
-                  role="tabpanel"
-                  aria-labelledby="faq_tab_1-tab"
-                >
-                 <div className="clearfix">
-        <div className='row mt-5 mb-5'>
-          {loading && <p style={{ textAlign:'center' }}><i className="fas fa-spinner fa-spin"></i> Loading...</p>}
-          {!loading && err && <p className='text-danger' style={{ textAlign:'center' }}>{err}</p>}
-          {!loading && !err && items.map((p) => (
-            <div key={p.id} className='col-lg-3 col-md-4 col-6 p-0'>
-              <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1" onClick={() => navigate(`/project/${p.id}`)} style={{ cursor:'pointer' }}>
-                <img src={getProjectThumb(p) || 'assets/image-coming-soon-placeholder.png'} alt={p.title} className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ''}</span>
-                    <h3 className="port-title mt-2">{p.title}</h3>
-                    <button className="btn-custom portfolio-btn mt-2">View Project</button>
-                  </div>
-                </div>
-              </div>
+                <li className="nav-item custom-nav-item" role="presentation">
+                  <button
+                    className="nav-link custom-nav-link active"
+                    id="faq_tab_1-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#faq_tab_1"
+                    type="button"
+                    role="tab"
+                    aria-controls="faq_tab_1"
+                    aria-selected="true"
+                  >
+                    <div className="d-flex flex-column lh-lgg portfolio-tabs">
+                      <span>All</span>
+                    </div>
+                  </button>
+                </li>
+                <li className="nav-item custom-nav-item" role="presentation">
+                  <button
+                    className="nav-link custom-nav-link"
+                    id="faq_tab_2-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#faq_tab_2"
+                    type="button"
+                    role="tab"
+                    aria-controls="faq_tab_2"
+                    aria-selected="false"
+                  >
+                    <div className="d-flex flex-column lh-lgg portfolio-tabs">
+                      <span>Residential</span>
+                    </div>
+                  </button>
+                </li>
+                <li className="nav-item custom-nav-item" role="presentation">
+                  <button
+                    className="nav-link custom-nav-link"
+                    id="faq_tab_3-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#faq_tab_3"
+                    type="button"
+                    role="tab"
+                    aria-controls="faq_tab_3"
+                    aria-selected="false"
+                  >
+                    <div className="d-flex flex-column lh-lgg portfolio-tabs">
+                      <span>Commercial</span>
+                    </div>
+                  </button>
+                </li>
+                <li className="nav-item custom-nav-item" role="presentation">
+                  <button
+                    className="nav-link custom-nav-link"
+                    id="faq_tab_4-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#faq_tab_4"
+                    type="button"
+                    role="tab"
+                    aria-controls="faq_tab_4"
+                    aria-selected="false"
+                  >
+                    <div className="d-flex flex-column lh-lgg portfolio-tabs">
+                      <span>Plot</span>
+                    </div>
+                  </button>
+                </li>
+              </ul>
             </div>
-          ))}
-          {!loading && !err && items.length === 0 && (
-            <p style={{ textAlign:'center' }}>No projects yet.</p>
-          )}
+          </div>
         </div>
+
+        <div className="tab-content container-fluid p-0" id="myTabContent">
+
+          {/* ---------------- All Tab ---------------- */}
+          <div
+            className="tab-pane fade active show px-3 px-lg-0"
+            id="faq_tab_1"
+            role="tabpanel"
+            aria-labelledby="faq_tab_1-tab"
+          >
+<div className="d-flex justify-content-end">
+  <div className="custom-select-wrapper w-50">
+    <select
+      className="form-select custom-select"
+      value={purposeFilterAll}
+      onChange={(e) => setPurposeFilterAll(e.target.value)}
+    >
+      <option value="">All</option>
+      <option value="rent">For Rent</option>
+      <option value="sell">For Sale</option>
+    </select>
+  </div>
+</div>
+
+<div className='container'>
+            <div className='row mt-3 mb-3'>
+              {loading && <p style={{ textAlign:'center' }}><i className="fas fa-spinner fa-spin"></i> Loading...</p>}
+              {!loading && err && <p className='text-danger' style={{ textAlign:'center' }}>{err}</p>}
+              {!loading && !err && items
+                .filter(p => !purposeFilterAll || p.purpose === purposeFilterAll)
+                .map((p) => (
+                  <div key={p.id} className='col-lg-4 col-md-6 col-12 mt-3'>
+<div
+  className="project-card"
+  onClick={() => navigate(`/project/${p.id}`)}
+>
+  <div className="project-image">
+    <img
+      src={getProjectThumb(p) || 'assets/image-coming-soon-placeholder.png'}
+      alt={p.title}
+      className="img-fluid w-100"
+    />
+  </div>
+  <div className="project-info p-3">
+<p className={`mb-0 badge ${p.purpose === 'rent' ? 'badge-rent' : 'badge-sell'}`}>
+  {p.purpose === 'rent' ? 'For Rent' : 'For Sale'}
+</p>
+    <h5 className="project-title mt-2">
+      {p.title}
+    </h5>
+     <p className="text-muted mb-2 text-inner">
+     <i className="fas fa-map-marker-alt location-mark"></i> {p.location}
+      </p>
+    <p className="text-muted mb-2 text-inner">
+      <span><i className="fas fa-bed"></i> {p.bedrooms} Bed</span> &nbsp; <span><i className="fas fa-bath"></i> {p.bathrooms} Bath </span>&nbsp; <span><i className="fas fa-ruler-combined"></i> {parseInt(p.areaSize)} {p.areaUnit}</span></p>
+
+  </div>
+  <div>
+        <div className="d-flex justify-content-between align-items-center mb-2 custom-border-project-cards">
+      <span className="project-price p-3">
+        {p.currency} {Number(p.price).toLocaleString()}
+      </span>
+      {p.availableOnInstallments && (
+        <span className="installment-badge px-2 py-1 rounded me-3">
+          Installments: {p.numberOfInstallments} × {p.currency} {Number(p.monthlyInstallment).toLocaleString()}
+        </span>
+      )}
     </div>
-                </div>
-                <div
-                  className="tab-pane fade px-3 px-lg-0"
-                  id="faq_tab_2"
-                  role="tabpanel"
-                  aria-labelledby="faq_tab_2-tab"
-                >
-<div className='row mt-5 mb-5'>
-<div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio10.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio11.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio12.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio7.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
+    </div>
 </div>
-                </div>
-                <div
-                  className="tab-pane fade px-3 px-lg-0"
-                  id="faq_tab_3"
-                  role="tabpanel"
-                  aria-labelledby="faq_tab_3-tab"
-                >
-  <div className='row mt-5 mb-5'>
-<div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio10.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
+
                   </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio11.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio12.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio7.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-</div>
-                </div>
-                <div
-                  className="tab-pane fade px-3 px-lg-0"
-                  id="faq_tab_4"
-                  role="tabpanel"
-                  aria-labelledby="faq_tab_4-tab"
-                >
-<div className='row mt-5 mb-5'>
-<div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio10.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio11.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio12.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio7.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-</div>
-                </div>
-                <div
-                  className="tab-pane fade px-3 px-lg-0"
-                  id="faq_tab_5"
-                  role="tabpanel"
-                  aria-labelledby="faq_tab_5-tab"
-                >
-<div className='row mt-5 mb-5'>
-<div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio10.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio11.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio12.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div className='col-lg-3 col-md-4 col-6 p-0'>
-          <div className="dlab-media dlab-img-overlay1 dlab-img-effect portbox1">
-                <img src='assets/portfolio7.jpg' alt="portfolio" className='img-fluid' />
-                <div className="overlay-bx">
-                  <div className="portinner">
-                    <span>July 3, 2016 in Travelling</span>
-                    <h3 className="port-title mt-2">
-                      Design is where science
-                    </h3>
-                    <button className="btn-custom portfolio-btn mt-2">
-                      View Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </div>
-</div>
-                </div>
-              </div>
+                ))
+              }
+              {!loading && !err && items.length === 0 && (
+                <p style={{ textAlign:'center' }}>No projects yet.</p>
+              )}
+            </div>
             </div>
           </div>
+
+          {/* ---------------- Residential Tab ---------------- */}
+          <div
+            className="tab-pane fade px-3 px-lg-0"
+            id="faq_tab_2"
+            role="tabpanel"
+            aria-labelledby="faq_tab_2-tab"
+          >
+            <div className="d-flex justify-content-end mb-3">
+               <div className="custom-select-wrapper w-50">
+              <select
+                className="form-select custom-select"
+                value={purposeFilterResidential}
+                onChange={(e) => setPurposeFilterResidential(e.target.value)}
+              >
+                <option value="">All</option>
+                <option value="rent">For Rent</option>
+                <option value="sell">For Sale</option>
+              </select>
+              </div>
+            </div>
+            <div className='container'>
+            <div className='row mt-5 mb-5'>
+              {!loading && !err && items
+                .filter(p => p.propertyType === 'home')
+                .filter(p => !purposeFilterResidential || p.purpose === purposeFilterResidential)
+                .map(p => (
+                             <div key={p.id} className='col-lg-4 col-md-6 col-12 mt-3'>
+<div
+  className="project-card"
+  onClick={() => navigate(`/project/${p.id}`)}
+>
+  <div className="project-image">
+    <img
+      src={getProjectThumb(p) || 'assets/image-coming-soon-placeholder.png'}
+      alt={p.title}
+      className="img-fluid w-100"
+    />
+  </div>
+  <div className="project-info p-3">
+<p className={`mb-0 badge ${p.purpose === 'rent' ? 'badge-rent' : 'badge-sell'}`}>
+  {p.purpose === 'rent' ? 'For Rent' : 'For Sale'}
+</p>
+    <h5 className="project-title mt-2">
+      {p.title}
+    </h5>
+     <p className="text-muted mb-2 text-inner">
+     <i className="fas fa-map-marker-alt location-mark"></i> {p.location}
+      </p>
+    <p className="text-muted mb-2 text-inner">
+      <span><i className="fas fa-bed"></i> {p.bedrooms} Bed</span> &nbsp; <span><i className="fas fa-bath"></i> {p.bathrooms} Bath </span>&nbsp; <span><i className="fas fa-ruler-combined"></i> {parseInt(p.areaSize)} {p.areaUnit}</span></p>
+
+  </div>
+  <div>
+        <div className="d-flex justify-content-between align-items-center mb-2 custom-border-project-cards">
+      <span className="project-price p-3">
+        {p.currency} {Number(p.price).toLocaleString()}
+      </span>
+      {p.availableOnInstallments && (
+        <span className="installment-badge px-2 py-1 rounded me-3">
+          Installments: {p.numberOfInstallments} × {p.currency} {Number(p.monthlyInstallment).toLocaleString()}
+        </span>
+      )}
+    </div>
+    </div>
+</div>
+
+                  </div>
+                ))
+              }
+            </div>
+            </div>
+          </div>
+
+          {/* ---------------- Commercial Tab ---------------- */}
+          <div
+            className="tab-pane fade px-3 px-lg-0"
+            id="faq_tab_3"
+            role="tabpanel"
+            aria-labelledby="faq_tab_3-tab"
+          >
+            <div className="d-flex justify-content-end mb-3">
+                   <div className="custom-select-wrapper w-50">
+              <select
+                className="form-select custom-select"
+                value={purposeFilterCommercial}
+                onChange={(e) => setPurposeFilterCommercial(e.target.value)}
+              >
+                <option value="">All</option>
+                <option value="rent">For Rent</option>
+                <option value="sell">For Sale</option>
+              </select>
+              </div>
+            </div>
+            <div className='container'>
+            <div className='row mt-5 mb-5'>
+              {!loading && !err && items
+                .filter(p => p.propertyType === 'commercial')
+                .filter(p => !purposeFilterCommercial || p.purpose === purposeFilterCommercial)
+                .map(p => (
+                              <div key={p.id} className='col-lg-4 col-md-6 col-12 mt-3'>
+<div
+  className="project-card"
+  onClick={() => navigate(`/project/${p.id}`)}
+>
+  <div className="project-image">
+    <img
+      src={getProjectThumb(p) || 'assets/image-coming-soon-placeholder.png'}
+      alt={p.title}
+      className="img-fluid w-100"
+    />
+  </div>
+  <div className="project-info p-3">
+<p className={`mb-0 badge ${p.purpose === 'rent' ? 'badge-rent' : 'badge-sell'}`}>
+  {p.purpose === 'rent' ? 'For Rent' : 'For Sale'}
+</p>
+    <h5 className="project-title mt-2">
+      {p.title}
+    </h5>
+     <p className="text-muted mb-2 text-inner">
+     <i className="fas fa-map-marker-alt location-mark"></i> {p.location}
+      </p>
+    <p className="text-muted mb-2 text-inner">
+      <span><i className="fas fa-bed"></i> {p.bedrooms} Bed</span> &nbsp; <span><i className="fas fa-bath"></i> {p.bathrooms} Bath </span>&nbsp; <span><i className="fas fa-ruler-combined"></i> {parseInt(p.areaSize)} {p.areaUnit}</span></p>
+
+  </div>
+  <div>
+        <div className="d-flex justify-content-between align-items-center mb-2 custom-border-project-cards">
+      <span className="project-price p-3">
+        {p.currency} {Number(p.price).toLocaleString()}
+      </span>
+      {p.availableOnInstallments && (
+        <span className="installment-badge px-2 py-1 rounded me-3">
+          Installments: {p.numberOfInstallments} × {p.currency} {Number(p.monthlyInstallment).toLocaleString()}
+        </span>
+      )}
+    </div>
+    </div>
+</div>
+
+                  </div>
+                ))
+              }
+            </div>
+            </div>
+          </div>
+
+          {/* ---------------- Plot Tab ---------------- */}
+          <div
+            className="tab-pane fade px-3 px-lg-0"
+            id="faq_tab_4"
+            role="tabpanel"
+            aria-labelledby="faq_tab_4-tab"
+          >
+            <div className="d-flex justify-content-end mb-3">
+              <div className="custom-select-wrapper w-50">
+              <select
+                className="form-select custom-select"
+                value={purposeFilterPlot}
+                onChange={(e) => setPurposeFilterPlot(e.target.value)}
+              >
+                <option value="">All</option>
+                <option value="rent">For Rent</option>
+                <option value="sell">For Sale</option>
+              </select>
+              </div>
+            </div>
+            <div className='container'>
+            <div className='row mt-5 mb-5'>
+              {!loading && !err && items
+                .filter(p => p.propertyType === 'plot')
+                .filter(p => !purposeFilterPlot || p.purpose === purposeFilterPlot)
+                .map(p => (
+                          <div key={p.id} className='col-lg-4 col-md-6 col-12 mt-3'>
+<div
+  className="project-card"
+  onClick={() => navigate(`/project/${p.id}`)}
+>
+  <div className="project-image">
+    <img
+      src={getProjectThumb(p) || 'assets/image-coming-soon-placeholder.png'}
+      alt={p.title}
+      className="img-fluid w-100"
+    />
+  </div>
+  <div className="project-info p-3">
+<p className={`mb-0 badge ${p.purpose === 'rent' ? 'badge-rent' : 'badge-sell'}`}>
+  {p.purpose === 'rent' ? 'For Rent' : 'For Sale'}
+</p>
+    <h5 className="project-title mt-2">
+      {p.title}
+    </h5>
+     <p className="text-muted mb-2 text-inner">
+     <i className="fas fa-map-marker-alt location-mark"></i> {p.location}
+      </p>
+    <p className="text-muted mb-2 text-inner">
+      <span><i className="fas fa-bed"></i> {p.bedrooms} Bed</span> &nbsp; <span><i className="fas fa-bath"></i> {p.bathrooms} Bath </span>&nbsp; <span><i className="fas fa-ruler-combined"></i> {parseInt(p.areaSize)} {p.areaUnit}</span></p>
+
+  </div>
+  <div>
+        <div className="d-flex justify-content-between align-items-center mb-2 custom-border-project-cards">
+      <span className="project-price p-3">
+        {p.currency} {Number(p.price).toLocaleString()}
+      </span>
+      {p.availableOnInstallments && (
+        <span className="installment-badge px-2 py-1 rounded me-3">
+          Installments: {p.numberOfInstallments} × {p.currency} {Number(p.monthlyInstallment).toLocaleString()}
+        </span>
+      )}
+    </div>
+    </div>
+</div>
+
+                  </div>
+                ))
+              }
+            </div>
+            </div>
+          </div>
+
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
 <Footer/>
 </div>
   );

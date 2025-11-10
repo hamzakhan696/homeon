@@ -94,13 +94,6 @@ const PropertyManagement = () => {
       </div>
       <div className="col-lg-4 col-md-6 mb-4">
         <div className="service-card">
-          <i className="las la-building"></i>
-          <h4>Property Leasing</h4>
-          <p>Efficient leasing services to ensure high occupancy rates.</p>
-        </div>
-      </div>
-      <div className="col-lg-4 col-md-6 mb-4">
-        <div className="service-card">
           <i className="las la-file-alt"></i>
           <h4>Legal Assistance</h4>
           <p>Documentation and legal support for hassle-free property transactions.</p>

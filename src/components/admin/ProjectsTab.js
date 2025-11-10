@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { showToast } from '../../toast';
 import { API_BASE_URL } from '../../api';
-
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import { isValidPhoneNumber } from 'libphonenumber-js';
+// const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
 const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || `${API_BASE_URL}/uploads`;
 const USE_MULTIPART_UPLOAD = (process.env.REACT_APP_UPLOAD_MODE || 'json').toLowerCase() === 'multipart';
 
@@ -238,6 +241,7 @@ const ProjectsTab = () => {
       const res = await axios.get(`${API_BASE_URL}/admin/projects`, {
         headers: { Accept: 'application/json' },
       });
+      console.log("res",res)
       setProjects(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to load projects:', err);
@@ -471,7 +475,6 @@ const ProjectsTab = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   // Handle form submission with API integration
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -686,6 +689,24 @@ const ProjectsTab = () => {
       setIsAmenityModalOpen(false);
     }
   };
+const [isPhoneValid, setIsPhoneValid] = useState(true);
+
+const validateMobile = (value) => {
+  if (!value) {
+    setIsPhoneValid(false);
+    return;
+  }
+  setIsPhoneValid(isValidPhoneNumber(value));
+};
+const [isLandlineValid, setIsLandlineValid] = useState(true);
+
+const validateLandline = (number) => {
+  if (!number) {
+    setIsLandlineValid(true);
+    return;
+  }
+  setIsLandlineValid(isValidPhoneNumber(number));
+};
 
   return (
     <div className="project-section-custom">
@@ -1533,42 +1554,34 @@ const ProjectsTab = () => {
                   </div>
                   <div className="w-100">
                                     <label>Mobile</label>
-                <div className="input-group">
-                  <select
-                    name="mobileCountryCode"
-                    className="form-control projects-input-custom"
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        mobile: e.target.value + prev.mobile.replace(/^\+\d{1,3}/, ''),
-                      }))
-                    }
-                  >
-                    <option value="+92">🇵🇰 +92</option>
-                    <option value="+1">🇺🇸 +1</option>
-                    <option value="+44">🇬🇧 +44</option>
-                  </select>
-                  <input
-                    type="tel"
-                    name="mobile"
-                    className="form-control projects-input-custom"
-                    placeholder="Enter mobile number"
-                    value={formData.mobile.replace(/^\+\d{1,3}/, '')}
-                    onChange={(e) => {
-                      const countryCode = formData.mobile.match(/^\+\d{1,3}/)?.[0] || '+92';
-                      setFormData((prev) => ({
-                        ...prev,
-                        mobile: countryCode + e.target.value,
-                      }));
-                      setErrors((prev) => ({ ...prev, mobile: '' }));
-                    }}
-                    required
-                  />
-                  <button type="button" className="btn btn-outline-cstm">
-                    <i className="fas fa-plus"></i>
-                  </button>
-                </div>
-                {errors.mobile && <small className="text-danger">{errors.mobile}</small>}
+<div className="input-group">
+ {!isPhoneValid && formData.mobile && (
+    <div className="text-danger">
+      Please enter a valid phone number.
+    </div>
+  )}
+
+<div className="input-group">
+  <PhoneInput
+    international
+    defaultCountry="PK"
+    name="mobile"
+    placeholder="Enter phone number"
+    value={formData.mobile}
+    onChange={(value) => {
+      setFormData((prev) => ({ ...prev, mobile: value || "" }));
+      validateMobile(value);
+    }}
+    className={`form-control projects-input-custom1 projects-input-custom ${
+      !isPhoneValid ? "is-invalid" : ""
+    }`}
+    required
+  />
+</div>
+
+
+</div>
+
                     </div>
                   </div>
               </div>
@@ -1582,38 +1595,29 @@ const ProjectsTab = () => {
                   </div>
                   <div className="w-100">
                 <label>Landline</label>
-                <div className="input-group">
-                  <select
-                    name="landlineCountryCode"
-                    className="form-control projects-input-custom"
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        landline: e.target.value + (prev.landline?.replace(/^\+\d{1,3}/, '') || ''),
-                      }))
-                    }
-                  >
-                    <option value="+92">🇵🇰 +92</option>
-                    <option value="+1">🇺🇸 +1</option>
-                    <option value="+44">🇬🇧 +44</option>
-                  </select>
-                  <input
-                    type="tel"
-                    name="landline"
-                    className="form-control projects-input-custom"
-                    placeholder="Enter landline number"
-                    value={formData.landline?.replace(/^\+\d{1,3}/, '') || ''}
-                    onChange={(e) => {
-                      const countryCode = formData.landline?.match(/^\+\d{1,3}/)?.[0] || '+92';
-                      setFormData((prev) => ({
-                        ...prev,
-                        landline: e.target.value ? countryCode + e.target.value : '',
-                      }));
-                      setErrors((prev) => ({ ...prev, landline: '' }));
-                    }}
-                  />
-                </div>
-                {errors.landline && <small className="text-danger">{errors.landline}</small>}
+            {!isLandlineValid && formData.landline && (
+  <div className="text-danger">
+    Please enter a valid landline number.
+  </div>
+)}
+
+<div className="input-group">
+  <PhoneInput
+    international
+    defaultCountry="PK"
+    name="landline"
+    placeholder="Enter landline number"
+    value={formData.landline}
+    onChange={(value) => {
+      setFormData((prev) => ({ ...prev, landline: value || "" }));
+      validateLandline(value);
+    }}
+    className={`form-control projects-input-custom1 projects-input-custom ${
+      !isLandlineValid ? "is-invalid" : ""
+    }`}
+  />
+</div>
+
                     </div>
                   </div>
               </div>
@@ -1704,23 +1708,23 @@ const ProjectsTab = () => {
 
           {!isListLoading && !listError && projects.length > 0 && (
             <div className="projects-table-container">
-              <table className="attractive-table">
+              <table className="attractive-table w-100">
                 <thead>
                   <tr style={{ background: '#63b330', color: '#fff' }}>
-                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Media</th>
+                    {/* <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Media</th> */}
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Title</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Purpose</th>
-                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Type</th>
-                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Subtype</th>
+                    {/* <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Type</th> */}
+                    {/* <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Subtype</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>City</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Location</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Area</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Price</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Bedrooms</th>
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Bathrooms</th>
-                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Installments</th>
+                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Installments</th> */}
                     <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Status</th>
-                    <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Created</th>
+                    {/* <th style={{ padding: '12px', borderRight: '1px solid #2980b9' }}>Created</th> */}
                     <th style={{ padding: '12px' }}>Actions</th>
                   </tr>
                 </thead>
@@ -1731,7 +1735,7 @@ const ProjectsTab = () => {
                     const thumb = imageUrls[0] || getProjectThumb(p);
                     return (
                     <tr key={p.id} style={{ background: '#fff', transition: 'background 0.3s', borderBottom: '1px solid #ecf0f1' }}>
-                      <td style={{ padding: '8px', minWidth: 180 }}>
+                      {/* <td style={{ padding: '8px', minWidth: 180 }}>
                         {imageUrls.length === 0 && videoUrls.length === 0 && '-'}
                         {(imageUrls.length > 0 || videoUrls.length > 0) && (
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -1757,18 +1761,18 @@ const ProjectsTab = () => {
                             </button>
                           </div>
                         )}
-                      </td>
+                      </td> */}
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.title}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.purpose}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{p.propertyType}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{p.propertySubtype}</td>
+                      {/* <td style={{ padding: '12px', color: '#2c3e50' }}>{p.propertyType}</td> */}
+                      {/* <td style={{ padding: '12px', color: '#2c3e50' }}>{p.propertySubtype}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.city}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.location}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.areaSize} {p.areaUnit}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{formatCurrency(p.currency, p.price)}</td>
                       <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bedrooms || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bathrooms || '-'}</td>
-                      <td style={{ padding: '12px', color: '#2c3e50' }}>
+                      <td style={{ padding: '12px', color: '#2c3e50' }}>{p.bathrooms || '-'}</td> */}
+                      {/* <td style={{ padding: '12px', color: '#2c3e50' }}>
                         {p.availableOnInstallments ? (
                           <div>
                             <div>Yes</div>
@@ -1786,7 +1790,7 @@ const ProjectsTab = () => {
                             )}
                           </div>
                         ) : 'No'}
-                      </td>
+                      </td> */}
                       <td style={{ padding: '12px' }}>
                         <span
                           className="badge"
@@ -1802,29 +1806,27 @@ const ProjectsTab = () => {
                           {p.status || 'pending'}
                         </span>
                       </td>
-                      <td style={{ padding: '12px', color: '#7f8c8d' }}>{p.createdAt ? new Date(p.createdAt).toLocaleString() : '-'}</td>
-                      <td style={{ padding: '12px' }}>
+                      {/* <td style={{ padding: '12px', color: '#7f8c8d' }}>{p.createdAt ? new Date(p.createdAt).toLocaleString() : '-'}</td> */}
+                      <td className='btn-projects-custom' style={{ padding: '12px' }}>
                         {(!p.status || p.status === 'pending') && (
                           <button
                             type="button"
-                            className="btn btn-sm btn-success"
+                            className="btn btn-sm btn-success btn-projects3"
                             onClick={() => handleApproveProject(p.id)}
                             title="Approve project"
-                            style={{ marginRight: 8 }}
                           >
                             <i className="fas fa-check"></i>
                           </button>
                         )}
                         <button
                           type="button"
-                          className="btn btn-sm btn-primary"
+                          className="btn btn-sm btn-primary btn-projects2 me-1"
                           onClick={() => handleEditProject(p)}
                           title="Edit project"
-                          style={{ marginRight: 8 }}
                         >
                           <i className="fas fa-edit"></i>
                         </button>
-                        <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteProject(p.id)} title="Delete project">
+                        <button type="button" className="btn btn-sm btn-danger btn-projects1" onClick={() => handleDeleteProject(p.id)} title="Delete project">
                           <i className="fas fa-trash"></i>
                         </button>
                       </td>

@@ -13,7 +13,23 @@ import { showToast } from '../toast';
 import { API_BASE_URL } from '../api';
 
 const HomePage = () => {
+    const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
+    
+  const units = ['Marla', 'Square Feet', 'Square Yards', 'Square Meters', 'Kanal'];
+   const [currency, setCurrency] = useState('Pakistan (PKR)');
+  const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(false);
+
+  const currencies = [
+    'Pakistan (PKR)',
+    'Canadian dollar (CAD)',
+    'Saudi Arabia (SAR)',
+    'United Arab Emirates (AED)',
+    'United Kingdom (GBP)'
+  ];
+
+      const [areaUnit, setAreaUnit] = useState('Marla');
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
   const [city, setCity] = useState('Lahore');
   const [location, setLocation] = useState('');
@@ -24,7 +40,21 @@ const HomePage = () => {
   const [maxPrice, setMaxPrice] = useState('');
   const [minArea, setMinArea] = useState('');
   const [maxArea, setMaxArea] = useState('');
+const propertyOptions = {
+  home: ['House', 'Upper Portion', 'Farm House', 'Penthouse', 'Flat', 'Lower Portion', 'Room'],
+  plots: ['Residential Plot', 'Agricultural Land', 'Plot File', 'Commercial Plot', 'Industrial Land', 'Plot Form'],
+  commercial: ['Office', 'Warehouse', 'Building', 'Shop', 'Factory', 'Other']
+};
 
+const [propertySubtype, setPropertySubtype] = useState('');
+ const handleReset = () => {
+    setPropertyType('');
+    setPropertySubtype('');
+  };
+
+  const handleClose = () => {
+    console.log('Close clicked'); // replace with your logic
+  };
   const tabsData = {
     "1": {
       title: "Initial Consultation",
@@ -76,227 +106,6 @@ const HomePage = () => {
 											<button  onClick={handleClick} className="btn-custom d-flex justify-content-center">Book A Site Visit</button>
 										</div>
 									</div>	
-								</div>
-								<div className="col-md-6">
-									<div className="zameen-filter-container">
-										<div className="zameen-filter-header">
-											<h3>Find Your Property</h3>
-											<p>Search from thousands of properties</p>
-										</div>
-										
-										<div className="zameen-filter-main">
-											{/* First Row - City and Location */}
-											<div className="zameen-filter-row">
-												<div className="zameen-filter-field">
-													<label className="zameen-field-label">City</label>
-													<select 
-														className="zameen-select" 
-														value={city} 
-														onChange={(e)=>setCity(e.target.value)}
-													>
-														<option value="Lahore">Lahore</option>
-														<option value="Karachi">Karachi</option>
-														<option value="Islamabad">Islamabad</option>
-														<option value="Rawalpindi">Rawalpindi</option>
-													</select>
-												</div>
-												<div className="zameen-filter-field">
-													<label className="zameen-field-label">Location</label>
-													<input 
-														type="text" 
-														className="zameen-input" 
-														value={location} 
-														onChange={(e)=>setLocation(e.target.value)} 
-														placeholder="Enter location" 
-													/>
-												</div>
-											</div>
-											
-                                            {/* Second Row - Purpose and Property Type */}
-											<div className="zameen-filter-row">
-                                                <div className="zameen-filter-field">
-                                                    <label className="zameen-field-label">Purpose</label>
-                                                    <select 
-                                                        className="zameen-select" 
-                                                        value={purpose} 
-                                                        onChange={(e)=>setPurpose(e.target.value)}
-                                                    >
-                                                        <option value="">All</option>
-                                                        <option value="sell">Sell</option>
-                                                        <option value="rent">Rent</option>
-                                                    </select>
-                                                </div>
-												<div className="zameen-filter-field">
-													<label className="zameen-field-label">Property Type</label>
-													<select 
-														className="zameen-select" 
-														value={propertyType} 
-														onChange={(e)=>setPropertyType(e.target.value)}
-													>
-														<option value="">All Types</option>
-														<option value="home">Homes</option>
-														<option value="plots">Plots</option>
-                                                        <option value="commercial">Commercial</option>
-													</select>
-												</div>
-												<div className="zameen-filter-field">
-													<label className="zameen-field-label">Bedrooms</label>
-													<select 
-														className="zameen-select" 
-														value={beds} 
-														onChange={(e)=>setBeds(e.target.value)}
-													>
-														<option value="All">All</option>
-														<option value="Studio">Studio</option>
-														<option value="1">1</option>
-														<option value="2">2</option>
-														<option value="3">3</option>
-														<option value="4">4</option>
-														<option value="5">5</option>
-														<option value="6">6</option>
-														<option value="7">7</option>
-														<option value="8">8</option>
-														<option value="9">9</option>
-														<option value="10">10</option>
-														<option value="10+">10+</option>
-													</select>
-												</div>
-											</div>
-											
-											{/* Third Row - Price Range */}
-											<div className="zameen-filter-row">
-												<div className="zameen-filter-field">
-													<label className="zameen-field-label">Price Range (PKR)</label>
-													<div className="zameen-range-inputs">
-														<input 
-															type="number" 
-															className="zameen-range-input" 
-															placeholder="Min Price" 
-															value={minPrice} 
-															onChange={(e)=>setMinPrice(e.target.value)} 
-														/>
-														<span className="zameen-range-separator">to</span>
-														<input 
-															type="number" 
-															className="zameen-range-input" 
-															placeholder="Max Price" 
-															value={maxPrice} 
-															onChange={(e)=>setMaxPrice(e.target.value)} 
-														/>
-													</div>
-												</div>
-											</div>
-											
-											{/* Fourth Row - Area Range */}
-											<div className="zameen-filter-row">
-												<div className="zameen-filter-field">
-													<label className="zameen-field-label">Area Range (Marla)</label>
-													<div className="zameen-range-inputs">
-														<input 
-															type="number" 
-															className="zameen-range-input" 
-															placeholder="Min Area" 
-															value={minArea} 
-															onChange={(e)=>setMinArea(e.target.value)} 
-														/>
-														<span className="zameen-range-separator">to</span>
-														<input 
-															type="number" 
-															className="zameen-range-input" 
-															placeholder="Max Area" 
-															value={maxArea} 
-															onChange={(e)=>setMaxArea(e.target.value)} 
-														/>
-													</div>
-												</div>
-											</div>
-											
-											{/* Find Button */}
-											<div className="zameen-filter-actions">
-												<button 
-													type="button" 
-													onClick={async ()=>{
-														const payload = {
-															city: city || undefined,
-															location: location || undefined,
-                                                                purpose: purpose || undefined,
-															propertyType: propertyType || undefined,
-															bedrooms: beds !== 'All' ? beds : undefined,
-															minPrice: minPrice ? Number(minPrice) : undefined,
-															maxPrice: maxPrice ? Number(maxPrice) : undefined,
-															minArea: minArea ? Number(minArea) : undefined,
-															maxArea: maxArea ? Number(maxArea) : undefined,
-														};
-														
-														// Remove undefined values from payload
-														Object.keys(payload).forEach(key => {
-															if (payload[key] === undefined) {
-																delete payload[key];
-															}
-														});
-														
-														try {
-															const res = await fetch(`${API_BASE_URL}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-															const data = await res.json();
-															if (Array.isArray(data) && data.length > 0) {
-                                                                const query = new URLSearchParams({
-																	city: city || '',
-																	location: location || '',
-                                                                    purpose: purpose || '',
-																	propertyType: propertyType || '',
-																	bedrooms: beds || '',
-															minPrice: String(minPrice || ''),
-															maxPrice: String(maxPrice || ''),
-															minArea: String(minArea || ''),
-															maxArea: String(maxArea || ''),
-																}).toString();
-																navigate(`/portfolio?${query}`);
-															} else {
-																showToast('No matching project found', 'info');
-															}
-														} catch (e) { showToast('Search failed', 'error'); }
-													}} 
-													className="zameen-find-btn"
-												>
-													<i className="fas fa-search me-2"></i>
-													Find Properties
-												</button>
-											</div>
-											
-											{/* Additional Options */}
-											<div className="zameen-filter-options">
-												<button 
-													className="zameen-option-btn" 
-                                                    onClick={() => {
-														setCity('Lahore');
-														setLocation('');
-                                                        setPurpose('');
-														setPropertyType('');
-														setBeds('All');
-														setMinPrice('');
-														setMaxPrice('');
-														setMinArea('');
-														setMaxArea('');
-														showToast('Search filters reset', 'info');
-													}}
-												>
-													Reset Search
-												</button>
-												<button 
-													className="zameen-option-btn"
-													onClick={() => showToast('Currency: PKR (Pakistani Rupees)', 'info')}
-												>
-													Currency: PKR
-												</button>
-												<button 
-													className="zameen-option-btn"
-													onClick={() => showToast('Area Unit: Marla', 'info')}
-												>
-													Area: Marla
-												</button>
-											</div>
-										</div>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -573,6 +382,433 @@ const HomePage = () => {
                     <img src='assets/about1.webp' alt='about-img' className='img-fluid'/>
                   </div>
 	 </div>	
+   <div className='container'>
+    <div className='row'>
+      								<div className="col-12">
+									<div className="zameen-filter-container">
+										<div className="zameen-filter-header">
+											<h3>Find Your Property</h3>
+											<p>Search from thousands of properties</p>
+										</div>
+										
+										<div className="zameen-filter-main">
+                      
+                      <div className='zameen-filter-row d-flex justify-content-center'>
+                                                                        <div className="zameen-filter-field">
+    <div className="d-flex gap-2 flex-wrap">
+      {['All', 'Sell', 'Rent'].map((p) => (
+        <button
+          key={p}
+           className={`custom-btn-search ${purpose === p.toLowerCase() ? 'active' : ''}`}
+          onClick={() => setPurpose(p.toLowerCase())}
+        >
+          {p}
+        </button>
+      ))}
+    </div>
+  </div>
+                      </div>
+											{/* First Row - City and Location */}
+											<div className="zameen-filter-row">
+												<div className="zameen-filter-field">
+													<label className="zameen-field-label">City</label>
+													<select 
+														className="zameen-select" 
+														value={city} 
+														onChange={(e)=>setCity(e.target.value)}
+													>
+														<option value="Lahore">Lahore</option>
+														<option value="Karachi">Karachi</option>
+														<option value="Islamabad">Islamabad</option>
+														<option value="Rawalpindi">Rawalpindi</option>
+													</select>
+												</div>
+												<div className="zameen-filter-field">
+													<label className="zameen-field-label">Location</label>
+													<input 
+														type="text" 
+														className="zameen-input" 
+														value={location} 
+														onChange={(e)=>setLocation(e.target.value)} 
+														placeholder="Enter location" 
+													/>
+												</div>
+											</div>
+											
+											<div className="zameen-filter-row">
+												{/* <div className="zameen-filter-field">
+													<label className="zameen-field-label">Property Type</label>
+													<select 
+														className="zameen-select" 
+														value={propertyType} 
+														onChange={(e)=>setPropertyType(e.target.value)}
+													>
+														<option value="">All Types</option>
+														<option value="home">Homes</option>
+														<option value="plots">Plots</option>
+                                                        <option value="commercial">Commercial</option>
+													</select>
+												</div> */}
+<div className="zameen-filter-field">
+  <label className="zameen-field-label">Property Type</label>
+  {/* <select
+    className="zameen-select"
+    value={propertySubtype || propertyType} // show subtype if selected, else main type
+    onChange={(e) => {
+      const value = e.target.value;
+      if (['home', 'plots', 'commercial'].includes(value)) {
+        setPropertyType(value);
+        setPropertySubtype(''); // reset subtype
+      } else {
+        setPropertySubtype(value); // select a subtype
+      }
+    }}
+  >
+    {!propertySubtype && (
+      <>
+      <div className='d-flex'>
+        <option value="">Select Type</option>
+        <option value="home">Homes</option>
+        <option value="plots">Plots</option>
+        <option value="commercial">Commercial</option>
+        </div>
+      </>
+    )}    {propertyType && !propertySubtype &&
+      propertyOptions[propertyType].map((sub) => (
+        <option key={sub} value={sub}>
+          {sub}
+        </option>
+      ))}
+  </select> */}
+{/* 
+  {propertyType === 'home' && propertySubtype === '' && (
+    <div className="zameen-filter-field" style={{ marginTop: '10px' }}>
+      <label className="zameen-field-label">Bedrooms</label>
+      <select
+        className="zameen-select"
+        value={beds}
+        onChange={(e) => setBeds(e.target.value)}
+      >
+        <option value="All">All</option>
+        <option value="Studio">Studio</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="10+">10+</option>
+      </select>
+    </div>
+  )} */}
+<div className="property-dropdown">
+  {/* Fake Select as Trigger */}
+  <div
+    className="dropdown-trigger"
+    onClick={() => setIsOpen(!isOpen)}
+  >
+    <select className="zameen-select" readOnly>
+      <option className="d-none">
+        {propertyType
+          ? `${propertyType.charAt(0).toUpperCase() + propertyType.slice(1)}${propertySubtype ? ' → ' + propertySubtype : ''}`
+          : 'Select Property'}
+      </option>
+    </select>
+  </div>
+
+  {/* Custom Dropdown */}
+  {isOpen && (
+    <div className="category-picker">
+      <div className="main-categories">
+        {['home', 'plots', 'commercial'].map((cat) => (
+          <li
+            key={cat}
+            className={`main-category ${propertyType === cat ? 'active' : ''}`}
+            onClick={() => {
+              setPropertyType(cat);
+              setPropertySubtype('');
+            }}
+          >
+            {cat.charAt(0).toUpperCase() + cat.slice(1)}
+          </li>
+        ))}
+      </div>
+
+      {propertyType && (
+        <div className="sub-categories">
+          {propertyOptions[propertyType].map((sub, idx) => (
+            <li
+              key={idx}
+              className={`sub-category ${propertySubtype === sub ? 'active' : ''}`}
+              onClick={() => setPropertySubtype(sub)}
+            >
+              {sub}
+            </li>
+          ))}
+        </div>
+      )}
+
+      <div className="picker-actions">
+        <button className="reset-btn" onClick={handleReset}>Reset</button>
+        <button className="close-btn" onClick={() => setIsOpen(false)}>Close</button>
+      </div>
+    </div>
+  )}
+
+  {/* Bedrooms only for Home */}
+  {propertyType === 'home' && (
+    <div className="zameen-filter-field" style={{ marginTop: '10px' }}>
+      <label className="zameen-field-label">Bedrooms</label>
+      <select
+        className="zameen-select"
+        value={beds}
+        onChange={(e) => setBeds(e.target.value)}
+      >
+        <option value="All">All</option>
+        <option value="Studio">Studio</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="10+">10+</option>
+      </select>
+    </div>
+  )}
+</div>
+
+</div>
+
+											</div>
+											<div className="zameen-filter-row">
+ <div className="zameen-filter-field">
+      <label 
+        className="zameen-field-label unit-display"
+        onClick={() => setIsCurrencyModalOpen(true)}
+      >
+        Select Currency: <span className='unit-custom-size'>{currency || 'Select Currency'}</span>
+      </label>
+
+      <div className="zameen-range-inputs">
+        <input 
+          type="number" 
+          className="zameen-range-input" 
+          placeholder="Min Price" 
+          value={minPrice} 
+          onChange={(e)=>setMinPrice(e.target.value)} 
+        />
+        <span className="zameen-range-separator">to</span>
+        <input 
+          type="number" 
+          className="zameen-range-input" 
+          placeholder="Max Price" 
+          value={maxPrice} 
+          onChange={(e)=>setMaxPrice(e.target.value)} 
+        />
+      </div>
+
+      {/* Currency Modal */}
+      {isCurrencyModalOpen && (
+        <div className="modal show d-block" tabIndex="-1" role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Select Currency</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  onClick={() => setIsCurrencyModalOpen(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <ul className="list-group">
+                  {currencies.map((curr) => (
+                    <li
+                      key={curr}
+                      className={`list-group-item ${currency === curr ? 'active' : ''}`}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        setCurrency(curr);
+                        setIsCurrencyModalOpen(false);
+                      }}
+                    >
+                      {curr}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => setIsCurrencyModalOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+
+<div className="zameen-filter-field">
+  <label className="zameen-field-label unit-display" onClick={() => setIsUnitModalOpen(true)}>Select Area Range : <span className='unit-custom-size'>{areaUnit || 'Select Unit'}</span></label>
+  <div className="zameen-range-inputs">
+    <input 
+      type="number" 
+      className="zameen-range-input" 
+      placeholder="Min Area" 
+      value={minArea} 
+      onChange={(e)=>setMinArea(e.target.value)} 
+      // onClick={() => setIsUnitModalOpen(true)}
+    />
+    <span className="zameen-range-separator">to</span>
+    <input 
+      type="number" 
+      className="zameen-range-input" 
+      placeholder="Max Area" 
+      value={maxArea} 
+      onChange={(e)=>setMaxArea(e.target.value)} 
+      // onClick={() => setIsUnitModalOpen(true)}
+    />
+  </div>
+
+   {isUnitModalOpen && (
+        <div className="modal show d-block" tabIndex="-1" role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Select Unit</h5>
+                <button type="button" className="btn-close" onClick={() => setIsUnitModalOpen(false)}></button>
+              </div>
+              <div className="modal-body">
+                <ul className="list-group">
+                  {units.map((unit) => (
+                    <li
+                      key={unit}
+                      className={`list-group-item ${areaUnit === unit ? 'active' : ''}`}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        setAreaUnit(unit);
+                        setIsUnitModalOpen(false);
+                      }}
+                    >
+                      {unit}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setIsUnitModalOpen(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+</div>
+
+											</div>
+											<div className="zameen-filter-actions">
+												<button 
+													type="button" 
+													onClick={async ()=>{
+														const payload = {
+															city: city || undefined,
+															location: location || undefined,
+                                                                purpose: purpose || undefined,
+															propertyType: propertyType || undefined,
+															bedrooms: beds !== 'All' ? beds : undefined,
+															minPrice: minPrice ? Number(minPrice) : undefined,
+															maxPrice: maxPrice ? Number(maxPrice) : undefined,
+															minArea: minArea ? Number(minArea) : undefined,
+															maxArea: maxArea ? Number(maxArea) : undefined,
+														};
+														
+														// Remove undefined values from payload
+														Object.keys(payload).forEach(key => {
+															if (payload[key] === undefined) {
+																delete payload[key];
+															}
+														});
+														
+														// const base = process.env.REACT_APP_API_URL || 'http://192.168.100.13:3002';
+														try {
+															const res = await fetch(`${API_BASE_URL}/admin/projects/search`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+															const data = await res.json();
+															if (Array.isArray(data) && data.length > 0) {
+                                                                const query = new URLSearchParams({
+																	city: city || '',
+																	location: location || '',
+                                                                    purpose: purpose || '',
+																	propertyType: propertyType || '',
+																	bedrooms: beds || '',
+															minPrice: String(minPrice || ''),
+															maxPrice: String(maxPrice || ''),
+															minArea: String(minArea || ''),
+															maxArea: String(maxArea || ''),
+																}).toString();
+																navigate(`/portfolio?${query}`);
+															} else {
+																showToast('No matching project found', 'info');
+															}
+														} catch (e) { showToast('Search failed', 'error'); }
+													}} 
+													className="zameen-find-btn"
+												>
+													<i className="fas fa-search me-2"></i>
+													Find Properties
+												</button>
+											</div>
+											
+											{/* Additional Options */}
+											<div className="zameen-filter-options">
+												<button 
+													className="zameen-option-btn" 
+                                                    onClick={() => {
+														setCity('Lahore');
+														setLocation('');
+                                                        setPurpose('');
+														setPropertyType('');
+														setBeds('All');
+														setMinPrice('');
+														setMaxPrice('');
+														setMinArea('');
+														setMaxArea('');
+														showToast('Search filters reset', 'info');
+													}}
+												>
+													Reset Search
+												</button>
+												<button 
+													className="zameen-option-btn"
+													onClick={() => showToast(`'Currency: ${currency || 'Select Currency'}`)}
+												>
+													Currency: {currency || 'Select Currency'}
+												</button>
+												<button 
+													className="zameen-option-btn"
+													onClick={() => showToast(`Area Unit: ${areaUnit || 'Select Unit'}`)}
+												>
+													Area: {areaUnit || 'Select Unit'}
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+    </div>
+   </div>
    <div className='container mt-3'>			
 	 <div  className="specification-heading  mt-lg-0 mt-5" data-content="OUR SERVICES">
    OUR SERVICES

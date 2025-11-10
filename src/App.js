@@ -14,7 +14,6 @@ import ProjectDetail from "./pages/ProjectDetail";
 import SubmitProject from "./pages/SubmitProject";
 import CurrentProject from "./pages/services/currentProject";
 import Consultancy from "./pages/services/consultancy";
-import ProjectSelling from "./pages/services/projectSelling";
 import PropertyManagement from "./pages/services/propertyManagement";
 import Transactions from "./pages/services/transaction";
 import Turnkey from "./pages/services/turnkey";
@@ -41,7 +40,6 @@ function App() {
             <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/currentProject" element={<CurrentProject />} />
             <Route path="/consultancy" element={<Consultancy />} />
-            <Route path="/projectSelling" element={<ProjectSelling />} />
             <Route path="/propertyManagement" element={<PropertyManagement />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/turnkey" element={<Turnkey />} />

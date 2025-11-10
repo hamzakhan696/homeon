@@ -14,6 +14,11 @@ html, body {
     font-size: 14px;
   }
 }
+@media (max-width:768px) {
+  .top-bar ul li{
+    font-size: 10px;
+  }
+}
 .top-bar{
   background-color: #63b330;
 }
@@ -205,6 +210,7 @@ ul li.nav-item .nav-link{
   padding: 10px 30px;
   border-radius: 4px;
   font-weight: 600;
+  text-decoration: none !important;
 }
 
 .btn-custom:hover {
@@ -213,7 +219,7 @@ background-color: black !important;
 color: white !important;
 }
 .offcanvas{
-  max-width: 60% !important;
+  max-width: 70% !important;
 }
 .nav-item .fa-chevron-right{
   background-color: green !important;
@@ -297,7 +303,7 @@ i{
 }
 .specification-heading {
   position: relative;
-  font-size: 64px;
+  font-size: 40px;
   font-weight: 700;
   color: #1a1a1a; /* Elegant dark color */
   text-transform: uppercase;
@@ -310,7 +316,7 @@ i{
 
 @media (max-width:991px) {
   .specification-heading {  
-    font-size: 40px;
+    font-size: 30px;
 }
 }
 @media (max-width:767px) {
@@ -586,4 +592,20 @@ cursor: pointer !important;
 .timeline-article .meta-date .month {
   font-size: 18px;
   line-height: 10px;
+}
+.logo-homeon img{
+  height: 90px;
+}
+@media (max-width:768px) {
+  .btn-custom {
+    padding: 7px 14px;
+    font-size: 13px;
+}
+.navbar-toggler-icon {
+    width: 18px !important;
+    height: 21px !important;
+}
+.logo-homeon img{
+  height: 70px;
+}
 }

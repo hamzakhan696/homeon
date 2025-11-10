@@ -354,9 +354,6 @@ font-weight: 600;
     height: 100%;
     padding: 80px;
 }
-.tab-pane{
-    background-color:  #faf8f2;
-}
 .service-area{
     background-image: url('/public/assets/service-bg.webp');
     background-position: cover;

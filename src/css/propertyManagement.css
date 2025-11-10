@@ -125,4 +125,18 @@
     top: 0;
     transform: translateY(-10%);
   }
-  
+  .proj-selling-btn{
+    color: #fff;
+    background-color: black;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    padding: 10px 30px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+.proj-selling-btn:hover {
+    transform: translateY(-3px);
+    background-color: #63b330 !important;
+    color: white !important;
+}
