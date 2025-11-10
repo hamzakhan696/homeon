@@ -182,7 +182,8 @@ const ProjectsTab = () => {
       file,
       name: file.name,
       size: file.size,
-      url: URL.createObjectURL(file),
+    url: URL.createObjectURL(file),
+    mimeType: file.type || guessVideoMimeType(file.name),
     }));
 
     setProjectVideos((prev) => [...prev, ...newVideos]);
@@ -225,13 +226,33 @@ const ProjectsTab = () => {
     );
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+const formatFileSize = (bytes) => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+function guessVideoMimeType(filename = '') {
+  const ext = filename.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'mp4':
+      return 'video/mp4';
+    case 'mov':
+      return 'video/quicktime';
+    case 'wmv':
+      return 'video/x-ms-wmv';
+    case 'avi':
+      return 'video/x-msvideo';
+    case 'webm':
+      return 'video/webm';
+    case 'mkv':
+      return 'video/x-matroska';
+    default:
+      return 'video/mp4';
+  }
+}
 
   // Fetch projects list
   const fetchProjects = async () => {
@@ -659,7 +680,14 @@ const ProjectsTab = () => {
         for (const item of project.projectVideos) {
           const name = (item && (item.name || item.url)) || item;
           const url = /^https?:\/\//i.test(String(name)) ? String(name) : resolveMediaUrl(String(name));
-          existingVideos.push({ id: `existv-${Math.random()}`, file: null, name: String(name), size: 0, url });
+        existingVideos.push({
+          id: `existv-${Math.random()}`,
+          file: null,
+          name: String(name),
+          size: 0,
+          url,
+          mimeType: (item && item.type) || guessVideoMimeType(String(name)),
+        });
         }
       }
       setProjectVideos(existingVideos);
@@ -1462,7 +1490,10 @@ const validateLandline = (number) => {
                       {projectVideos.map((video) => (
                         <div key={video.id} className="file-item">
                           <video controls width="100" height="60">
-                            <source src={video.url} type={video.file.type} />
+                            <source
+                              src={video.url}
+                              type={video.mimeType || video.file?.type || guessVideoMimeType(video.name)}
+                            />
                             Your browser does not support the video tag.
                           </video>
                           <div className="file-info">
